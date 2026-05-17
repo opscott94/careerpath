@@ -1,0 +1,437 @@
+{% extends 'frontend/base.html' %}
+{% block title %}University Eligibility Checker — CareerPath Ghana{% endblock %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto px-4 py-12">
+
+  <!-- Step indicators -->
+  <div class="flex items-center justify-center gap-3 mb-10">
+    <div id="step1-ind" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center">1</div>
+      <span class="text-sm font-medium text-gray-700">Enter Grades</span>
+    </div>
+    <div class="w-12 h-px bg-gray-200"></div>
+    <div id="step2-ind" class="flex items-center gap-2 opacity-40">
+      <div class="w-8 h-8 rounded-full bg-gray-300 text-white text-sm font-bold flex items-center justify-center">2</div>
+      <span class="text-sm font-medium text-gray-500">Choose Program</span>
+    </div>
+    <div class="w-12 h-px bg-gray-200"></div>
+    <div id="step3-ind" class="flex items-center gap-2 opacity-40">
+      <div class="w-8 h-8 rounded-full bg-gray-300 text-white text-sm font-bold flex items-center justify-center">3</div>
+      <span class="text-sm font-medium text-gray-500">Results</span>
+    </div>
+  </div>
+
+  <!-- STEP 1: Grade entry -->
+  <div id="step1" style="position:relative;">
+  <div style="position:fixed;inset:0;z-index:-1;pointer-events:none;display:flex;">
+    <div style="flex:1;background-image:url('https://images.pexels.com/photos/28683669/pexels-photo-28683669.jpeg');background-size:cover;background-position:center;opacity:0.08;"></div>
+    <div style="flex:1;background-image:url('https://images.pexels.com/photos/34313903/pexels-photo-34313903.jpeg');background-size:cover;background-position:center;opacity:0.08;"></div>
+  </div>
+    <div class="card p-8 relative overflow-hidden">
+      <!-- WAEC faded bg -->
+      <div style="position:absolute;right:-40px;bottom:-40px;width:260px;height:260px;background-image:url('/static/images/waec.png');background-size:contain;background-repeat:no-repeat;opacity:0.05;"></div>
+
+      <div class="relative">
+        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-xl mb-5">📊</div>
+        <h1 class="display text-3xl font-bold text-gray-900 mb-2">SHS Eligibility Checker</h1>
+        <p class="text-gray-500 mb-8">Already have your WASSCE results? Enter your grades and instantly see which university programs you qualify for across KNUST, UG, UCC, UDS, and UENR.</p>
+
+        <div class="space-y-1 mb-8">
+          <div class="flex items-center gap-3 text-sm text-gray-600 py-2 border-b border-gray-50">
+            <span class="text-blue-500 font-bold">✓</span> Enter your WASSCE grades
+          </div>
+          <div class="flex items-center gap-3 text-sm text-gray-600 py-2 border-b border-gray-50">
+            <span class="text-blue-500 font-bold">✓</span> Calculate your aggregate automatically
+          </div>
+          <div class="flex items-center gap-3 text-sm text-gray-600 py-2">
+            <span class="text-blue-500 font-bold">✓</span> See matching programs across 5 universities
+          </div>
+        </div>
+
+        <h2 class="font-bold text-gray-800 mb-5">Enter Your WASSCE Grades</h2>
+
+        <div class="space-y-3 mb-8">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">English Language</label>
+              <select id="g_english" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-800 font-medium">
+                <option value="">Select grade</option>
+                <option value="1">A1 — Excellent</option>
+                <option value="2">B2 — Very Good</option>
+                <option value="3">B3 — Good</option>
+                <option value="4">C4 — Credit</option>
+                <option value="5">C5 — Credit</option>
+                <option value="6">C6 — Credit</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Core Mathematics</label>
+              <select id="g_math" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-800 font-medium">
+                <option value="">Select grade</option>
+                <option value="1">A1 — Excellent</option>
+                <option value="2">B2 — Very Good</option>
+                <option value="3">B3 — Good</option>
+                <option value="4">C4 — Credit</option>
+                <option value="5">C5 — Credit</option>
+                <option value="6">C6 — Credit</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Integrated Science / Social Studies</label>
+            <select id="g_science" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-800 font-medium">
+              <option value="">Select grade</option>
+              <option value="1">A1 — Excellent</option>
+              <option value="2">B2 — Very Good</option>
+              <option value="3">B3 — Good</option>
+              <option value="4">C4 — Credit</option>
+              <option value="5">C5 — Credit</option>
+              <option value="6">C6 — Credit</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Elective 1</label>
+              <select id="g_e1" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-800 font-medium">
+                <option value="">Grade</option>
+                <option value="1">A1</option><option value="2">B2</option><option value="3">B3</option>
+                <option value="4">C4</option><option value="5">C5</option><option value="6">C6</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Elective 2</label>
+              <select id="g_e2" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-800 font-medium">
+                <option value="">Grade</option>
+                <option value="1">A1</option><option value="2">B2</option><option value="3">B3</option>
+                <option value="4">C4</option><option value="5">C5</option><option value="6">C6</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Elective 3</label>
+              <select id="g_e3" class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-800 font-medium">
+                <option value="">Grade</option>
+                <option value="1">A1</option><option value="2">B2</option><option value="3">B3</option>
+                <option value="4">C4</option><option value="5">C5</option><option value="6">C6</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="goToStep2()" style="background:#2563eb;color:#fff;font-weight:700;padding:16px 28px;border-radius:12px;width:100%;font-size:16px;transition:all 0.2s;" class="hover:bg-blue-700">
+          Check Eligibility →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Choose program -->
+  <div id="step2" class="hidden" style="position:relative;">
+  <div style="position:fixed;inset:0;z-index:-1;pointer-events:none;display:flex;">
+    <div style="flex:1;background-image:url('https://images.pexels.com/photos/28683669/pexels-photo-28683669.jpeg');background-size:cover;background-position:center;opacity:0.08;"></div>
+    <div style="flex:1;background-image:url('https://images.pexels.com/photos/34313903/pexels-photo-34313903.jpeg');background-size:cover;background-position:center;opacity:0.08;"></div>
+  </div>
+    <div class="card p-8">
+      <div class="flex items-center gap-4 mb-6">
+        <div id="aggregateBadge" class="w-16 h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black flex-shrink-0"></div>
+        <div>
+          <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide">Your Aggregate</p>
+          <p id="aggregateLabel" class="text-xl font-bold text-gray-900"></p>
+          <p class="text-xs text-gray-400">Lower is better · Qualifying threshold is 24</p>
+        </div>
+      </div>
+
+      <h2 class="display text-2xl font-bold text-gray-900 mb-1">Which program do you want to study?</h2>
+      <p class="text-gray-500 text-sm mb-6">Select one program and we'll check all 5 universities for you</p>
+
+      <!-- Category filters -->
+      <div class="flex flex-wrap gap-2 mb-5" id="categoryFilters">
+        <button onclick="filterPrograms('all')" class="filter-btn active text-sm px-4 py-2 rounded-full border-2 border-green-600 text-green-600 font-medium bg-green-50">All</button>
+        <button onclick="filterPrograms('health')" class="filter-btn text-sm px-4 py-2 rounded-full border border-gray-200 text-gray-600 font-medium hover:border-green-400">Health Sciences</button>
+        <button onclick="filterPrograms('engineering')" class="filter-btn text-sm px-4 py-2 rounded-full border border-gray-200 text-gray-600 font-medium hover:border-green-400">Engineering</button>
+        <button onclick="filterPrograms('computing')" class="filter-btn text-sm px-4 py-2 rounded-full border border-gray-200 text-gray-600 font-medium hover:border-green-400">Computing & IT</button>
+        <button onclick="filterPrograms('business')" class="filter-btn text-sm px-4 py-2 rounded-full border border-gray-200 text-gray-600 font-medium hover:border-green-400">Business</button>
+        <button onclick="filterPrograms('law')" class="filter-btn text-sm px-4 py-2 rounded-full border border-gray-200 text-gray-600 font-medium hover:border-green-400">Law & Social Sciences</button>
+        <button onclick="filterPrograms('science')" class="filter-btn text-sm px-4 py-2 rounded-full border border-gray-200 text-gray-600 font-medium hover:border-green-400">Natural Sciences</button>
+        <button onclick="filterPrograms('agric')" class="filter-btn text-sm px-4 py-2 rounded-full border border-gray-200 text-gray-600 font-medium hover:border-green-400">Agriculture</button>
+      </div>
+
+      <!-- Search -->
+      <div class="relative mb-5">
+        <input id="programSearch" type="text" placeholder="Search programs e.g. Medicine, Law, Computer Science..."
+          oninput="filterPrograms(currentCategory)"
+          class="w-full border border-gray-200 rounded-xl px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50">
+        <span class="absolute left-3 top-3.5 text-gray-400">🔍</span>
+      </div>
+
+      <div id="programList" class="space-y-2 max-h-96 overflow-y-auto pr-1"></div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Results -->
+  <div id="step3" class="hidden" style="position:relative;">
+  <div style="position:fixed;inset:0;z-index:-1;pointer-events:none;display:flex;">
+    <div style="flex:1;background-image:url('https://images.pexels.com/photos/28683669/pexels-photo-28683669.jpeg');background-size:cover;background-position:center;opacity:0.08;"></div>
+    <div style="flex:1;background-image:url('https://images.pexels.com/photos/34313903/pexels-photo-34313903.jpeg');background-size:cover;background-position:center;opacity:0.08;"></div>
+  </div>
+    <div id="step3Content"></div>
+  </div>
+
+</div>
+
+<script>
+let aggregate = 0;
+let allPrograms = [];
+let currentCategory = 'all';
+
+const programMeta = {
+  'medicine': {cat:'health', icon:'🩺', label:'Medicine & Surgery (MBChB)', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics or Maths']},
+  'pharmacy': {cat:'health', icon:'💊', label:'Doctor of Pharmacy (Pharm D)', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics or Maths']},
+  'nursing': {cat:'health', icon:'🏥', label:'BSc Nursing', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics or Maths']},
+  'midwifery': {cat:'health', icon:'👶', label:'BSc Midwifery', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics']},
+  'medical lab': {cat:'health', icon:'🔬', label:'BSc Medical Laboratory Science', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics']},
+  'dental': {cat:'health', icon:'🦷', label:'Bachelor of Dental Surgery (BDS)', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics']},
+  'physiotherapy': {cat:'health', icon:'🏃', label:'BSc Physiotherapy', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics']},
+  'dietetics': {cat:'health', icon:'🥗', label:'BSc Dietetics', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics']},
+  'civil engineering': {cat:'engineering', icon:'🌉', label:'BSc Civil Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Maths']},
+  'mechanical engineering': {cat:'engineering', icon:'⚙️', label:'BSc Mechanical Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Maths']},
+  'electrical engineering': {cat:'engineering', icon:'⚡', label:'BSc Electrical/Electronic Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Maths']},
+  'biomedical engineering': {cat:'engineering', icon:'🔩', label:'BSc Biomedical Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Biology']},
+  'computer engineering': {cat:'engineering', icon:'💻', label:'BSc Computer Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Maths']},
+  'chemical engineering': {cat:'engineering', icon:'⚗️', label:'BSc Chemical Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Maths']},
+  'computer science': {cat:'computing', icon:'🖥️', label:'BSc Computer Science', desc:'Computing & IT', subjects:['Physics','Maths','Chemistry/ICT']},
+  'information technology': {cat:'computing', icon:'📱', label:'BSc Information Technology', desc:'Computing & IT', subjects:['Physics','Maths','Any elective']},
+  'accounting': {cat:'business', icon:'📊', label:'BSc Business Admin (Accounting)', desc:'Business & Economics', subjects:['Business Mgt','Accounting','Economics']},
+  'marketing': {cat:'business', icon:'📣', label:'BSc Business Admin (Marketing)', desc:'Business & Economics', subjects:['Business Mgt','Accounting','Economics']},
+  'law': {cat:'law', icon:'⚖️', label:'LLB Bachelor of Laws', desc:'Law', subjects:['Any 3 electives','English required']},
+  'economics': {cat:'law', icon:'📈', label:'BSc/BA Economics', desc:'Social Sciences', subjects:['Economics','Geography','Maths']},
+  'biochemistry': {cat:'science', icon:'🧬', label:'BSc Biochemistry', desc:'Natural Sciences', subjects:['Biology','Chemistry','Physics/Maths']},
+  'mathematics': {cat:'science', icon:'📐', label:'BSc Mathematics', desc:'Natural Sciences', subjects:['Maths','Physics','Chemistry/Biology']},
+  'chemistry': {cat:'science', icon:'⚗️', label:'BSc Chemistry', desc:'Natural Sciences', subjects:['Chemistry','Physics','Maths']},
+  'agriculture': {cat:'agric', icon:'🌾', label:'BSc Agriculture', desc:'Agriculture', subjects:['Biology','Chemistry','Physics/Maths']},
+  'agribusiness': {cat:'agric', icon:'🚜', label:'BSc Agribusiness', desc:'Agriculture', subjects:['Economics','Biology','Chemistry']},
+};
+
+function goToStep2() {
+  const ids = ['g_english','g_math','g_science','g_e1','g_e2','g_e3'];
+  const vals = ids.map(id => parseInt(document.getElementById(id).value));
+  if (vals.some(isNaN)) { alert('Please select all 6 grades'); return; }
+  const sorted = [...vals].sort((a,b)=>a-b);
+  aggregate = sorted.slice(0,6).reduce((a,b)=>a+b,0);
+
+  const label = aggregate <= 8 ? 'Outstanding' : aggregate <= 12 ? 'Excellent' : aggregate <= 18 ? 'Very Good' : aggregate <= 24 ? 'Good' : 'Fair';
+  document.getElementById('aggregateBadge').textContent = aggregate;
+  document.getElementById('aggregateLabel').textContent = `Aggregate ${aggregate} · ${label}`;
+
+  document.getElementById('step1').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+
+  // Update step indicators
+  document.getElementById('step2-ind').classList.remove('opacity-40');
+  document.getElementById('step2-ind').querySelector('div').className = 'w-8 h-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center';
+
+  renderPrograms('all');
+}
+
+function filterPrograms(cat) {
+  currentCategory = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.className = 'filter-btn text-sm px-4 py-2 rounded-full border border-gray-200 text-gray-600 font-medium hover:border-green-400';
+  });
+  event.target.className = 'filter-btn active text-sm px-4 py-2 rounded-full border-2 border-green-600 text-green-600 font-medium bg-green-50';
+  renderPrograms(cat);
+}
+
+function renderPrograms(cat) {
+  const search = (document.getElementById('programSearch').value || '').toLowerCase();
+  const list = document.getElementById('programList');
+  let html = '';
+  Object.entries(programMeta).forEach(([key, prog]) => {
+    if (cat !== 'all' && prog.cat !== cat) return;
+    if (search && !prog.label.toLowerCase().includes(search) && !key.includes(search)) return;
+    const unis = getUnisForProgram(key);
+    html += `
+      <div onclick="showResults('${key}')" class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-green-300 hover:bg-green-50 cursor-pointer transition group">
+        <div class="text-2xl w-10 text-center">${prog.icon}</div>
+        <div class="flex-1">
+          <p class="font-semibold text-gray-800 group-hover:text-green-800">${prog.label}</p>
+          <p class="text-xs text-gray-400">${prog.desc}</p>
+          <p class="text-xs text-gray-400 mt-0.5">${unis.join(' · ')}</p>
+        </div>
+        <div class="text-gray-300 group-hover:text-green-500">→</div>
+      </div>`;
+  });
+  if (!html) html = '<p class="text-center text-gray-400 py-8">No programs found. Try a different search.</p>';
+  list.innerHTML = html;
+}
+
+function getUnisForProgram(key) {
+  const uniMap = {
+    'medicine':['KNUST','UG','UCC','UDS','UENR'],
+    'pharmacy':['KNUST','UG','UCC','UDS','UENR'],
+    'nursing':['KNUST','UG','UCC','UDS','UENR'],
+    'midwifery':['KNUST','UG','UCC'],
+    'medical lab':['KNUST','UG','UDS','UENR'],
+    'dental':['KNUST'],
+    'physiotherapy':['KNUST','UENR'],
+    'dietetics':['KNUST','UG','UCC','UENR'],
+    'civil engineering':['KNUST','UDS','UENR'],
+    'mechanical engineering':['KNUST','UDS','UENR'],
+    'electrical engineering':['KNUST','UDS','UENR'],
+    'biomedical engineering':['KNUST','UG','UENR'],
+    'computer engineering':['KNUST','UDS','UENR'],
+    'chemical engineering':['KNUST','UG'],
+    'computer science':['KNUST','UG','UDS','UENR'],
+    'information technology':['KNUST','UG','UENR'],
+    'accounting':['KNUST','UG'],
+    'marketing':['KNUST'],
+    'law':['KNUST','UG','UENR'],
+    'economics':['KNUST','UG','UDS','UENR'],
+    'biochemistry':['KNUST','UG'],
+    'mathematics':['KNUST','UG','UDS','UENR'],
+    'chemistry':['KNUST'],
+    'agriculture':['KNUST','UG','UDS','UENR'],
+    'agribusiness':['KNUST','UG','UENR'],
+  };
+  return uniMap[key] || ['KNUST'];
+}
+
+const cutoffs = {
+  'medicine': {KNUST:6, UG:8, UCC:9, UDS:6, UENR:8},
+  'pharmacy': {KNUST:6, UG:10, UCC:12, UDS:6, UENR:10},
+  'nursing': {KNUST:7, UG:12, UCC:9, UDS:6, UENR:15},
+  'midwifery': {KNUST:8, UG:12, UCC:9},
+  'medical lab': {KNUST:7, UG:12, UDS:6, UENR:12},
+  'dental': {KNUST:6},
+  'physiotherapy': {KNUST:12, UENR:14},
+  'dietetics': {KNUST:9, UG:14, UCC:16, UENR:14},
+  'civil engineering': {KNUST:7, UDS:6, UENR:6},
+  'mechanical engineering': {KNUST:7, UDS:6, UENR:6},
+  'electrical engineering': {KNUST:6, UDS:6, UENR:6},
+  'biomedical engineering': {KNUST:6, UG:6, UENR:6},
+  'computer engineering': {KNUST:6, UDS:6, UENR:7},
+  'chemical engineering': {KNUST:7, UG:18},
+  'computer science': {KNUST:7, UG:15, UDS:6, UENR:7},
+  'information technology': {KNUST:10, UG:15, UENR:10},
+  'accounting': {KNUST:7, UG:15},
+  'marketing': {KNUST:9},
+  'law': {KNUST:6, UG:12, UENR:7},
+  'economics': {KNUST:10, UG:16, UDS:6, UENR:6},
+  'biochemistry': {KNUST:9, UG:16},
+  'mathematics': {KNUST:15, UG:20, UDS:6, UENR:6},
+  'chemistry': {KNUST:15},
+  'agriculture': {KNUST:20, UG:18, UDS:6, UENR:6},
+  'agribusiness': {KNUST:15, UG:20, UENR:6},
+};
+
+const uniColors = {KNUST:'#15803d', UG:'#1d4ed8', UCC:'#dc2626', UDS:'#7c3aed', UENR:'#d97706'};
+const uniLocations = {KNUST:'Kumasi', UG:'Legon, Accra', UCC:'Cape Coast', UDS:'Tamale', UENR:'Sunyani'};
+
+function showResults(key) {
+  const prog = programMeta[key];
+  const progCutoffs = cutoffs[key] || {};
+
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step3').classList.remove('hidden');
+
+  // Update step 3 indicator
+  document.getElementById('step3-ind').classList.remove('opacity-40');
+  document.getElementById('step3-ind').querySelector('div').className = 'w-8 h-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center';
+
+  let uniCards = '';
+  const unis = getUnisForProgram(key);
+
+  // Sort: eligible first, then borderline, then not eligible
+  const sorted = unis.map(uni => {
+    const co = progCutoffs[uni];
+    const eligible = co && aggregate <= co;
+    const borderline = co && !eligible && aggregate <= co + 3;
+    return {uni, co, eligible, borderline};
+  }).sort((a,b) => {
+    if (a.eligible && !b.eligible) return -1;
+    if (!a.eligible && b.eligible) return 1;
+    if (a.borderline && !b.borderline) return -1;
+    if (!a.borderline && b.borderline) return 1;
+    return 0;
+  });
+
+  sorted.forEach(({uni, co, eligible, borderline}) => {
+    const margin = co ? co - aggregate : 0;
+    const statusBadge = eligible
+      ? '<span style="background:#dcfce7;color:#15803d;" class="badge">✓ Eligible</span>'
+      : borderline
+      ? '<span style="background:#fef3c7;color:#d97706;" class="badge">~ Borderline</span>'
+      : '<span style="background:#fee2e2;color:#dc2626;" class="badge">✗ Not yet eligible</span>';
+
+    const borderColor = eligible ? '#86efac' : borderline ? '#fcd34d' : '#fca5a5';
+    const initials = uni.substring(0,2);
+    const color = uniColors[uni] || '#16a34a';
+
+    uniCards += `
+      <div class="card p-6 mb-4" style="border-left:4px solid ${borderColor};">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl text-white font-bold text-sm flex items-center justify-center flex-shrink-0" style="background:${color};">${initials}</div>
+            <div>
+              <p class="font-bold text-gray-900">${uni}</p>
+              <p class="text-xs text-gray-400">${prog.label}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            ${statusBadge}
+            ${co ? `<div class="mt-2"><span class="text-xs text-gray-400">Cut-off: ${co} · Yours: </span><span class="text-lg font-black" style="color:${color};">${aggregate}</span></div>` : ''}
+            ${eligible && margin > 0 ? `<p class="text-xs text-green-600 font-medium">${margin} pts ahead of cut-off</p>` : ''}
+            ${borderline ? `<p class="text-xs text-yellow-600 font-medium">${Math.abs(margin)} pts from cut-off</p>` : ''}
+            ${!eligible && !borderline && co ? `<p class="text-xs text-red-500 font-medium">${Math.abs(margin)} pts above cut-off</p>` : ''}
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Required Subjects</p>
+            <div class="flex flex-wrap gap-1">
+              ${prog.subjects.map(s=>`<span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">${s}</span>`).join('')}
+            </div>
+          </div>
+          <div class="text-right text-xs text-gray-400 flex items-center gap-1">📍 ${uniLocations[uni] || ''}</div>
+        </div>
+      </div>`;
+  });
+
+  const eligible_count = sorted.filter(x=>x.eligible).length;
+  const borderline_count = sorted.filter(x=>x.borderline).length;
+
+  document.getElementById('step3Content').innerHTML = `
+    <div class="card p-6 mb-6">
+      <div class="flex items-center gap-4">
+        <div class="text-3xl">${prog.icon}</div>
+        <div class="flex-1">
+          <h2 class="display text-xl font-bold text-gray-900">${prog.label}</h2>
+          <p class="text-gray-400 text-sm">${prog.desc}</p>
+          <div class="flex items-center gap-2 mt-2">
+            <div class="w-12 h-12 bg-green-600 text-white font-black rounded-xl flex items-center justify-center text-lg">${aggregate}</div>
+            <span class="text-sm text-gray-500">Your aggregate</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-4 mb-4 text-xs">
+      <span class="flex items-center gap-1"><span class="w-2 h-2 bg-green-400 rounded-full"></span> Eligible now (${eligible_count})</span>
+      <span class="flex items-center gap-1"><span class="w-2 h-2 bg-yellow-400 rounded-full"></span> Borderline within 3 pts (${borderline_count})</span>
+      <span class="flex items-center gap-1"><span class="w-2 h-2 bg-red-300 rounded-full"></span> Not yet eligible</span>
+    </div>
+
+    <h3 class="font-bold text-gray-700 mb-3 text-sm uppercase tracking-wide">Universities Offering This Program</h3>
+    ${uniCards}
+
+    <button onclick="document.getElementById('step3').classList.add('hidden'); document.getElementById('step2').classList.remove('hidden');"
+      class="w-full mt-4 py-3 border-2 border-gray-200 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 transition">
+      ← Back to Programs
+    </button>
+  `;
+
+  document.getElementById('step3').scrollIntoView({behavior:'smooth'});
+}
+</script>
+
+{% endblock %}

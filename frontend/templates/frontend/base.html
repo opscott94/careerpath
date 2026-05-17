@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}CareerPath Ghana{% endblock %}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #16a34a;
+  --green-dark: #14532d;
+  --green-light: #dcfce7;
+  --gold: #d97706;
+  --gold-light: #fef3c7;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --surface: #f8fafc;
+}
+* { box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface); color: var(--ink); }
+.display { font-family: 'Playfair Display', serif; }
+.btn-primary { background: var(--green); color: #fff; font-weight: 600; padding: 14px 28px; border-radius: 12px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+.btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(22,163,74,0.3); }
+.btn-outline { border: 2px solid var(--green); color: var(--green); font-weight: 600; padding: 12px 28px; border-radius: 12px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+.btn-outline:hover { background: var(--green-light); }
+.card { background: #fff; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04); }
+.badge { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; }
+.fade-in { animation: fadeUp 0.5s ease forwards; opacity: 0; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav style="background:#fff;border-bottom:1px solid #f1f5f9;position:sticky;top:0;z-index:50;">
+  <div style="max-width:1152px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;">
+    <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+      <div style="width:36px;height:36px;background:linear-gradient(135deg,#16a34a,#052e16);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+        <span style="color:#fff;font-weight:800;font-size:13px;letter-spacing:-0.5px;">CP</span>
+      </div>
+      <span style="font-weight:800;font-size:1.1rem;color:#0f172a;letter-spacing:-0.3px;">CareerPath</span>
+
+    </a>
+    <div style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:100px;padding:6px 14px;">
+      <span style="font-size:14px;">🇬🇭</span>
+      <span style="font-size:13px;font-weight:600;color:#374151;">Ghana</span>
+    </div>
+  </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<footer class="bg-gray-900 text-white mt-24">
+  <div class="max-w-6xl mx-auto px-6 py-14">
+    <div class="flex flex-col md:flex-row justify-between gap-8">
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+            <span class="text-white text-sm font-bold">CP</span>
+          </div>
+          <span class="font-bold text-lg">CareerPath Ghana</span>
+        </div>
+        <p class="text-gray-400 text-sm max-w-xs">Helping every Ghanaian student find the right academic path — from JHS to university.</p>
+      </div>
+      <div class="flex gap-12 text-sm">
+        <div>
+          <p class="font-semibold mb-3 text-gray-300">Tools</p>
+          <div class="space-y-2 text-gray-400">
+            <p><a href="/jhs-guide/" class="hover:text-white transition">JHS Career Guide</a></p>
+            <p><a href="/shs-eligibility/" class="hover:text-white transition">SHS Eligibility Checker</a></p>
+          </div>
+        </div>
+        <div>
+          <p class="font-semibold mb-3 text-gray-300">Universities</p>
+          <div class="space-y-2 text-gray-400">
+            <p>KNUST · UG · UCC</p>
+            <p>UDS · UENR</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-gray-800 mt-10 pt-6 text-xs text-gray-500">
+      Data sourced from NaCCA Subject Combination Guidelines & University Admission Requirements 2024/2025
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

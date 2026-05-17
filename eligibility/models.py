@@ -1,0 +1,34 @@
+from django.db import models
+from careers.models import LearningArea, Subject
+
+class University(models.Model):
+    name = models.CharField(max_length=200)
+    short_name = models.CharField(max_length=20)
+    location = models.CharField(max_length=100)
+    website = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.short_name
+
+    class Meta:
+        verbose_name_plural = 'Universities'
+
+class Program(models.Model):
+    university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='programs')
+    name = models.CharField(max_length=200)
+    faculty = models.CharField(max_length=200, blank=True)
+    learning_area = models.ForeignKey(LearningArea, on_delete=models.SET_NULL, null=True, blank=True)
+    required_subjects = models.ManyToManyField(Subject, blank=True)
+    duration_years = models.IntegerField(default=4)
+
+    def __str__(self):
+        return f"{self.university.short_name} — {self.name}"
+
+class Cutoff(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='cutoffs')
+    aggregate = models.IntegerField(help_text='WASSCE aggregate cut-off (lower is better)')
+    year = models.IntegerField(default=2024)
+    notes = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.program} | Agg {self.aggregate}"

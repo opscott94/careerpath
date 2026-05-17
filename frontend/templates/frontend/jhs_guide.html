@@ -1,0 +1,177 @@
+{% extends 'frontend/base.html' %}
+{% block title %}JHS Career Guide - CareerPath Ghana{% endblock %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto px-4 py-12" style="position:relative;">
+  <div style="position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:url('https://images.pexels.com/photos/9879939/pexels-photo-9879939.jpeg');background-size:cover;background-position:center;opacity:0.08;"></div>
+  <div class="text-center mb-10">
+    <div class="text-5xl mb-4">🎓</div>
+    <h1 class="text-3xl font-bold mb-3">JHS Career Guide</h1>
+    <p class="text-gray-500">Tell us your dream career and we'll map it to the right SHS subjects</p>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm p-8 mb-6">
+    <label class="block font-semibold mb-3 text-gray-700">What do you want to be? <span class="text-gray-400 font-normal">(type naturally)</span></label>
+    <div class="flex gap-3">
+      <input id="careerInput" type="text" placeholder="e.g. I want to be a doctor, software developer, lawyer..."
+        class="flex-1 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+        onkeydown="if(event.key==='Enter') searchCareer()">
+      <button onclick="searchCareer()" class="bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary transition">
+        Search
+      </button>
+    </div>
+    <div class="flex flex-wrap gap-2 mt-4">
+      <span class="text-sm text-gray-400">Try:</span>
+        <button onclick="document.getElementById('careerInput').value='I want to be a doctor'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">doctor</button>
+      <button onclick="document.getElementById('careerInput').value='I want to be an engineer'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">engineer</button>
+      <button onclick="document.getElementById('careerInput').value='I want to be a lawyer'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">lawyer</button>
+      <button onclick="document.getElementById('careerInput').value='I want to be a nurse'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">nurse</button>
+      <button onclick="document.getElementById('careerInput').value='I want to be an accountant'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">accountant</button>
+      <button onclick="document.getElementById('careerInput').value='I want to be a journalist'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">journalist</button>
+    </div>
+  </div>
+
+  <div id="loadingDiv" class="hidden text-center py-8">
+    <div class="inline-block animate-spin text-4xl">⏳</div>
+    <p class="text-gray-500 mt-2">Finding the best career match...</p>
+  </div>
+
+  <div id="resultsDiv" class="hidden"></div>
+  <div id="subjectDiv" class="hidden"></div>
+</div>
+
+<script>
+async function searchCareer() {
+  const query = document.getElementById('careerInput').value.trim();
+  if (!query) return;
+  document.getElementById('loadingDiv').classList.remove('hidden');
+  document.getElementById('resultsDiv').classList.add('hidden');
+  document.getElementById('subjectDiv').classList.add('hidden');
+  document.getElementById('resultsDiv').innerHTML = '';
+
+  const res = await fetch('/api/career-search/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+    body: JSON.stringify({query: query.toLowerCase()})
+  });
+  const data = await res.json();
+  document.getElementById('loadingDiv').classList.add('hidden');
+
+  if (!data.results || data.results.length === 0) {
+    document.getElementById('resultsDiv').innerHTML = `
+      <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 text-center">
+        <div class="text-4xl mb-3">🤔</div>
+        <p class="font-semibold text-yellow-800">No careers found for "${query}"</p>
+        <p class="text-yellow-700 text-sm mt-1">Try words like: doctor, engineer, lawyer, nurse, teacher, accountant</p>
+      </div>`;
+    document.getElementById('resultsDiv').classList.remove('hidden');
+    return;
+  }
+
+  let html = '<h2 class="font-bold text-lg mb-4 text-gray-700">Best matches for you:</h2><div class="space-y-3">';
+  data.results.forEach(c => {
+    html += `
+      <div class="bg-white rounded-2xl shadow-sm p-5 card-hover cursor-pointer border-2 border-transparent hover:border-primary"
+           onclick="getSubjects(${c.id}, '${c.name}')">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">${getEmoji(c.icon)}</span>
+            <div>
+              <div class="font-bold text-gray-800">${c.name}</div>
+              <div class="text-sm text-primary">📚 ${c.learning_area} Track</div>
+            </div>
+          </div>
+          <a href="/jhs-guide/career/${c.id}/" style="font-size:13px;font-weight:600;background:#052e16;color:#4ade80;padding:8px 18px;border-radius:10px;text-decoration:none;">View Subjects →</a>
+        </div>
+        <p class="text-gray-500 text-sm mt-3">${c.why_text}</p>
+      </div>`;
+  });
+  html += '</div>';
+  document.getElementById('resultsDiv').innerHTML = html;
+  document.getElementById('resultsDiv').classList.remove('hidden');
+}
+
+async function getSubjects(careerId, careerName) {
+  document.getElementById('subjectDiv').classList.add('hidden');
+  const res = await fetch('/api/subject-recommendation/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+    body: JSON.stringify({career_id: careerId})
+  });
+  const d = await res.json();
+
+  let html = `
+    <div class="mt-6" style="border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;">
+
+      <div style="background:#052e16;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:52px;height:52px;background:rgba(74,222,128,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;">${getEmoji(d.icon)}</div>
+          <div>
+            <p style="font-size:20px;font-weight:700;color:#fff;margin:0;">${d.career}</p>
+            <p style="font-size:12px;color:#86efac;margin:4px 0 0;">📚 ${d.learning_area} Track</p>
+          </div>
+        </div>
+        <span style="font-size:11px;font-weight:700;background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);padding:4px 12px;border-radius:100px;">Best Match</span>
+      </div>
+
+      <div style="padding:20px 24px;">
+        <div style="background:#f0fdf4;border-left:3px solid #16a34a;border-radius:0 8px 8px 0;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#374151;line-height:1.6;">
+          ${d.why_text}
+        </div>
+
+        <p style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;display:flex;align-items:center;gap:6px;">
+          📌 Core subjects (all students)
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;">
+          ${d.core_subjects.map(s=>`<span style="font-size:12px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:5px 12px;border-radius:100px;">${s.name}</span>`).join('')}
+        </div>
+
+        <p style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;">
+          ⭐ Required electives
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+          ${d.mandatory_electives.map(s=>`
+            <div style="display:flex;align-items:center;gap:10px;background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:10px 14px;">
+              <span style="font-size:11px;font-weight:700;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:100px;flex-shrink:0;">Required</span>
+              <span style="font-size:13px;color:#78350f;font-weight:500;">${s.name}</span>
+            </div>`).join('')}
+        </div>
+
+        <p style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;">
+          💡 Recommended electives
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+          ${d.recommended_electives.map(s=>`
+            <div style="padding:10px 14px;border:1px solid #bfdbfe;border-radius:10px;background:#eff6ff;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:${s.reason ? '4px' : '0'};">
+                <span style="font-size:11px;font-weight:700;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:100px;flex-shrink:0;">Recommended</span>
+                <span style="font-size:13px;color:#1e3a8a;font-weight:500;">${s.name}</span>
+              </div>
+              ${s.reason ? `<p style="font-size:11px;color:#3b82f6;margin:0 0 0 0;padding-left:0;">${s.reason}</p>` : ''}
+            </div>`).join('')}
+        </div>
+
+        <div style="border-top:1px solid #f1f5f9;padding-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <p style="font-size:12px;color:#6b7280;margin:0;">Based on NaCCA 2024/2025 guidelines</p>
+          <a href="/shs-eligibility/" style="font-size:13px;font-weight:600;background:#052e16;color:#4ade80;padding:8px 18px;border-radius:10px;text-decoration:none;">
+            Check University Eligibility →
+          </a>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('subjectDiv').innerHTML = html;
+  document.getElementById('subjectDiv').classList.remove('hidden');
+  document.getElementById('subjectDiv').scrollIntoView({behavior:'smooth'});
+}
+
+function getEmoji(icon) {
+  const map = {stethoscope:'🩺',bridge:'🌉',laptop:'💻',chart:'📊',scales:'⚖️',hospital:'🏥',seedling:'🌱',building:'🏛️',pill:'💊',newspaper:'📰',microscope:'🔬','chart increasing':'📈'};
+  return map[icon] || '🎯';
+}
+
+function getCookie(name) {
+  let v = document.cookie.match('(^|;) ?'+name+'=([^;]*)(;|$)');
+  return v ? v[2] : null;
+}
+</script>
+{% endblock %}
