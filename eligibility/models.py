@@ -13,6 +13,7 @@ class University(models.Model):
     class Meta:
         verbose_name_plural = 'Universities'
 
+
 class Program(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='programs')
     name = models.CharField(max_length=200)
@@ -23,6 +24,7 @@ class Program(models.Model):
 
     def __str__(self):
         return f"{self.university.short_name} — {self.name}"
+
 
 class Cutoff(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='cutoffs')

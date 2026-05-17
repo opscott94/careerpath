@@ -13,6 +13,7 @@ class LearningArea(models.Model):
     def __str__(self):
         return self.name
 
+
 class Subject(models.Model):
     GROUP_CHOICES = [
         ('A', 'Core'),
@@ -29,6 +30,7 @@ class Subject(models.Model):
 
     def __str__(self):
         return f"{self.name} (Group {self.group})"
+
 
 class Career(models.Model):
     name = models.CharField(max_length=150)
@@ -47,6 +49,7 @@ class Career(models.Model):
 
     def keywords_list(self):
         return [k.strip().lower() for k in self.keywords.split(',')]
+
 
 class CareerRecommendationReason(models.Model):
     career = models.ForeignKey(Career, on_delete=models.CASCADE, related_name='recommendation_reasons')
