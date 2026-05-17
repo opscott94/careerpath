@@ -4,7 +4,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-careerpath-dev-key'
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['careerpath-m5le.onrender.com', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
