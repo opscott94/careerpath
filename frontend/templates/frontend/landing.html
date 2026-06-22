@@ -4,24 +4,7 @@
 
 <!-- Hero -->
 <section style="position:relative;overflow:hidden;min-height:600px;display:flex;align-items:center;">
-  <div id="hero-slide" style="position:absolute;inset:0;background-size:cover;background-position:center;transition:background-image 1s ease-in-out;"></div>
-<style>
-  #hero-slide { background-image:url('https://plus.unsplash.com/premium_photo-1714211559416-6b9a06e2367b?q=80&w=2670&auto=format&fit=crop'); }
-</style>
-<script>
-  var imgs = [
-    'https://plus.unsplash.com/premium_photo-1714211559416-6b9a06e2367b?q=80&w=2670&auto=format&fit=crop',
-    'https://images.pexels.com/photos/34526421/pexels-photo-34526421.jpeg',
-    'https://images.pexels.com/photos/36478531/pexels-photo-36478531.jpeg'
-  ];
-  var i = 0;
-  setInterval(function(){
-    i = (i+1) % imgs.length;
-    var el = document.getElementById('hero-slide');
-    el.style.opacity = '0';
-    setTimeout(function(){ el.style.backgroundImage = "url('"+imgs[i]+"')"; el.style.opacity = '1'; }, 500);
-  }, 3000);
-</script>
+  <div style="position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/34526421/pexels-photo-34526421.jpeg');background-size:cover;background-position:center;"></div>
   <div style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(5,46,22,0.96) 0%,rgba(20,83,45,0.90) 45%,rgba(21,128,61,0.65) 100%);"></div>
   <div style="position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to top,#f8fafc,transparent);"></div>
 
