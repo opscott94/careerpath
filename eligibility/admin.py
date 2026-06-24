@@ -1,9 +1,5 @@
 from django.contrib import admin
-from .models import University, Program, Cutoff
-
-class CutoffInline(admin.TabularInline):
-    model = Cutoff
-    extra = 1
+from .models import University, Program
 
 class ProgramInline(admin.TabularInline):
     model = Program
@@ -17,13 +13,8 @@ class UniversityAdmin(admin.ModelAdmin):
 
 @admin.register(Program)
 class ProgramAdmin(admin.ModelAdmin):
-    list_display = ['name', 'university', 'faculty']
+    list_display = ['name', 'university', 'faculty', 'aggregate', 'year']
     list_filter = ['university']
     search_fields = ['name']
     filter_horizontal = ['required_subjects']
-    inlines = [CutoffInline]
 
-@admin.register(Cutoff)
-class CutoffAdmin(admin.ModelAdmin):
-    list_display = ['program', 'aggregate', 'year']
-    list_filter = ['year', 'program__university']

@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from careers.models import Career, Subject
-from eligibility.models import University, Program, Cutoff
+from eligibility.models import University, Program
 import json
 
 @csrf_exempt
@@ -73,35 +73,33 @@ def wassce_check(request):
         return JsonResponse({'error': 'aggregate and program_id required'}, status=400)
     try:
         program = Program.objects.select_related('university').get(id=program_id)
-        cutoff = program.cutoffs.order_by('-year').first()
     except Program.DoesNotExist:
         return JsonResponse({'error': 'Program not found'}, status=404)
-    if not cutoff:
+    if program.aggregate is None:
         return JsonResponse({'error': 'No cutoff data available'}, status=404)
-    eligible = int(aggregate) <= cutoff.aggregate
+    eligible = int(aggregate) <= program.aggregate
     return JsonResponse({
         'program': program.name,
         'university': program.university.name,
-        'cutoff': cutoff.aggregate,
+        'cutoff': program.aggregate,
         'your_aggregate': aggregate,
         'eligible': eligible,
-        'message': 'Congratulations! You qualify.' if eligible else f'You need aggregate {cutoff.aggregate} or better.',
+        'message': 'Congratulations! You qualify.' if eligible else f'You need aggregate {program.aggregate} or better.',
     })
 
 
 @require_http_methods(["GET"])
 def universities_list(request):
-    universities = University.objects.prefetch_related('programs__cutoffs').all()
+    universities = University.objects.prefetch_related('programs').all()
     data = []
     for uni in universities:
         programs = []
         for prog in uni.programs.all():
-            cutoff = prog.cutoffs.order_by('-year').first()
             programs.append({
                 'id': prog.id,
                 'name': prog.name,
                 'faculty': prog.faculty,
-                'cutoff': cutoff.aggregate if cutoff else None,
+                'cutoff': prog.aggregate,
             })
         data.append({
             'id': uni.id,

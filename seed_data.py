@@ -2,12 +2,11 @@ import django, os, sys
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 from careers.models import LearningArea, Subject, Career, CareerRecommendationReason
-from eligibility.models import University, Program, Cutoff
+from eligibility.models import University, Program
 CareerRecommendationReason.objects.all().delete()
 Career.objects.all().delete()
 Subject.objects.all().delete()
 LearningArea.objects.all().delete()
-Cutoff.objects.all().delete()
 Program.objects.all().delete()
 University.objects.all().delete()
 la_science = LearningArea.objects.create(name="Science", school_type="SHS")
@@ -88,8 +87,7 @@ ucc = University.objects.create(name="University of Cape Coast", short_name="UCC
 uds = University.objects.create(name="University for Development Studies", short_name="UDS", location="Tamale", website="https://www.uds.edu.gh")
 uenr = University.objects.create(name="University of Energy and Natural Resources", short_name="UENR", location="Sunyani", website="https://www.uenr.edu.gh")
 def p(uni, name, fac, agg, la=None):
-    prog = Program.objects.create(university=uni, name=name, faculty=fac, learning_area=la)
-    Cutoff.objects.create(program=prog, aggregate=agg, year=2024)
+    prog = Program.objects.create(university=uni, name=name, faculty=fac, learning_area=la, aggregate=agg, year=2024)
 p(knust,"BSc. Human Biology MBChB","College of Health Sciences",6,la_science)
 p(knust,"BSc. Biomedical Engineering","College of Engineering",6,la_science)
 p(knust,"BSc. Computer Engineering","College of Engineering",6,la_science)
@@ -193,10 +191,9 @@ p(uenr,"BSc. Dietetics","College of Health Sciences",14,la_science)
 p(uenr,"Bachelor of Public Health","College of Health Sciences",9,la_science)
 print("=== SEED COMPLETE ===")
 from careers.models import LearningArea, Subject, Career
-from eligibility.models import University, Program, Cutoff
+from eligibility.models import University, Program
 print(f"Learning Areas: {LearningArea.objects.count()}")
 print(f"Subjects: {Subject.objects.count()}")
 print(f"Careers: {Career.objects.count()}")
 print(f"Universities: {University.objects.count()}")
 print(f"Programs: {Program.objects.count()}")
-print(f"Cutoffs: {Cutoff.objects.count()}")
