@@ -18,7 +18,7 @@ class Program(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='programs')
     name = models.CharField(max_length=200)
     faculty = models.CharField(max_length=200, blank=True)
-    learning_area = models.ForeignKey(LearningArea, on_delete=models.SET_NULL, null=True, blank=True)
+    learning_areas = models.ManyToManyField(LearningArea, blank=True)
     required_subjects = models.ManyToManyField(Subject, blank=True)
     duration_years = models.IntegerField(default=4)
     aggregate = models.IntegerField(help_text='WASSCE aggregate cut-off (lower is better)', null=True, blank=True)

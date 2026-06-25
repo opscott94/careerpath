@@ -16,5 +16,5 @@ class ProgramAdmin(admin.ModelAdmin):
     list_display = ['name', 'university', 'faculty', 'aggregate', 'year']
     list_filter = ['university']
     search_fields = ['name']
-    filter_horizontal = ['required_subjects']
+    filter_horizontal = ['required_subjects', 'learning_areas']
 

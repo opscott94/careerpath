@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import LearningArea, Subject, Career, CareerRecommendationReason
+from .models import LearningArea, Subject, Career, CareerRecommendationReason, SubjectLearningArea
+
+class SubjectLearningAreaInline(admin.TabularInline):
+    model = SubjectLearningArea
+    extra = 1
 
 @admin.register(LearningArea)
 class LearningAreaAdmin(admin.ModelAdmin):
@@ -8,9 +12,15 @@ class LearningAreaAdmin(admin.ModelAdmin):
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
-    list_display = ['name', 'group', 'learning_area', 'is_mandatory', 'is_externally_examinable']
-    list_filter = ['group', 'learning_area', 'is_mandatory']
+    list_display = ['name', 'group', 'is_mandatory', 'is_externally_examinable']
+    list_filter = ['group', 'learning_areas', 'is_mandatory']
     search_fields = ['name']
+    inlines = [SubjectLearningAreaInline]
+
+@admin.register(SubjectLearningArea)
+class SubjectLearningAreaAdmin(admin.ModelAdmin):
+    list_display = ['subject', 'learning_area', 'group']
+    list_filter = ['group', 'learning_area']
 
 class ReasonInline(admin.TabularInline):
     model = CareerRecommendationReason
