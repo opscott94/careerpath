@@ -12,15 +12,15 @@ class LearningAreaAdmin(admin.ModelAdmin):
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
-    list_display = ['name', 'group', 'is_mandatory', 'is_externally_examinable']
-    list_filter = ['group', 'learning_areas', 'is_mandatory']
+    list_display = ['name', 'is_externally_examinable']
+    list_filter = ['learning_areas']
     search_fields = ['name']
     inlines = [SubjectLearningAreaInline]
 
 @admin.register(SubjectLearningArea)
 class SubjectLearningAreaAdmin(admin.ModelAdmin):
-    list_display = ['subject', 'learning_area', 'group']
-    list_filter = ['group', 'learning_area']
+    list_display = ['subject', 'learning_area', 'group', 'is_mandatory']
+    list_filter = ['group', 'learning_area', 'is_mandatory']
 
 class ReasonInline(admin.TabularInline):
     model = CareerRecommendationReason

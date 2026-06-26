@@ -15,22 +15,12 @@ class LearningArea(models.Model):
 
 
 class Subject(models.Model):
-    GROUP_CHOICES = [
-        ('A', 'Core'),
-        ('B', 'Learning Area Elective'),
-        ('C', 'Related Learning Area Elective'),
-        ('D', 'Other Elective'),
-    ]
     name = models.CharField(max_length=100)
-    group = models.CharField(max_length=1, choices=GROUP_CHOICES, blank=True, null=True)
-    is_mandatory = models.BooleanField(default=False)
     is_externally_examinable = models.BooleanField(default=True)
     description = models.TextField(blank=True)
     learning_areas = models.ManyToManyField(LearningArea, through='SubjectLearningArea', related_name='subjects', blank=True)
 
     def __str__(self):
-        if self.group:
-            return f"{self.name} (Group {self.group})"
         return self.name
 
 
@@ -44,9 +34,10 @@ class SubjectLearningArea(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='subject_learning_areas')
     learning_area = models.ForeignKey(LearningArea, on_delete=models.CASCADE, related_name='subject_learning_areas')
     group = models.CharField(max_length=1, choices=GROUP_CHOICES)
+    is_mandatory = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.subject.name} - {self.learning_area.name} (Group {self.group})"
+        return f"{self.subject.name} - {self.learning_area.name} (Group {self.group}, Mandatory: {self.is_mandatory})"
 
 
 class Career(models.Model):

@@ -18,11 +18,27 @@ class Program(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='programs')
     name = models.CharField(max_length=200)
     faculty = models.CharField(max_length=200, blank=True)
-    learning_areas = models.ManyToManyField(LearningArea, blank=True)
-    required_subjects = models.ManyToManyField(Subject, blank=True)
     duration_years = models.IntegerField(default=4)
     aggregate = models.IntegerField(help_text='WASSCE aggregate cut-off (lower is better)', null=True, blank=True)
     year = models.IntegerField(default=2024, null=True, blank=True)
+    core_subjects = models.ManyToManyField(
+        Subject, 
+        related_name='programs', 
+        blank=True,
+        limit_choices_to={'name__in': ['Mathematics', 'English Language', 'Social Studies', 'General Science']}
+    )
 
     def __str__(self):
-        return f"{self.university.short_name} — {self.name}"
+        return f"{self.university.short_name} — {self.name}"
+
+
+class ProgramRequirement(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='requirements')
+    learning_area = models.ForeignKey(LearningArea, on_delete=models.CASCADE, null=True, blank=True)
+    mandatory_subjects = models.ManyToManyField(Subject, related_name='program_mandatory_requirements', blank=True)
+    elective_subjects = models.ManyToManyField(Subject, related_name='program_elective_requirements', blank=True)
+
+    def __str__(self):
+        if self.learning_area:
+            return f"{self.program.name} - {self.learning_area.name}"
+        return f"{self.program.name} - Direct Subjects"

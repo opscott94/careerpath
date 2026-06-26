@@ -1,10 +1,15 @@
 from django.contrib import admin
-from .models import University, Program
+from .models import University, Program, ProgramRequirement
 
 class ProgramInline(admin.TabularInline):
     model = Program
     extra = 1
     show_change_link = True
+
+class ProgramRequirementInline(admin.StackedInline):
+    model = ProgramRequirement
+    extra = 1
+    filter_horizontal = ['mandatory_subjects', 'elective_subjects']
 
 @admin.register(University)
 class UniversityAdmin(admin.ModelAdmin):
@@ -16,5 +21,13 @@ class ProgramAdmin(admin.ModelAdmin):
     list_display = ['name', 'university', 'faculty', 'aggregate', 'year']
     list_filter = ['university']
     search_fields = ['name']
-    filter_horizontal = ['required_subjects', 'learning_areas']
+    filter_horizontal = ['core_subjects']
+    inlines = [ProgramRequirementInline]
+
+@admin.register(ProgramRequirement)
+class ProgramRequirementAdmin(admin.ModelAdmin):
+    list_display = ['program', 'learning_area']
+    list_filter = ['learning_area']
+    search_fields = ['program__name']
+    filter_horizontal = ['mandatory_subjects', 'elective_subjects']
 
