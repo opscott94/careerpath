@@ -188,7 +188,17 @@ let aggregate = 0;
 let allPrograms = [];
 let currentCategory = 'all';
 
-const programMeta = {
+const catColors = {
+  'health': {border:'#1d9e75', bg:'#e1f5ee', text:'#0f6e56'},
+  'engineering': {border:'#378add', bg:'#e6f1fb', text:'#185fa5'},
+  'computing': {border:'#378add', bg:'#e6f1fb', text:'#185fa5'},
+  'business': {border:'#ba7517', bg:'#faeeda', text:'#854f0b'},
+  'law': {border:'#d85a30', bg:'#faece7', text:'#993c1d'},
+  'science': {border:'#639922', bg:'#eaf3de', text:'#3b6d11'},
+  'agriculture': {border:'#639922', bg:'#eaf3de', text:'#3b6d11'},
+  'arts': {border:'#d4537e', bg:'#fbeaf0', text:'#993556'},
+};
+programMeta = {
   'medicine': {cat:'health', icon:'🩺', label:'Medicine & Surgery (MBChB)', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics or Maths']},
   'pharmacy': {cat:'health', icon:'💊', label:'Doctor of Pharmacy (Pharm D)', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics or Maths']},
   'nursing': {cat:'health', icon:'🏥', label:'BSc Nursing', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics or Maths']},
@@ -255,8 +265,7 @@ function renderPrograms(cat) {
     if (search && !prog.label.toLowerCase().includes(search) && !key.includes(search)) return;
     const unis = getUnisForProgram(key);
     html += `
-      <div onclick="showResults('${key}')" class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-green-300 hover:bg-green-50 cursor-pointer transition group">
-        <div class="text-2xl w-10 text-center">${prog.icon}</div>
+      <div onclick="showResults('${key}')" style="border-left:3px solid ${catColors[prog.cat]?.border||'#1d9e75'};border-radius:12px;border-top:0.5px solid #e5e7eb;border-right:0.5px solid #e5e7eb;border-bottom:0.5px solid #e5e7eb;" class="flex items-center gap-4 p-4 cursor-pointer transition group hover:bg-gray-50">
         <div class="flex-1">
           <p class="font-semibold text-gray-800 group-hover:text-green-800">${prog.label}</p>
           <p class="text-xs text-gray-400">${prog.desc}</p>
@@ -416,7 +425,7 @@ function showResults(key) {
   document.getElementById('step3Content').innerHTML = `
     <div class="card p-6 mb-6">
       <div class="flex items-center gap-4">
-        <div class="text-3xl">${prog.icon}</div>
+        <span style="font-size:11px;font-weight:600;background:${catColors[prog.cat]?.bg||'#e1f5ee'};color:${catColors[prog.cat]?.text||'#0f6e56'};padding:3px 10px;border-radius:4px;">${prog.desc}</span>
         <div class="flex-1">
           <h2 class="display text-xl font-bold text-gray-900">${prog.label}</h2>
           <p class="text-gray-400 text-sm">${prog.desc}</p>
