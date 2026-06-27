@@ -368,14 +368,23 @@ function showResults(key) {
       : '<span style="background:#fee2e2;color:#dc2626;" class="badge">✗ Not yet eligible</span>';
 
     const borderColor = eligible ? '#86efac' : borderline ? '#fcd34d' : '#fca5a5';
+    const uniLogos = {
+      'KNUST': '/static/images/knust.png',
+      'UG': '/static/images/ug.png',
+      'UCC': '/static/images/ucc.png',
+      'UDS': '/static/images/uds.png',
+      'UENR': '/static/images/uenr.png'
+    };
     const initials = uni.substring(0,2);
     const color = uniColors[uni] || '#16a34a';
+    const logoImg = uniLogos[uni] ? `<img src="${uniLogos[uni]}" style="width:40px;height:40px;object-fit:contain;">` : `<div class="w-10 h-10 rounded-xl text-white font-bold text-sm flex items-center justify-center flex-shrink-0" style="background:${color};">${initials}</div>`;
 
     uniCards += `
       <div class="card p-6 mb-4" style="border-left:4px solid ${borderColor};">
         <div class="flex items-start justify-between mb-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl text-white font-bold text-sm flex items-center justify-center flex-shrink-0" style="background:${color};">${initials}</div>
+            ${logoImg}
+            <div style="display:none;" class="w-10 h-10 rounded-xl text-white font-bold text-sm flex items-center justify-center flex-shrink-0" style="background:${color};">${initials}</div>
             <div>
               <p class="font-bold text-gray-900">${uni}</p>
               <p class="text-xs text-gray-400">${prog.label}</p>
