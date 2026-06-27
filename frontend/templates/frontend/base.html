@@ -58,11 +58,9 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface);
   <div class="max-w-6xl mx-auto px-6 py-14">
     <div class="flex flex-col md:flex-row justify-between gap-8">
       <div>
-        <div class="flex items-center gap-2 mb-3">
-          <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-            <span class="text-white text-sm font-bold">CP</span>
-          </div>
-          <span class="font-bold text-lg">CareerPath Ghana</span>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <img src="{% static 'images/favicon.png' %}" style="height:40px;object-fit:contain;">
+          <span style="font-weight:800;font-size:1.2rem;"><span style="color:#4ade80;">Career</span><span style="color:#60a5fa;">Path</span></span>
         </div>
         <p class="text-gray-400 text-sm max-w-xs">Helping every Ghanaian student find the right academic path — from JHS to university.</p>
       </div>
