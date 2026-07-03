@@ -89,12 +89,57 @@
               </td>
             </tr>
             <tr style="border-top:0.5px solid #f1f5f9;">
+              <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;">Social Studies</td>
+              <td style="padding:12px 12px;text-align:center;"><span style="font-size:11px;font-weight:600;background:#eff6ff;color:#1e40af;padding:3px 10px;border-radius:100px;">Core</span></td>
+              <td style="padding:12px 16px;text-align:right;">
+                <select id="g_social" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
+                  <option value="">Select grade</option>
+                  <option value="1">A1 — Excellent</option><option value="2">B2 — Very Good</option><option value="3">B3 — Good</option>
+                  <option value="4">C4 — Credit</option><option value="5">C5 — Credit</option><option value="6">C6 — Credit</option>
+                </select>
+              </td>
+            </tr>
+            <tr style="border-top:0.5px solid #f1f5f9;">
               <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;">Elective 1</td>
               <td style="padding:12px 12px;text-align:center;"><span style="font-size:11px;font-weight:600;background:#f0fdf4;color:#15803d;padding:3px 10px;border-radius:100px;">Elective</span></td>
               <td style="padding:12px 16px;text-align:right;">
-                <select id="g_e1" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
-                  <option value="">Grade</option>
-                  <option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option>
+                <select id="g_e1" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:160px;">
+                  <option value="">Select subject</option>
+                  <optgroup label="Science">
+                    <option>Biology</option>
+                    <option>Chemistry</option>
+                    <option>Physics</option>
+                    <option>Additional Mathematics</option>
+                    <option>Agricultural Science</option>
+                  </optgroup>
+                  <optgroup label="General Arts">
+                    <option>Economics</option>
+                    <option>Geography</option>
+                    <option>Government</option>
+                    <option>History</option>
+                    <option>Literature in English</option>
+                    <option>Christian Religious Studies</option>
+                    <option>Islamic Religious Studies</option>
+                  </optgroup>
+                  <optgroup label="Business">
+                    <option>Business Management</option>
+                    <option>Accounting</option>
+                    <option>Economics</option>
+                  </optgroup>
+                  <optgroup label="Computing & Technology">
+                    <option>Computer Science</option>
+                    <option>ICT</option>
+                  </optgroup>
+                  <optgroup label="Arts & Others">
+                    <option>Music</option>
+                    <option>Performing Arts</option>
+                    <option>French</option>
+                    <option>Arabic</option>
+                    <option>Ghanaian Language</option>
+                    <option>Food and Nutrition</option>
+                    <option>Clothing and Textiles</option>
+                    <option>Management in Living</option>
+                  </optgroup>
                 </select>
               </td>
             </tr>
@@ -102,9 +147,43 @@
               <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;">Elective 2</td>
               <td style="padding:12px 12px;text-align:center;"><span style="font-size:11px;font-weight:600;background:#f0fdf4;color:#15803d;padding:3px 10px;border-radius:100px;">Elective</span></td>
               <td style="padding:12px 16px;text-align:right;">
-                <select id="g_e2" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
-                  <option value="">Grade</option>
-                  <option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option>
+                <select id="g_e2" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:160px;">
+                  <option value="">Select subject</option>
+                  <optgroup label="Science">
+                    <option>Biology</option>
+                    <option>Chemistry</option>
+                    <option>Physics</option>
+                    <option>Additional Mathematics</option>
+                    <option>Agricultural Science</option>
+                  </optgroup>
+                  <optgroup label="General Arts">
+                    <option>Economics</option>
+                    <option>Geography</option>
+                    <option>Government</option>
+                    <option>History</option>
+                    <option>Literature in English</option>
+                    <option>Christian Religious Studies</option>
+                    <option>Islamic Religious Studies</option>
+                  </optgroup>
+                  <optgroup label="Business">
+                    <option>Business Management</option>
+                    <option>Accounting</option>
+                    <option>Economics</option>
+                  </optgroup>
+                  <optgroup label="Computing & Technology">
+                    <option>Computer Science</option>
+                    <option>ICT</option>
+                  </optgroup>
+                  <optgroup label="Arts & Others">
+                    <option>Music</option>
+                    <option>Performing Arts</option>
+                    <option>French</option>
+                    <option>Arabic</option>
+                    <option>Ghanaian Language</option>
+                    <option>Food and Nutrition</option>
+                    <option>Clothing and Textiles</option>
+                    <option>Management in Living</option>
+                  </optgroup>
                 </select>
               </td>
             </tr>
@@ -112,9 +191,43 @@
               <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;">Elective 3</td>
               <td style="padding:12px 12px;text-align:center;"><span style="font-size:11px;font-weight:600;background:#f0fdf4;color:#15803d;padding:3px 10px;border-radius:100px;">Elective</span></td>
               <td style="padding:12px 16px;text-align:right;">
-                <select id="g_e3" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
-                  <option value="">Grade</option>
-                  <option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option>
+                <select id="g_e3" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:160px;">
+                  <option value="">Select subject</option>
+                  <optgroup label="Science">
+                    <option>Biology</option>
+                    <option>Chemistry</option>
+                    <option>Physics</option>
+                    <option>Additional Mathematics</option>
+                    <option>Agricultural Science</option>
+                  </optgroup>
+                  <optgroup label="General Arts">
+                    <option>Economics</option>
+                    <option>Geography</option>
+                    <option>Government</option>
+                    <option>History</option>
+                    <option>Literature in English</option>
+                    <option>Christian Religious Studies</option>
+                    <option>Islamic Religious Studies</option>
+                  </optgroup>
+                  <optgroup label="Business">
+                    <option>Business Management</option>
+                    <option>Accounting</option>
+                    <option>Economics</option>
+                  </optgroup>
+                  <optgroup label="Computing & Technology">
+                    <option>Computer Science</option>
+                    <option>ICT</option>
+                  </optgroup>
+                  <optgroup label="Arts & Others">
+                    <option>Music</option>
+                    <option>Performing Arts</option>
+                    <option>French</option>
+                    <option>Arabic</option>
+                    <option>Ghanaian Language</option>
+                    <option>Food and Nutrition</option>
+                    <option>Clothing and Textiles</option>
+                    <option>Management in Living</option>
+                  </optgroup>
                 </select>
               </td>
             </tr>
