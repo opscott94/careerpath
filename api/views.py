@@ -37,6 +37,291 @@ def career_search(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
+def ai_career_match(request):
+    """
+    AI-powered career matching endpoint (two-step approach).
+    Step 1: Small LLM call to determine career + search keywords from the interest.
+            Instructions are placed first to leverage Ollama's prompt caching.
+    Step 2: Programmatic database search using SQL filtering via Q objects.
+    """
+    data = json.loads(request.body)
+    query = data.get('query', '').lower().strip()
+    if not query:
+        return JsonResponse({'error': 'No query provided'}, status=400)
+
+    import urllib.request
+    from django.db.models import Q
+
+    # Step 1: Ask LLM to determine career and search keywords (structured for Ollama prompt caching)
+    system_prompt = """You are a career counselor for Ghanaian students. Analyze the student's interest and respond ONLY with a JSON object in this format:
+{
+  "career_name": "determined career title (e.g. Aerospace Engineer, Medical Doctor, Software Developer)",
+  "career_description": "1 sentence describing the career and its main activities",
+  "primary_keywords": ["keyword1", "keyword2"],
+  "secondary_keywords": ["keyword3", "keyword4"],
+  "explanations": {
+    "keyword1": "1-sentence explanation of how this direct subject relates to the career",
+    "keyword2": "1-sentence explanation of how this direct subject relates to the career",
+    "keyword3": "1-sentence explanation of how this secondary subject relates to the career",
+    "keyword4": "1-sentence explanation of how this secondary subject relates to the career"
+  }
+}
+
+CRITICAL RULES:
+1. The keywords MUST be academic subjects, degree fields, or department terms.
+2. "primary_keywords" MUST ONLY contain the most specific, direct specialized field name for the career (e.g. ["Optometry"] for Optometrist, ["Aerospace", "Aeronautical"] for Aerospace Engineer, ["Marine"] for Marine Engineer, ["Law", "LLB"] for Lawyer).
+3. "secondary_keywords" MUST contain related, general, or broader fields that can also lead to the career (e.g. ["Medicine", "Biology", "Medical"] for Optometrist, ["Mechanical", "Engineering"] for Aerospace/Marine Engineer).
+4. "explanations" MUST contain a key-value mapping for EACH keyword in both primary_keywords and secondary_keywords, explaining in a brief sentence how studying that subject prepares someone for the determined career.
+5. NEVER use job titles (like "Lawyer", "Accountant", "Software Developer", "Doctor") as keywords.
+6. Respond ONLY with the JSON object. Do NOT output any thinking process, reasoning, explanations, or introductory text. Skip any thinking phase and generate the JSON directly."""
+
+    user_prompt = f"Student Stated Interest: \"{query}\""
+
+    try:
+        payload = {
+            "model": "gemma4:e4b",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            "stream": False,
+            "format": "json",
+            "options": {
+                "temperature": 0.0,
+                "num_predict": 450,
+                "num_ctx": 1024
+            }
+        }
+
+        req = urllib.request.Request(
+            "http://localhost:11434/api/chat",
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=150) as response:
+            res_data = json.loads(response.read().decode())
+            content = res_data["message"]["content"]
+            parsed = json.loads(content)
+
+            career_name = parsed.get("career_name", "")
+            career_description = parsed.get("career_description", "")
+            primary_keywords = parsed.get("primary_keywords", [])
+            secondary_keywords = parsed.get("secondary_keywords", [])
+            explanations = parsed.get("explanations", {})
+
+            if not career_name or (not primary_keywords and not secondary_keywords):
+                raise ValueError("Missing career_name or keywords")
+
+        # Step 2: SQL-level filtering for candidate programs using AI keywords
+        all_keywords = primary_keywords + secondary_keywords
+        query_filter = Q()
+        for kw in all_keywords:
+            kw = kw.strip()
+            if kw:
+                query_filter |= Q(name__icontains=kw) | Q(faculty__icontains=kw) | Q(requirements__learning_area__name__icontains=kw)
+
+        # Only fetch matching programs from the database (distinct candidate set)
+        programs = Program.objects.filter(query_filter).select_related('university').prefetch_related(
+            'requirements__learning_area',
+        ).distinct()
+
+        # Group candidate programs by name (case-insensitive) to avoid redundant university listings
+        grouped_programs = {}
+        for p in programs:
+            score = 0
+            name_lower = p.name.lower()
+            name_key = p.name.strip()
+            faculty_lower = (p.faculty or '').lower()
+            la_names = [req.learning_area.name.lower() for req in p.requirements.all() if req.learning_area]
+
+            # Score primary keywords
+            for kw in primary_keywords:
+                kw_lower = kw.lower()
+                if kw_lower in name_lower:
+                    score += 10
+                if kw_lower in faculty_lower:
+                    score += 5
+                for la in la_names:
+                    if kw_lower in la:
+                        score += 5
+
+            # Score secondary keywords
+            for kw in secondary_keywords:
+                kw_lower = kw.lower()
+                if kw_lower in name_lower:
+                    score += 3
+                if kw_lower in faculty_lower:
+                    score += 1
+                for la in la_names:
+                    if kw_lower in la:
+                        score += 1
+
+            if score > 0:
+                is_direct = any(kw.lower() in p.name.lower() for kw in primary_keywords)
+                key = name_key.lower()
+                
+                # Track matched keywords for this specific program offering
+                current_kws = set()
+                for kw in primary_keywords:
+                    if kw.lower() in name_lower or kw.lower() in faculty_lower or any(kw.lower() in la for la in la_names):
+                        current_kws.add(kw)
+                for kw in secondary_keywords:
+                    if kw.lower() in name_lower or kw.lower() in faculty_lower or any(kw.lower() in la for la in la_names):
+                        current_kws.add(kw)
+
+                if key not in grouped_programs:
+                    grouped_programs[key] = {
+                        'name': name_key,
+                        'score': score,
+                        'is_direct': is_direct,
+                        'min_cutoff': p.aggregate,
+                        'universities': {p.university.short_name},
+                        'matched_kws': current_kws,
+                    }
+                else:
+                    g = grouped_programs[key]
+                    if score > g['score']:
+                        g['score'] = score
+                    if is_direct:
+                        g['is_direct'] = True
+                    if p.aggregate is not None:
+                        if g['min_cutoff'] is None or p.aggregate < g['min_cutoff']:
+                            g['min_cutoff'] = p.aggregate
+                    g['universities'].add(p.university.short_name)
+                    g['matched_kws'].update(current_kws)
+
+        groups = list(grouped_programs.values())
+
+        # Separate into primary and secondary groups
+        primary_groups = []
+        secondary_groups = []
+        for g in groups:
+            p_type = "Direct Program" if g['is_direct'] else "Secondary Pathway"
+            
+            # Find the best matching explanation from explanations dict
+            explanation = ""
+            # Try primary keywords first (if any matched)
+            for m_kw in primary_keywords:
+                if m_kw in g['matched_kws']:
+                    explanation = explanations.get(m_kw, "")
+                    if not explanation:
+                        # Case-insensitive lookup fallback
+                        for k, v in explanations.items():
+                            if k.lower() == m_kw.lower():
+                                explanation = v
+                                break
+                    if explanation:
+                        break
+            
+            if not explanation:
+                # Try secondary keywords
+                for m_kw in secondary_keywords:
+                    if m_kw in g['matched_kws']:
+                        explanation = explanations.get(m_kw, "")
+                        if not explanation:
+                            # Case-insensitive lookup fallback
+                            for k, v in explanations.items():
+                                if k.lower() == m_kw.lower():
+                                    explanation = v
+                                    break
+                        if explanation:
+                            break
+
+            if not explanation:
+                explanation = f"Provides relevant academic foundations for a career in this field."
+
+            g['reason'] = f"[{p_type}] {explanation}"
+            if g['is_direct']:
+                primary_groups.append(g)
+            else:
+                secondary_groups.append(g)
+
+        # Sort both groups: min_cutoff ascending (None/null goes last)
+        primary_groups.sort(key=lambda x: (x['min_cutoff'] is None, x['min_cutoff'] or 999))
+        secondary_groups.sort(key=lambda x: (x['min_cutoff'] is None, x['min_cutoff'] or 999))
+
+        combined_groups = primary_groups + secondary_groups
+        top_groups = combined_groups[:5]
+
+        if top_groups:
+            matched = []
+            for g in top_groups:
+                matched.append({
+                    'program_name': g['name'],
+                    'universities': ", ".join(sorted(list(g['universities']))),
+                    'reason': g['reason'],
+                })
+            return JsonResponse({
+                'ai_match': True,
+                'career_name': career_name,
+                'career_description': career_description,
+                'matched_programs': matched,
+            })
+
+    except Exception:
+        # Fall back to keyword search if AI is unavailable
+        pass
+
+    # If AI fails, return an indicator so frontend can fall back
+    return JsonResponse({'ai_match': False, 'message': 'AI unavailable, use keyword search'})
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def program_details(request):
+    """
+    Returns the requirements and details of all university offerings matching a program name.
+    """
+    data = json.loads(request.body)
+    program_name = data.get('program_name')
+    if not program_name:
+        return JsonResponse({'error': 'No program_name provided'}, status=400)
+
+    programs = Program.objects.filter(name__iexact=program_name.strip()).select_related('university').prefetch_related(
+        'core_subjects',
+        'requirements__learning_area',
+        'requirements__mandatory_subjects',
+        'requirements__elective_subjects'
+    ).all()
+
+    if not programs:
+        return JsonResponse({'error': 'Program not found'}, status=404)
+
+    offerings = []
+    for program in programs:
+        core_subjects = [{'name': s.name} for s in program.core_subjects.all()]
+        requirements = []
+        for req in program.requirements.all():
+            la_name = req.learning_area.name if req.learning_area else "General Entry"
+            mandatory = [{'name': s.name} for s in req.mandatory_subjects.all()]
+            electives = [{'name': s.name} for s in req.elective_subjects.all()]
+            requirements.append({
+                'learning_area': la_name,
+                'mandatory_subjects': mandatory,
+                'elective_subjects': electives,
+            })
+        offerings.append({
+            'university': program.university.name,
+            'university_short': program.university.short_name,
+            'faculty': program.faculty,
+            'duration_years': program.duration_years,
+            'cutoff': program.aggregate,
+            'core_subjects': core_subjects,
+            'requirements': requirements,
+        })
+
+    # Sort offerings by WASSCE cutoff aggregate ascending (best/lowest cutoff first)
+    offerings.sort(key=lambda x: (x['cutoff'] is None, x['cutoff'] or 999))
+
+    return JsonResponse({
+        'program_name': program_name,
+        'offerings': offerings
+    })
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
 def subject_recommendation(request):
     data = json.loads(request.body)
     career_id = data.get('career_id')

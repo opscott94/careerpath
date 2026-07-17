@@ -33,11 +33,13 @@
 
   <div id="loadingDiv" class="hidden text-center py-8">
     <div class="inline-block animate-spin text-4xl">⏳</div>
-    <p class="text-gray-500 mt-2">Finding the best career match...</p>
+    <p id="loadingText" class="text-gray-500 mt-2">Our AI is finding your career path...</p>
   </div>
 
+  <div id="aiResultsDiv" class="hidden"></div>
   <div id="resultsDiv" class="hidden"></div>
   <div id="subjectDiv" class="hidden"></div>
+  <div id="programDiv" class="hidden"></div>
 </div>
 
 <script>
@@ -45,10 +47,34 @@ async function searchCareer() {
   const query = document.getElementById('careerInput').value.trim();
   if (!query) return;
   document.getElementById('loadingDiv').classList.remove('hidden');
+  document.getElementById('loadingText').textContent = 'Our AI is finding your career path...';
+  document.getElementById('aiResultsDiv').classList.add('hidden');
   document.getElementById('resultsDiv').classList.add('hidden');
   document.getElementById('subjectDiv').classList.add('hidden');
+  document.getElementById('programDiv').classList.add('hidden');
+  document.getElementById('aiResultsDiv').innerHTML = '';
   document.getElementById('resultsDiv').innerHTML = '';
+  document.getElementById('programDiv').innerHTML = '';
 
+  try {
+    const aiRes = await fetch('/api/ai-career-match/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+      body: JSON.stringify({query: query.toLowerCase()})
+    });
+    const aiData = await aiRes.json();
+
+    if (aiData.ai_match && aiData.matched_programs && aiData.matched_programs.length > 0) {
+      document.getElementById('loadingDiv').classList.add('hidden');
+      renderAiResults(aiData);
+      return;
+    }
+  } catch(e) {
+    // AI failed, fall back to keyword search
+  }
+
+  // Fallback to keyword search
+  document.getElementById('loadingText').textContent = 'Finding the best career match...';
   const res = await fetch('/api/career-search/', {
     method: 'POST',
     headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
@@ -56,7 +82,63 @@ async function searchCareer() {
   });
   const data = await res.json();
   document.getElementById('loadingDiv').classList.add('hidden');
+  renderKeywordResults(data, query);
+}
 
+function renderAiResults(aiData) {
+  let html = `
+    <div style="border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;margin-bottom:16px;">
+      <div style="background:#052e16;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:52px;height:52px;background:rgba(74,222,128,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;">🎯</div>
+          <div>
+            <p style="font-size:20px;font-weight:700;color:#fff;margin:0;">${aiData.career_name}</p>
+            <p style="font-size:12px;color:#86efac;margin:4px 0 0;">AI-Recommended Career Path</p>
+          </div>
+        </div>
+        <span style="font-size:11px;font-weight:700;background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);padding:4px 12px;border-radius:100px;">✨ AI Match</span>
+      </div>
+      <div style="padding:20px 24px;">
+        <div style="background:#f0fdf4;border-left:3px solid #16a34a;border-radius:0 8px 8px 0;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#374151;line-height:1.6;">
+          ${aiData.career_description}
+        </div>
+
+        <p style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;display:flex;align-items:center;gap:6px;">
+          🏫 Recommended University Programs (Click a program card to view details)
+        </p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+          ${aiData.matched_programs.map((p, i) => `
+            <div style="display:flex;align-items:flex-start;gap:12px;background:${i===0?'#fefce8':'#f9fafb'};border:2px solid ${i===0?'#fde68a':'#e5e7eb'};border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;"
+                 class="hover:border-primary card-hover"
+                 onclick="getProgramDetails('${p.program_name.replace(/'/g, "\\'")}')">
+              <div style="width:32px;height:32px;background:${i===0?'#fef3c7':'#f3f4f6'};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:${i===0?'#92400e':'#6b7280'};flex-shrink:0;">${i+1}</div>
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+                  <p style="font-size:14px;font-weight:700;color:#1f2937;margin:0;">${p.program_name}</p>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <span style="font-size:11px;font-weight:600;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:100px;">${p.universities}</span>
+                    <span style="font-size:12px;color:#a8a29e;">🔍 View Details</span>
+                  </div>
+                </div>
+                <p style="font-size:12px;color:#6b7280;margin:4px 0 0;line-height:1.5;">${p.reason}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="border-top:1px solid #f1f5f9;padding-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <p style="font-size:12px;color:#6b7280;margin:0;">Powered by AI • Based on available university data</p>
+          <a href="/shs-eligibility/" style="font-size:13px;font-weight:600;background:#052e16;color:#4ade80;padding:8px 18px;border-radius:10px;text-decoration:none;">
+            Check Eligibility →
+          </a>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('aiResultsDiv').innerHTML = html;
+  document.getElementById('aiResultsDiv').classList.remove('hidden');
+}
+
+function renderKeywordResults(data, query) {
   if (!data.results || data.results.length === 0) {
     document.getElementById('resultsDiv').innerHTML = `
       <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 text-center">
@@ -172,6 +254,94 @@ function getEmoji(icon) {
 function getCookie(name) {
   let v = document.cookie.match('(^|;) ?'+name+'=([^;]*)(;|$)');
   return v ? v[2] : null;
+}
+
+async function getProgramDetails(programName) {
+  document.getElementById('programDiv').classList.add('hidden');
+  const res = await fetch('/api/program-details/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+    body: JSON.stringify({program_name: programName})
+  });
+  const d = await res.json();
+
+  let html = `
+    <div class="mt-6" style="border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;">
+
+      <div style="background:#052e16;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:52px;height:52px;background:rgba(74,222,128,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;">🏫</div>
+          <div>
+            <p style="font-size:20px;font-weight:700;color:#fff;margin:0;">${d.program_name}</p>
+            <p style="font-size:12px;color:#86efac;margin:4px 0 0;">Offered by ${d.offerings.length} Universities</p>
+          </div>
+        </div>
+        <span style="font-size:11px;font-weight:700;background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);padding:4px 12px;border-radius:100px;">Program Details</span>
+      </div>
+
+      <div style="padding:20px 24px;display:flex;flex-direction:column;gap:24px;">
+        ${d.offerings.map((off, idx) => `
+          <div style="${idx > 0 ? 'border-top: 1px solid #e2e8f0; padding-top: 20px;' : ''}">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+              <h3 style="font-size:16px;font-weight:700;color:#1e293b;margin:0;">
+                🏫 ${off.university} (${off.university_short})
+              </h3>
+              <span style="font-size:12px;font-weight:600;background:#f0fdf4;color:#15803d;padding:4px 12px;border-radius:100px;">
+                Cutoff: ${off.cutoff || 'N/A'}
+              </span>
+            </div>
+
+            <p style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;display:flex;align-items:center;gap:6px;">
+              📌 Core subjects (required pass)
+            </p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
+              ${off.core_subjects.length > 0 
+                ? off.core_subjects.map(s=>`<span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">${s.name}</span>`).join('')
+                : '<span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">Core Mathematics</span><span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">English Language</span><span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">Integrated Science</span><span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">Social Studies</span>'
+              }
+            </div>
+
+            <p style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;">
+              ⭐ Elective Requirements
+            </p>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              ${off.requirements.map(req => `
+                <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;">
+                  <p style="font-size:12px;font-weight:700;color:#334155;margin:0 0 6px;border-bottom:1px solid #e2e8f0;padding-bottom:4px;">
+                    Learning Track: ${req.learning_area}
+                  </p>
+                  
+                  ${req.mandatory_subjects.length > 0 ? `
+                    <div style="margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                      <span style="font-size:10px;font-weight:700;color:#92400e;background:#fef3c7;padding:1px 6px;border-radius:100px;">Mandatory</span>
+                      <span style="font-size:12px;color:#475569;font-weight:500;">
+                        ${req.mandatory_subjects.map(s => s.name).join(', ')}
+                      </span>
+                    </div>
+                  ` : ''}
+
+                  ${req.elective_subjects.length > 0 ? `
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                      <span style="font-size:10px;font-weight:700;color:#1e40af;background:#dbeafe;padding:1px 6px;border-radius:100px;">Recommended</span>
+                      <span style="font-size:12px;color:#475569;font-weight:500;">
+                        ${req.elective_subjects.map(s => s.name).join(', ')}
+                      </span>
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+        
+        <div style="border-top:1px solid #f1f5f9;padding-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <p style="font-size:12px;color:#6b7280;margin:0;">Based on University admissions guidelines</p>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('programDiv').innerHTML = html;
+  document.getElementById('programDiv').classList.remove('hidden');
+  document.getElementById('programDiv').scrollIntoView({behavior:'smooth'});
 }
 </script>
 {% endblock %}
