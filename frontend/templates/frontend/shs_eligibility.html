@@ -339,13 +339,41 @@ function filterPrograms(cat) {
   renderPrograms(cat);
 }
 
+function getUserElectives() {
+  const e1 = (document.getElementById('s_e1')?.value || '').toLowerCase();
+  const e2 = (document.getElementById('s_e2')?.value || '').toLowerCase();
+  const e3 = (document.getElementById('s_e3')?.value || '').toLowerCase();
+  return [e1, e2, e3].filter(Boolean);
+}
+
+function programMatchesElectives(prog, userElectives) {
+  if (!userElectives.length) return true;
+  const subjectMap = {
+    'physics or maths': ['physics', 'additional mathematics'],
+    'physics or maths or biology': ['physics', 'additional mathematics', 'biology'],
+    'any elective': null,
+    'any 3 electives': null,
+    'english required': null,
+  };
+  return prog.subjects.some(req => {
+    const reqLower = req.toLowerCase();
+    if (subjectMap[reqLower] === null) return true;
+    if (subjectMap[reqLower]) return subjectMap[reqLower].some(s => userElectives.includes(s));
+    return userElectives.includes(reqLower);
+  });
+}
+
 function renderPrograms(cat) {
   const search = (document.getElementById('programSearch').value || '').toLowerCase();
   const list = document.getElementById('programList');
+  const userElectives = getUserElectives();
   let html = '';
+  let count = 0;
   Object.entries(programMeta).forEach(([key, prog]) => {
     if (cat !== 'all' && prog.cat !== cat) return;
     if (search && !prog.label.toLowerCase().includes(search) && !key.includes(search)) return;
+    if (!programMatchesElectives(prog, userElectives)) return;
+    count++;
     const unis = getUnisForProgram(key);
     html += `
       <div onclick="showResults('${key}')" style="border-left:3px solid ${catColors[prog.cat]?.border||'#1d9e75'};border-radius:12px;border-top:0.5px solid #e5e7eb;border-right:0.5px solid #e5e7eb;border-bottom:0.5px solid #e5e7eb;" class="flex items-center gap-4 p-4 cursor-pointer transition group hover:bg-gray-50">
@@ -360,7 +388,7 @@ function renderPrograms(cat) {
       </div>`;
   });
   if (!html) html = '<p class="text-center text-gray-400 py-8">No programs found. Try a different search.</p>';
-  list.innerHTML = html;
+  list.innerHTML = html || '<p style="text-align:center;color:#9ca3af;padding:24px;font-size:14px;">No programs match your selected electives. Try different subjects.</p>';
 }
 
 function getUnisForProgram(key) {
