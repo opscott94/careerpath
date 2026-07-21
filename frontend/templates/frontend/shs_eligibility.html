@@ -133,76 +133,14 @@
                 </select>
               </td>
             </tr>
-            <tr style="border-top:0.5px solid #f1f5f9;">
-              <td style="padding:12px 16px;">
-                <select id="s_e2" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;min-width:130px;" onchange="this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';">
-                  <option value="">Elective 2</option>
-                      <optgroup label="Science">
-                        <option>Biology</option><option>Chemistry</option><option>Physics</option>
-                        <option>Additional Mathematics</option><option>Agricultural Science</option>
-                      </optgroup>
-                      <optgroup label="General Arts">
-                        <option>Economics</option><option>Geography</option><option>Government</option>
-                        <option>History</option><option>Literature in English</option>
-                        <option>Christian Religious Studies</option><option>Islamic Religious Studies</option>
-                      </optgroup>
-                      <optgroup label="Business">
-                        <option>Business Management</option><option>Accounting</option>
-                      </optgroup>
-                      <optgroup label="Computing">
-                        <option>Computer Science</option><option>ICT</option>
-                      </optgroup>
-                      <optgroup label="Others">
-                        <option>Music</option><option>French</option><option>Arabic</option>
-                        <option>Ghanaian Language</option><option>Food and Nutrition</option>
-                        <option>Clothing and Textiles</option><option>Management in Living</option>
-                      </optgroup>
-                </select>
-              </td>
-              <td style="padding:12px 12px;text-align:center;"><span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;border:1px solid #bbf7d0;">Elective</span></td>
-              <td style="padding:12px 16px;text-align:right;">
-                <select id="g_e2" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
-                  <option value="">Select grade</option>
-                  <option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option>
-                </select>
-              </td>
-            </tr>
-            <tr style="border-top:0.5px solid #f1f5f9;">
-              <td style="padding:12px 16px;">
-                <select id="s_e3" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;min-width:130px;" onchange="this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';">
-                  <option value="">Elective 3</option>
-                      <optgroup label="Science">
-                        <option>Biology</option><option>Chemistry</option><option>Physics</option>
-                        <option>Additional Mathematics</option><option>Agricultural Science</option>
-                      </optgroup>
-                      <optgroup label="General Arts">
-                        <option>Economics</option><option>Geography</option><option>Government</option>
-                        <option>History</option><option>Literature in English</option>
-                        <option>Christian Religious Studies</option><option>Islamic Religious Studies</option>
-                      </optgroup>
-                      <optgroup label="Business">
-                        <option>Business Management</option><option>Accounting</option>
-                      </optgroup>
-                      <optgroup label="Computing">
-                        <option>Computer Science</option><option>ICT</option>
-                      </optgroup>
-                      <optgroup label="Others">
-                        <option>Music</option><option>French</option><option>Arabic</option>
-                        <option>Ghanaian Language</option><option>Food and Nutrition</option>
-                        <option>Clothing and Textiles</option><option>Management in Living</option>
-                      </optgroup>
-                </select>
-              </td>
-              <td style="padding:12px 12px;text-align:center;"><span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;border:1px solid #bbf7d0;">Elective</span></td>
-              <td style="padding:12px 16px;text-align:right;">
-                <select id="g_e3" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
-                  <option value="">Select grade</option>
-                  <option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option>
-                </select>
-              </td>
-            </tr>
           </tbody>
+          <tbody id="extra-electives"></tbody>
         </table>
+        <div style="padding:8px 16px 4px;">
+          <button type="button" onclick="addElective()" id="addElectiveBtn" style="display:flex;align-items:center;gap:6px;background:none;border:0.5px solid #e5e7eb;border-radius:8px;padding:7px 14px;font-size:13px;color:#6b7280;cursor:pointer;">
+            + Add elective
+          </button>
+        </div>
       </div>
       <div style="padding:16px 16px 20px;">
         <button onclick="goToStep2()" style="width:100%;padding:16px;background:#052e16;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
