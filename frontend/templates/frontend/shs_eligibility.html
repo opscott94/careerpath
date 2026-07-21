@@ -88,7 +88,7 @@
                 </select>
               </td>
             </tr>
-            <tr id="social-row" style="border-top:0.5px solid #f1f5f9;">
+            <tr id="social-row" style="border-top:0.5px solid #f1f5f9;display:none;">
               <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;display:flex;align-items:center;gap:8px;">Social Studies <span style="font-size:11px;color:#9ca3af;">(optional)</span>
                 <button type="button" onclick="document.getElementById('social-row').style.display='none';document.getElementById('add-social-btn').style.display='flex';" style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;padding:0;line-height:1;">×</button>
               </td>
@@ -142,7 +142,7 @@
           <button type="button" id="addElectiveBtn" onclick="addElective()" style="display:flex;align-items:center;gap:6px;background:none;border:0.5px solid #e5e7eb;border-radius:8px;padding:7px 14px;font-size:13px;color:#6b7280;cursor:pointer;">
             + Add elective
           </button>
-          <button type="button" id="add-social-btn" onclick="document.getElementById('social-row').style.display='';document.getElementById('add-social-btn').style.display='none';" style="display:none;align-items:center;gap:6px;background:none;border:0.5px solid #e5e7eb;border-radius:8px;padding:7px 14px;font-size:13px;color:#6b7280;cursor:pointer;">
+          <button type="button" id="add-social-btn" onclick="document.getElementById('social-row').style.display='';document.getElementById('add-social-btn').style.display='none';" style="display:flex;align-items:center;gap:6px;background:none;border:0.5px solid #e5e7eb;border-radius:8px;padding:7px 14px;font-size:13px;color:#6b7280;cursor:pointer;">
             + Add Social Studies
           </button>
         </div>
