@@ -516,7 +516,7 @@ function showResults(key) {
 var electiveCount = 2;
 var eSubs = '<optgroup label="Science"><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Additional Mathematics</option><option>Agricultural Science</option></optgroup><optgroup label="General Arts"><option>Economics</option><option>Geography</option><option>Government</option><option>History</option><option>Literature in English</option><option>Christian Religious Studies</option><option>Islamic Religious Studies</option></optgroup><optgroup label="Business"><option>Business Management</option><option>Accounting</option></optgroup><optgroup label="Computing"><option>Computer Science</option><option>ICT</option></optgroup><optgroup label="Others"><option>Music</option><option>French</option><option>Arabic</option><option>Ghanaian Language</option><option>Food and Nutrition</option><option>Clothing and Textiles</option><option>Management in Living</option></optgroup>';
 function addElective() {
-  if (electiveCount > 6) return;
+  if (electiveCount > 3) return;
   var n = electiveCount;
   var tbody = document.getElementById('extra-electives');
   if (!tbody) { console.error('no tbody'); return; }
@@ -541,8 +541,8 @@ function addElective() {
   s2.innerHTML = '<option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option>';
   var btn = document.createElement('button');
   btn.type = 'button';
-  btn.textContent = 'x';
-  btn.style.cssText = 'background:none;border:none;color:#9ca3af;cursor:pointer;font-size:18px;padding:0;';
+  btn.textContent = '✕';
+  btn.style.cssText = 'background:#fee2e2;border:none;color:#ef4444;cursor:pointer;font-size:12px;padding:4px 7px;border-radius:6px;font-weight:700;line-height:1;';
   btn.setAttribute('onclick', 'removeElective(' + n + ')');
   td3.appendChild(s2);
   td3.appendChild(btn);
