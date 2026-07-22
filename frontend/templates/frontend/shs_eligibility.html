@@ -1,23 +1,23 @@
 {% extends 'frontend/base.html' %}
 {% block title %}University Eligibility Checker — CareerPath Ghana
+<script>
 function goToStep1() {
   document.getElementById('step1').classList.remove('hidden');
   document.getElementById('step2').classList.add('hidden');
   document.getElementById('step3').classList.add('hidden');
-  // reset stepper styles
   document.getElementById('step1-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
   document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:500;';
   document.getElementById('step3-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:not-allowed;font-size:13px;font-weight:500;';
 }
 function goToStep2Ind() {
-  // only allow if step2 was already reached
-  if (!document.getElementById('step2').classList.contains('hidden') || step2Reached) {
+  if (step2Reached) {
     document.getElementById('step1').classList.add('hidden');
     document.getElementById('step2').classList.remove('hidden');
     document.getElementById('step3').classList.add('hidden');
   }
 }
 var step2Reached = false;
+</script>
 
 {% endblock %}
 {% block content %}
@@ -601,23 +601,23 @@ function removeElective(n) {
 
 </script>
 
+<script>
 function goToStep1() {
   document.getElementById('step1').classList.remove('hidden');
   document.getElementById('step2').classList.add('hidden');
   document.getElementById('step3').classList.add('hidden');
-  // reset stepper styles
   document.getElementById('step1-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
   document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:500;';
   document.getElementById('step3-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:not-allowed;font-size:13px;font-weight:500;';
 }
 function goToStep2Ind() {
-  // only allow if step2 was already reached
-  if (!document.getElementById('step2').classList.contains('hidden') || step2Reached) {
+  if (step2Reached) {
     document.getElementById('step1').classList.add('hidden');
     document.getElementById('step2').classList.remove('hidden');
     document.getElementById('step3').classList.add('hidden');
   }
 }
 var step2Reached = false;
+</script>
 
 {% endblock %}
