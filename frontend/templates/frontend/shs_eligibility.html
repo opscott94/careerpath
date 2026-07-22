@@ -291,19 +291,58 @@ function getUserElectives() {
 
 function programMatchesElectives(prog, userElectives) {
   if (!userElectives.length) return true;
-  const subjectMap = {
-    'physics or maths': ['physics', 'additional mathematics'],
-    'physics or maths or biology': ['physics', 'additional mathematics', 'biology'],
-    'any elective': null,
-    'any 3 electives': null,
-    'english required': null,
-  };
-  return prog.subjects.some(req => {
-    const reqLower = req.toLowerCase();
-    if (subjectMap[reqLower] === null) return true;
-    if (subjectMap[reqLower]) return subjectMap[reqLower].some(s => userElectives.includes(s));
-    return userElectives.includes(reqLower);
-  });
+
+  // Normalize user electives
+  const ue = userElectives.map(s => s.toLowerCase());
+
+  // Helper: user has subject
+  const has = (s) => ue.includes(s.toLowerCase());
+
+  // Detect user's stream from their electives
+  const isScienceStudent = (has('biology') || has('chemistry') || has('physics') || has('additional mathematics') || has('agricultural science'));
+  const isBusinessStudent = (has('business management') || has('accounting')) && !has('biology') && !has('physics') && !has('chemistry');
+  const isArtsStudent = (has('economics') || has('government') || has('history') || has('geography') || has('literature in english') || has('christian religious studies') || has('islamic religious studies')) && !has('biology') && !has('physics') && !has('chemistry');
+  const isComputingStudent = (has('computer science') || has('ict')) && !has('biology');
+
+  // Strict match per program category
+  const cat = prog.cat;
+
+  // Health Sciences: need Biology + Chemistry + (Physics or Additional Maths)
+  if (cat === 'health') {
+    return has('biology') && has('chemistry') && (has('physics') || has('additional mathematics'));
+  }
+
+  // Engineering: need Physics + Chemistry + (Maths or Additional Maths)
+  if (cat === 'engineering') {
+    return has('physics') && has('chemistry') && (has('additional mathematics') || has('biology'));
+  }
+
+  // Computing: need Computer Science or ICT, and Physics or Maths
+  if (cat === 'computing') {
+    return (has('computer science') || has('ict')) || (has('physics') && has('additional mathematics'));
+  }
+
+  // Business: need Business Mgt or Accounting or Economics
+  if (cat === 'business') {
+    return has('business management') || has('accounting') || has('economics');
+  }
+
+  // Law & Social Sciences: open to arts students, not pure science
+  if (cat === 'law') {
+    return !isScienceStudent || has('economics') || has('government') || has('history');
+  }
+
+  // Natural Sciences: need Biology/Chemistry/Physics
+  if (cat === 'science') {
+    return (has('biology') || has('chemistry') || has('physics') || has('additional mathematics'));
+  }
+
+  // Agriculture: need Biology + Chemistry
+  if (cat === 'agric') {
+    return has('biology') && has('chemistry');
+  }
+
+  return true;
 }
 
 function renderPrograms(cat) {
