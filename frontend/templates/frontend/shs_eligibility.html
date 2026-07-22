@@ -105,27 +105,14 @@
               <td style="padding:12px 16px;">
                 <select id="s_e1" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;min-width:130px;" onchange="this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';">
                   <option value="">Elective 1</option>
-                      <optgroup label="Science">
-                        <option>Biology</option><option>Chemistry</option><option>Physics</option>
-                        <option>Additional Mathematics</option><option>Agricultural Science</option>
-                      </optgroup>
-                      <optgroup label="General Arts">
-                        <option>Economics</option><option>Geography</option><option>Government</option>
-                        <option>History</option><option>Literature in English</option>
-                        <option>Christian Religious Studies</option><option>Islamic Religious Studies</option>
-                      </optgroup>
-                      <optgroup label="Business">
-                        <option>Business Management</option><option>Accounting</option>
-                      </optgroup>
-                      <optgroup label="Computing">
-                        <option>Computer Science</option><option>ICT</option>
-                      </optgroup>
-                      <optgroup label="Others">
-                        <option>Music</option><option>French</option><option>Arabic</option>
-                        <option>Ghanaian Language</option><option>Food and Nutrition</option>
-                        <option>Clothing and Textiles</option><option>Management in Living</option>
-                      </optgroup>
-                </select>
+                  <optgroup label="Science"><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Additional Mathematics</option><option>Agricultural Science</option></optgroup>
+                  <optgroup label="General Arts"><option>Economics</option><option>Geography</option><option>Government</option><option>History</option><option>Literature in English</option><option>Christian Religious Studies</option><option>Islamic Religious Studies</option><option>RME</option></optgroup>
+                  <optgroup label="Business"><option>Business Management</option><option>Accounting</option><option>Business Economics</option></optgroup>
+                  <optgroup label="Computing"><option>Computer Science</option><option>ICT</option></optgroup>
+                  <optgroup label="Applied Technology"><option>Design and Communication Technology</option><option>Electrical and Electronic Technology</option><option>Building Construction and Wood Technology</option><option>Automobile and Metal Technology</option></optgroup>
+                  <optgroup label="Visual and Performing Arts"><option>Art and Design Foundation</option><option>Art and Design Studio</option><option>Music</option><option>Performing Arts</option></optgroup>
+                  <optgroup label="Home Economics"><option>Food and Nutrition</option><option>Clothing and Textiles</option><option>Management in Living</option></optgroup>
+                  <optgroup label="Languages"><option>French</option><option>Spanish</option><option>Arabic</option><option>Ghanaian Language</option></optgroup></select>
               </td>
               <td style="padding:12px 12px;text-align:center;"><span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;border:1px solid #bbf7d0;">Elective</span></td>
               <td style="padding:12px 16px;text-align:right;">
@@ -566,7 +553,7 @@ function addElective() {
   td1.style.padding = '12px 16px';
   var s1 = document.createElement('select');
   s1.id = 's_e' + n;
-  s1.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;';
+  s1.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;width:100%;max-width:200px;';
   s1.innerHTML = '<option value="">Elective ' + n + '</option>' + eSubs;
   td1.appendChild(s1);
   var td2 = document.createElement('td');
