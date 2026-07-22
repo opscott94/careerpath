@@ -539,13 +539,7 @@ function addElective() {
   s2.id = 'g_e' + n;
   s2.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;';
   s2.innerHTML = '<option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option>';
-  var btn = document.createElement('button');
-  btn.type = 'button';
-  btn.textContent = '✕';
-  btn.style.cssText = 'background:none;border:none;color:#d1d5db;cursor:pointer;font-size:13px;padding:2px 4px;line-height:1;';
-  btn.setAttribute('onclick', 'removeElective(' + n + ')');
   td3.appendChild(s2);
-  td3.appendChild(btn);
   row.appendChild(td1);
   row.appendChild(td2);
   row.appendChild(td3);
