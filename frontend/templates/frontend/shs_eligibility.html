@@ -1,25 +1,45 @@
 {% extends 'frontend/base.html' %}
-{% block title %}University Eligibility Checker — CareerPath Ghana{% endblock %}
+{% block title %}University Eligibility Checker — CareerPath Ghana
+function goToStep1() {
+  document.getElementById('step1').classList.remove('hidden');
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step3').classList.add('hidden');
+  // reset stepper styles
+  document.getElementById('step1-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
+  document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:500;';
+  document.getElementById('step3-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:not-allowed;font-size:13px;font-weight:500;';
+}
+function goToStep2Ind() {
+  // only allow if step2 was already reached
+  if (!document.getElementById('step2').classList.contains('hidden') || step2Reached) {
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+    document.getElementById('step3').classList.add('hidden');
+  }
+}
+var step2Reached = false;
+
+{% endblock %}
 {% block content %}
 
 <div class="max-w-3xl mx-auto px-4 py-12">
 
   <!-- Step indicators -->
   <div class="flex items-center justify-center gap-3 mb-10">
-    <div id="step1-ind" class="flex items-center gap-2">
-      <div class="w-8 h-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center">1</div>
-      <span class="text-sm font-medium text-gray-700">Enter Grades</span>
-    </div>
-    <div class="w-12 h-px bg-gray-200"></div>
-    <div id="step2-ind" class="flex items-center gap-2 opacity-40">
-      <div class="w-8 h-8 rounded-full bg-gray-300 text-white text-sm font-bold flex items-center justify-center">2</div>
-      <span class="text-sm font-medium text-gray-500">Choose Program</span>
-    </div>
-    <div class="w-12 h-px bg-gray-200"></div>
-    <div id="step3-ind" class="flex items-center gap-2 opacity-40">
-      <div class="w-8 h-8 rounded-full bg-gray-300 text-white text-sm font-bold flex items-center justify-center">3</div>
-      <span class="text-sm font-medium text-gray-500">Results</span>
-    </div>
+    <button id="step1-ind" onclick="goToStep1()" style="display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;">
+      <span style="width:22px;height:22px;background:#4ade80;color:#052e16;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;">1</span>
+      Enter Grades
+    </button>
+    <div style="flex:1;height:1px;background:#e5e7eb;max-width:48px;"></div>
+    <button id="step2-ind" onclick="goToStep2Ind()" style="display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:500;">
+      <span style="width:22px;height:22px;background:#e5e7eb;color:#9ca3af;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">2</span>
+      Choose Program
+    </button>
+    <div style="flex:1;height:1px;background:#e5e7eb;max-width:48px;"></div>
+    <button id="step3-ind" style="display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:not-allowed;font-size:13px;font-weight:500;">
+      <span style="width:22px;height:22px;background:#e5e7eb;color:#9ca3af;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">3</span>
+      Results
+    </button>
   </div>
 
   <!-- STEP 1: Grade entry -->
@@ -580,4 +600,24 @@ function removeElective(n) {
 }
 
 </script>
+
+function goToStep1() {
+  document.getElementById('step1').classList.remove('hidden');
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step3').classList.add('hidden');
+  // reset stepper styles
+  document.getElementById('step1-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
+  document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:500;';
+  document.getElementById('step3-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:not-allowed;font-size:13px;font-weight:500;';
+}
+function goToStep2Ind() {
+  // only allow if step2 was already reached
+  if (!document.getElementById('step2').classList.contains('hidden') || step2Reached) {
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+    document.getElementById('step3').classList.add('hidden');
+  }
+}
+var step2Reached = false;
+
 {% endblock %}
