@@ -363,18 +363,17 @@ programMeta = {
 };
 
 function goToStep2() {
-  // Sync mobile to desktop first
-  if (typeof syncMobileToDesktop === 'function') syncMobileToDesktop();
-  // On mobile, e2 and e3 are static; on desktop they're dynamic
   var isMobile = window.innerWidth <= 640;
-  var coreIds = ['g_english','g_math','g_science'];
-  var electiveIds = ['g_e1','g_e2','g_e3'];
   if (isMobile) {
-    electiveIds = ['m_g_e1','m_g_e2','m_g_e3'];
+    if (typeof syncMobileToDesktop === 'function') syncMobileToDesktop();
+    var mVals = ['m_g_e1','m_g_e2','m_g_e3','m_g_english','m_g_math','m_g_science'].map(id => {
+      var el = document.getElementById(id); return el ? parseInt(el.value) : NaN;
+    });
+    if (mVals.some(isNaN)) { alert('Please select all grades'); return; }
   }
-  var allIds = coreIds.concat(electiveIds);
-  const vals = allIds.map(id => { var el = document.getElementById(id); return el ? parseInt(el.value) : NaN; });
-  if (vals.some(isNaN)) { alert('Please select all grades'); return; }
+  const ids = ['g_english','g_math','g_science','g_e1','g_e2','g_e3'];
+  const vals = ids.map(id => { var el = document.getElementById(id); return el ? parseInt(el.value) : NaN; });
+  if (!isMobile && vals.some(isNaN)) { alert('Please select all 6 grades'); return; }
   const sorted = [...vals].sort((a,b)=>a-b);
   aggregate = sorted.slice(0,6).reduce((a,b)=>a+b,0);
 
