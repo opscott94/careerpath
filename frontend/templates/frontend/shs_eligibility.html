@@ -373,7 +373,12 @@ function goToStep2() {
   }
   const ids = ['g_english','g_math','g_science','g_e1','g_e2','g_e3'];
   const vals = ids.map(id => { var el = document.getElementById(id); return el && el.value ? parseInt(el.value) : null; }).filter(v => v !== null);
-  if (!isMobile && vals.length < 6) { alert('Please select grades for all 3 core subjects and all 3 electives'); return; }
+  if (!isMobile) {
+    var coreFilled = ['g_english','g_math','g_science'].every(id => { var el = document.getElementById(id); return el && el.value; });
+    var elecFilled = ['g_e1','g_e2','g_e3'].filter(id => { var el = document.getElementById(id); return el && el.value; }).length;
+    if (!coreFilled) { alert('Please select grades for all 3 core subjects'); return; }
+    if (elecFilled < 1) { alert('Please select at least 1 elective grade'); return; }
+  }
   const sorted = [...vals].sort((a,b)=>a-b);
   aggregate = sorted.slice(0,6).reduce((a,b)=>a+b,0);
 
