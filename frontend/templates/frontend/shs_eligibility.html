@@ -372,9 +372,8 @@ function goToStep2() {
     if (mVals.some(isNaN)) { alert('Please select all grades'); return; }
   }
   const ids = ['g_english','g_math','g_science','g_e1','g_e2','g_e3'];
-  const vals = ids.map(id => { var el = document.getElementById(id); return el ? parseInt(el.value) : null; }).filter(v => v !== null);
-  if (!isMobile && vals.some(isNaN)) { alert('Please select all grades for visible subjects'); return; }
-  if (!isMobile && vals.length < 4) { alert('Please select at least 1 elective grade'); return; }
+  const vals = ids.map(id => { var el = document.getElementById(id); return el && el.value ? parseInt(el.value) : null; }).filter(v => v !== null);
+  if (!isMobile && vals.length < 4) { alert('Please select grades for all 3 core subjects and at least 1 elective'); return; }
   const sorted = [...vals].sort((a,b)=>a-b);
   aggregate = sorted.slice(0,6).reduce((a,b)=>a+b,0);
 
