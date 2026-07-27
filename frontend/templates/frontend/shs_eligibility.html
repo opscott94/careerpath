@@ -19,6 +19,19 @@ function goToStep2Ind() {
 var step2Reached = false;
 </script>
 
+
+function syncMobileToDesktop() {
+  var mobileIds = ['english','math','science','social','e1','e2','e3'];
+  mobileIds.forEach(function(id) {
+    var mob = document.getElementById('m_g_' + id);
+    var desk = document.getElementById('g_' + id);
+    if (mob && desk) desk.value = mob.value;
+    var mobs = document.getElementById('m_s_' + id);
+    var desks = document.getElementById('s_' + id);
+    if (mobs && desks) desks.value = mobs.value;
+  });
+}
+
 {% endblock %}
 {% block content %}
 
@@ -169,19 +182,19 @@ var step2Reached = false;
         <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
           <div style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
             <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">English Language</p><span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span></div>
-            <select id="m_g_english" onchange="document.getElementById('g_english').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+            <select id="m_g_english" onchange="document.getElementById('g_english').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
           </div>
           <div style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
             <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">Core Mathematics</p><span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span></div>
-            <select id="m_g_math" onchange="document.getElementById('g_math').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+            <select id="m_g_math" onchange="document.getElementById('g_math').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
           </div>
           <div style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
             <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">Integrated Science</p><span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span></div>
-            <select id="m_g_science" onchange="document.getElementById('g_science').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+            <select id="m_g_science" onchange="document.getElementById('g_science').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
           </div>
           <div id="m_social_row" style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
             <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">Social Studies <span style="font-size:10px;color:#9ca3af;">(optional)</span></p><span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span></div>
-            <select id="m_g_social" onchange="document.getElementById('g_social').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+            <select id="m_g_social" onchange="document.getElementById('g_social').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
           </div>
         </div>
         <p style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;">Elective Subjects</p>
@@ -200,7 +213,7 @@ var step2Reached = false;
                 <optgroup label="Home Economics"><option>Food and Nutrition</option><option>Clothing and Textiles</option><option>Management in Living</option></optgroup>
                 <optgroup label="Languages"><option>French</option><option>Spanish</option><option>Arabic</option><option>Ghanaian Language</option></optgroup>
               </select>
-              <select id="m_g_e1" onchange="document.getElementById('g_e1').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+              <select id="m_g_e1" onchange="document.getElementById('g_e1').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;"><option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
             </div>
           </div>
           <div style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #15803d;border-radius:10px;padding:12px 14px;">
@@ -217,7 +230,7 @@ var step2Reached = false;
                 <optgroup label="Home Economics"><option>Food and Nutrition</option><option>Clothing and Textiles</option><option>Management in Living</option></optgroup>
                 <optgroup label="Languages"><option>French</option><option>Spanish</option><option>Arabic</option><option>Ghanaian Language</option></optgroup>
               </select>
-              <select id="m_g_e2" onchange="document.getElementById('g_e2')?document.getElementById('g_e2').value=this.value:null;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+              <select id="m_g_e2" onchange="document.getElementById('g_e2')?document.getElementById('g_e2').value=this.value:null;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;"><option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
             </div>
           </div>
           <div style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #15803d;border-radius:10px;padding:12px 14px;">
@@ -234,13 +247,13 @@ var step2Reached = false;
                 <optgroup label="Home Economics"><option>Food and Nutrition</option><option>Clothing and Textiles</option><option>Management in Living</option></optgroup>
                 <optgroup label="Languages"><option>French</option><option>Spanish</option><option>Arabic</option><option>Ghanaian Language</option></optgroup>
               </select>
-              <select id="m_g_e3" onchange="document.getElementById('g_e3')?document.getElementById('g_e3').value=this.value:null;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+              <select id="m_g_e3" onchange="document.getElementById('g_e3')?document.getElementById('g_e3').value=this.value:null;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;"><option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
             </div>
           </div>
         </div>
       </div>
       <div style="padding:16px 16px 20px;">
-        <button onclick="goToStep2()" style="width:100%;padding:16px;background:#052e16;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
+        <button onclick="syncMobileToDesktop();goToStep2();" style="width:100%;padding:16px;background:#052e16;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
           Check Eligibility
         </button>
       </div>
@@ -705,5 +718,18 @@ function goToStep2Ind() {
 }
 var step2Reached = false;
 </script>
+
+
+function syncMobileToDesktop() {
+  var mobileIds = ['english','math','science','social','e1','e2','e3'];
+  mobileIds.forEach(function(id) {
+    var mob = document.getElementById('m_g_' + id);
+    var desk = document.getElementById('g_' + id);
+    if (mob && desk) desk.value = mob.value;
+    var mobs = document.getElementById('m_s_' + id);
+    var desks = document.getElementById('s_' + id);
+    if (mobs && desks) desks.value = mobs.value;
+  });
+}
 
 {% endblock %}
