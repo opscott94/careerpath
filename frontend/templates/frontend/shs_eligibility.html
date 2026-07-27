@@ -20,6 +20,7 @@ var step2Reached = false;
 </script>
 
 
+<script>
 function syncMobileToDesktop() {
   var mobileIds = ['english','math','science','social','e1','e2','e3'];
   mobileIds.forEach(function(id) {
@@ -31,6 +32,7 @@ function syncMobileToDesktop() {
     if (mobs && desks) desks.value = mobs.value;
   });
 }
+</script>
 
 {% endblock %}
 {% block content %}
@@ -720,6 +722,7 @@ var step2Reached = false;
 </script>
 
 
+<script>
 function syncMobileToDesktop() {
   var mobileIds = ['english','math','science','social','e1','e2','e3'];
   mobileIds.forEach(function(id) {
@@ -731,5 +734,6 @@ function syncMobileToDesktop() {
     if (mobs && desks) desks.value = mobs.value;
   });
 }
+</script>
 
 {% endblock %}
