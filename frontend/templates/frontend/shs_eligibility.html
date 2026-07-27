@@ -378,8 +378,8 @@ function goToStep2() {
     var coreFilled = coreIds.every(id => { var el = document.getElementById(id); return el && el.value; });
     var elecFilled = ['g_e1','g_e2','g_e3'].filter(id => { var el = document.getElementById(id); return el && el.value; }).length;
     var debugMsg = coreIds.map(id => { var el = document.getElementById(id); return id + '=' + (el ? el.value : 'MISSING'); }).join(', ');
-    console.log('Core values:', debugMsg, '| Electives filled:', elecFilled);
-    if (!coreFilled) { alert('Please select grades for all 3 core subjects\n(Debug: ' + debugMsg + ')'); return; }
+    var mDebug = ['m_g_english','m_g_math','m_g_science'].map(id => { var el = document.getElementById(id); return id + '=' + (el ? el.value : 'MISSING'); }).join(', ');
+    if (!coreFilled) { alert('Width:'+window.innerWidth+'\nDesktop: ' + debugMsg + '\nMobile: ' + mDebug); return; }
     if (elecFilled < 1) { alert('Please select at least 1 elective grade'); return; }
   }
   const sorted = [...vals].sort((a,b)=>a-b);
