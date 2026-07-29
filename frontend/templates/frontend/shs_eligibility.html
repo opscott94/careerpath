@@ -19,63 +19,7 @@ function goToStep2Ind() {
 var step2Reached = false;
 </script>
 
-
-
-
 {% endblock %}
-
-<style>
-@media (max-width: 640px) {
-  /* Card wrapper */
-  .border.border-gray-100, 
-  [style*="border-top:0.5px solid #f1f5f9"] {
-    border-radius: 12px !important;
-    margin-bottom: 8px !important;
-  }
-  
-  /* Grade select full width on mobile */
-  select[id^="g_"], select[id^="s_e"] {
-    width: 100% !important;
-    min-width: unset !important;
-    max-width: unset !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Table becomes block on mobile */
-  table, thead, tbody, tr, td, th {
-    display: block !important;
-    width: 100% !important;
-  }
-
-  /* Hide table header */
-  thead { display: none !important; }
-
-  /* Each row becomes a card */
-  tbody tr {
-    background: #fff !important;
-    border: 0.5px solid #e5e7eb !important;
-    border-radius: 14px !important;
-    margin-bottom: 10px !important;
-    padding: 12px 14px !important;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05) !important;
-    border-top: 0.5px solid #e5e7eb !important;
-  }
-
-  /* Remove inner padding on tds */
-  tbody td {
-    padding: 3px 0 !important;
-    border: none !important;
-  }
-
-  /* Table wrapper no overflow hidden on mobile */
-  [style*="border-radius:14px;overflow:hidden"] {
-    border: none !important;
-    border-radius: 0 !important;
-    overflow: visible !important;
-    margin: 0 8px !important;
-  }
-}
-</style>
 {% block content %}
 
 <div class="max-w-3xl mx-auto px-4 py-12">
@@ -117,11 +61,11 @@ var step2Reached = false;
           <span style="font-size:12px;color:#bbf7d0;">✓ See matching programs</span>
         </div>
       </div>
-      <div style="padding:20px 24px 8px;">
+      <div class="desktop-table" style="padding:20px 24px 8px;">
         <p style="font-size:13px;font-weight:700;color:#374151;margin:0 0 2px;">Enter your WASSCE grades</p>
         <p style="font-size:12px;color:#9ca3af;margin:0;">Your Best Six aggregate updates as you select each grade</p>
       </div>
-      <div style="margin:12px 16px;border:0.5px solid #e5e7eb;border-radius:14px;overflow:hidden;">
+      <div class="desktop-table" style="margin:12px 16px;border:0.5px solid #e5e7eb;border-radius:14px;overflow:hidden;">
         <table style="width:100%;border-collapse:collapse;">
           <thead>
             <tr style="background:#f9fafb;">
@@ -153,10 +97,8 @@ var step2Reached = false;
                 </select>
               </td>
             </tr>
-            <tr id="science-row" style="border-top:0.5px solid #f1f5f9;display:none;">
-              <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;display:flex;align-items:center;gap:8px;">Integrated Science <span style="font-size:11px;color:#9ca3af;">(optional)</span>
-                <button type="button" onclick="document.getElementById('science-row').style.display='none';document.getElementById('add-science-btn').style.display='flex';" style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;padding:0;line-height:1;">×</button>
-              </td>
+            <tr style="border-top:0.5px solid #f1f5f9;">
+              <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;">Integrated Science</td>
               <td style="padding:12px 12px;text-align:center;"><span style="font-size:11px;font-weight:600;background:#eff6ff;color:#1e40af;padding:3px 10px;border-radius:100px;">Core</span></td>
               <td style="padding:12px 16px;text-align:right;">
                 <select id="g_science" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
@@ -166,8 +108,10 @@ var step2Reached = false;
                 </select>
               </td>
             </tr>
-            <tr id="social-row" style="border-top:0.5px solid #f1f5f9;">
-              <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;">Social Studies</td>
+            <tr id="social-row" style="border-top:0.5px solid #f1f5f9;display:none;">
+              <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;display:flex;align-items:center;gap:8px;">Social Studies <span style="font-size:11px;color:#9ca3af;">(optional)</span>
+                <button type="button" onclick="document.getElementById('social-row').style.display='none';document.getElementById('add-social-btn').style.display='flex';" style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;padding:0;line-height:1;">×</button>
+              </td>
               <td style="padding:12px 12px;text-align:center;"><span style="font-size:11px;font-weight:600;background:#eff6ff;color:#1e40af;padding:3px 10px;border-radius:100px;">Core</span></td>
               <td style="padding:12px 16px;text-align:right;">
                 <select id="g_social" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
@@ -201,19 +145,102 @@ var step2Reached = false;
           </tbody>
           <tbody id="extra-electives"></tbody>
         </table>
-        <div style="padding:8px 16px 4px;display:flex;gap:8px;flex-wrap:wrap;">
+        <div class="desktop-table" style="padding:8px 16px 4px;display:flex;gap:8px;flex-wrap:wrap;">
           <button type="button" id="addElectiveBtn" onclick="addElective()" style="display:flex;align-items:center;gap:6px;background:none;border:0.5px solid #e5e7eb;border-radius:8px;padding:7px 14px;font-size:13px;color:#6b7280;cursor:pointer;">
             + Add elective
           </button>
-          <button type="button" id="add-science-btn" onclick="document.getElementById('science-row').style.display='';document.getElementById('add-science-btn').style.display='none';" style="display:flex;align-items:center;gap:6px;background:none;border:0.5px solid #e5e7eb;border-radius:8px;padding:7px 14px;font-size:13px;color:#6b7280;cursor:pointer;">
-            + Add Integrated Science
+          <button type="button" id="add-social-btn" onclick="document.getElementById('social-row').style.display='';document.getElementById('add-social-btn').style.display='none';" style="display:flex;align-items:center;gap:6px;background:none;border:0.5px solid #e5e7eb;border-radius:8px;padding:7px 14px;font-size:13px;color:#6b7280;cursor:pointer;">
+            + Add Social Studies
           </button>
         </div>
       </div>
 
-
+      <!-- MOBILE CARD LAYOUT -->
+      <style>
+        .desktop-table { display: block; }
+        .mobile-cards { display: none; }
+        @media (max-width: 640px) {
+          .desktop-table { display: none !important; }
+          .mobile-cards { display: block !important; }
+        }
+      </style>
+      <div class="mobile-cards" style="padding:0 16px 8px;">
+        <p style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;">Core Subjects</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+          <div style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">English Language</p><span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span></div>
+            <select id="m_g_english" onchange="document.getElementById('g_english').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+          </div>
+          <div style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">Core Mathematics</p><span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span></div>
+            <select id="m_g_math" onchange="document.getElementById('g_math').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+          </div>
+          <div style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">Integrated Science</p><span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span></div>
+            <select id="m_g_science" onchange="document.getElementById('g_science').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+          </div>
+          <div id="m_social_row" style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">Social Studies <span style="font-size:10px;color:#9ca3af;">(optional)</span></p><span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span></div>
+            <select id="m_g_social" onchange="document.getElementById('g_social').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+          </div>
+        </div>
+        <p style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;">Elective Subjects</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+          <div style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #15803d;border-radius:10px;padding:12px 14px;">
+            <span style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:100px;border:1px solid #bbf7d0;display:inline-block;margin-bottom:8px;">Elective 1</span>
+            <div style="display:flex;gap:8px;">
+              <select id="m_s_e1" onchange="document.getElementById('s_e1').value=this.value;" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
+                <option value="">Subject</option>
+                <optgroup label="Science"><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Additional Mathematics</option><option>Agricultural Science</option></optgroup>
+                <optgroup label="General Arts"><option>Economics</option><option>Geography</option><option>Government</option><option>History</option><option>Literature in English</option><option>Christian Religious Studies</option><option>Islamic Religious Studies</option><option>RME</option></optgroup>
+                <optgroup label="Business"><option>Business Management</option><option>Accounting</option><option>Business Economics</option></optgroup>
+                <optgroup label="Computing"><option>Computer Science</option><option>ICT</option></optgroup>
+                <optgroup label="Applied Technology"><option>Design and Communication Technology</option><option>Electrical and Electronic Technology</option><option>Building Construction and Wood Technology</option><option>Automobile and Metal Technology</option></optgroup>
+                <optgroup label="Visual and Performing Arts"><option>Art and Design Foundation</option><option>Art and Design Studio</option><option>Music</option><option>Performing Arts</option></optgroup>
+                <optgroup label="Home Economics"><option>Food and Nutrition</option><option>Clothing and Textiles</option><option>Management in Living</option></optgroup>
+                <optgroup label="Languages"><option>French</option><option>Spanish</option><option>Arabic</option><option>Ghanaian Language</option></optgroup>
+              </select>
+              <select id="m_g_e1" onchange="document.getElementById('g_e1').value=this.value;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+            </div>
+          </div>
+          <div style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #15803d;border-radius:10px;padding:12px 14px;">
+            <span style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:100px;border:1px solid #bbf7d0;display:inline-block;margin-bottom:8px;">Elective 2</span>
+            <div style="display:flex;gap:8px;">
+              <select id="m_s_e2" onchange="document.getElementById('s_e2')?document.getElementById('s_e2').value=this.value:null;" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
+                <option value="">Subject</option>
+                <optgroup label="Science"><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Additional Mathematics</option><option>Agricultural Science</option></optgroup>
+                <optgroup label="General Arts"><option>Economics</option><option>Geography</option><option>Government</option><option>History</option><option>Literature in English</option><option>Christian Religious Studies</option><option>Islamic Religious Studies</option><option>RME</option></optgroup>
+                <optgroup label="Business"><option>Business Management</option><option>Accounting</option><option>Business Economics</option></optgroup>
+                <optgroup label="Computing"><option>Computer Science</option><option>ICT</option></optgroup>
+                <optgroup label="Applied Technology"><option>Design and Communication Technology</option><option>Electrical and Electronic Technology</option><option>Building Construction and Wood Technology</option><option>Automobile and Metal Technology</option></optgroup>
+                <optgroup label="Visual and Performing Arts"><option>Art and Design Foundation</option><option>Art and Design Studio</option><option>Music</option><option>Performing Arts</option></optgroup>
+                <optgroup label="Home Economics"><option>Food and Nutrition</option><option>Clothing and Textiles</option><option>Management in Living</option></optgroup>
+                <optgroup label="Languages"><option>French</option><option>Spanish</option><option>Arabic</option><option>Ghanaian Language</option></optgroup>
+              </select>
+              <select id="m_g_e2" onchange="document.getElementById('g_e2')?document.getElementById('g_e2').value=this.value:null;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+            </div>
+          </div>
+          <div style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #15803d;border-radius:10px;padding:12px 14px;">
+            <span style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:100px;border:1px solid #bbf7d0;display:inline-block;margin-bottom:8px;">Elective 3</span>
+            <div style="display:flex;gap:8px;">
+              <select id="m_s_e3" onchange="document.getElementById('s_e3')?document.getElementById('s_e3').value=this.value:null;" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
+                <option value="">Subject</option>
+                <optgroup label="Science"><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Additional Mathematics</option><option>Agricultural Science</option></optgroup>
+                <optgroup label="General Arts"><option>Economics</option><option>Geography</option><option>Government</option><option>History</option><option>Literature in English</option><option>Christian Religious Studies</option><option>Islamic Religious Studies</option><option>RME</option></optgroup>
+                <optgroup label="Business"><option>Business Management</option><option>Accounting</option><option>Business Economics</option></optgroup>
+                <optgroup label="Computing"><option>Computer Science</option><option>ICT</option></optgroup>
+                <optgroup label="Applied Technology"><option>Design and Communication Technology</option><option>Electrical and Electronic Technology</option><option>Building Construction and Wood Technology</option><option>Automobile and Metal Technology</option></optgroup>
+                <optgroup label="Visual and Performing Arts"><option>Art and Design Foundation</option><option>Art and Design Studio</option><option>Music</option><option>Performing Arts</option></optgroup>
+                <optgroup label="Home Economics"><option>Food and Nutrition</option><option>Clothing and Textiles</option><option>Management in Living</option></optgroup>
+                <optgroup label="Languages"><option>French</option><option>Spanish</option><option>Arabic</option><option>Ghanaian Language</option></optgroup>
+              </select>
+              <select id="m_g_e3" onchange="document.getElementById('g_e3')?document.getElementById('g_e3').value=this.value:null;updateAggregate();" style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;"><option value="">Grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
       <div style="padding:16px 16px 20px;">
-        <button onclick="goToStep2();" style="width:100%;padding:16px;background:#052e16;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
+        <button onclick="goToStep2()" style="width:100%;padding:16px;background:#052e16;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
           Check Eligibility
         </button>
       </div>
@@ -318,16 +345,10 @@ programMeta = {
 };
 
 function goToStep2() {
-  const coreIds = ['g_english','g_math','g_science'];
-  const coreVals = coreIds.map(id => parseInt(document.getElementById(id).value));
-  if (coreVals.some(isNaN)) { alert('Please select grades for all 3 core subjects'); return; }
-
-  const elecIds = ['g_e1','g_e2','g_e3'];
-  const elecVals = elecIds.map(id => { var el = document.getElementById(id); return el ? parseInt(el.value) : null; }).filter(v => v !== null);
-  if (elecVals.some(isNaN) || elecVals.length < 1) { alert('Please select at least 1 elective grade'); return; }
-
-  const allVals = coreVals.concat(elecVals);
-  const sorted = [...allVals].sort((a,b)=>a-b);
+  const ids = ['g_english','g_math','g_science','g_e1','g_e2','g_e3'];
+  const vals = ids.map(id => parseInt(document.getElementById(id).value));
+  if (vals.some(isNaN)) { alert('Please select all 6 grades'); return; }
+  const sorted = [...vals].sort((a,b)=>a-b);
   aggregate = sorted.slice(0,6).reduce((a,b)=>a+b,0);
 
   const label = aggregate <= 8 ? 'Outstanding' : aggregate <= 12 ? 'Excellent' : aggregate <= 18 ? 'Very Good' : aggregate <= 24 ? 'Good' : 'Fair';
@@ -337,11 +358,12 @@ function goToStep2() {
   document.getElementById('step1').classList.add('hidden');
   document.getElementById('step2').classList.remove('hidden');
 
-  document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
-  step2Reached = true;
+  // Update step indicators
+  document.getElementById('step2-ind').classList.remove('opacity-40');
+  document.getElementById('step2-ind').querySelector('div').className = 'w-8 h-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center';
+
   renderPrograms('all');
 }
-
 
 function filterPrograms(cat) {
   currentCategory = cat;
@@ -513,7 +535,8 @@ function showResults(key) {
   document.getElementById('step3').classList.remove('hidden');
 
   // Update step 3 indicator
-  document.getElementById('step3-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
+  document.getElementById('step3-ind').classList.remove('opacity-40');
+  document.getElementById('step3-ind').querySelector('div').className = 'w-8 h-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center';
 
   let uniCards = '';
   const unis = getUnisForProgram(key);
@@ -624,7 +647,7 @@ function showResults(key) {
 var electiveCount = 2;
 var eSubs = '<optgroup label="Science"><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Additional Mathematics</option><option>Agricultural Science</option></optgroup><optgroup label="General Arts"><option>Economics</option><option>Geography</option><option>Government</option><option>History</option><option>Literature in English</option><option>Christian Religious Studies</option><option>Islamic Religious Studies</option><option>RME</option></optgroup><optgroup label="Business"><option>Business Management</option><option>Accounting</option><option>Business Economics</option></optgroup><optgroup label="Computing"><option>Computer Science</option><option>ICT</option></optgroup><optgroup label="Applied Technology"><option>Design and Communication Technology</option><option>Electrical and Electronic Technology</option><option>Building Construction and Wood Technology</option><option>Automobile and Metal Technology</option></optgroup><optgroup label="Visual and Performing Arts"><option>Art and Design Foundation</option><option>Art and Design Studio</option><option>Music</option><option>Performing Arts</option></optgroup><optgroup label="Home Economics"><option>Food and Nutrition</option><option>Clothing and Textiles</option><option>Management in Living</option></optgroup><optgroup label="Languages"><option>French</option><option>Spanish</option><option>Arabic</option><option>Ghanaian Language</option></optgroup>';
 function addElective() {
-  if (electiveCount > 5) return;
+  if (electiveCount > 3) return;
   var n = electiveCount;
   var tbody = document.getElementById('extra-electives');
   if (!tbody) { console.error('no tbody'); return; }
@@ -635,8 +658,7 @@ function addElective() {
   td1.style.padding = '12px 16px';
   var s1 = document.createElement('select');
   s1.id = 's_e' + n;
-  s1.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;width:100%;max-width:200px;';
-  s1.setAttribute('onchange', "this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';");
+  s1.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;width:100%;max-width:200px;';
   s1.innerHTML = '<option value="">Elective ' + n + '</option>' + eSubs;
   td1.appendChild(s1);
   var td2 = document.createElement('td');
@@ -654,7 +676,7 @@ function addElective() {
   row.appendChild(td3);
   tbody.appendChild(row);
   electiveCount++;
-  if (electiveCount > 5) document.getElementById('addElectiveBtn').style.display = 'none';
+  if (electiveCount > 3) document.getElementById('addElectiveBtn').style.display = 'none';
 }
 function removeElective(n) {
   var row = document.getElementById('extra-e' + n);
@@ -683,8 +705,5 @@ function goToStep2Ind() {
 }
 var step2Reached = false;
 </script>
-
-
-
 
 {% endblock %}
