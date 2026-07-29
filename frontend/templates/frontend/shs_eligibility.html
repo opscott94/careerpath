@@ -390,6 +390,20 @@ function goToStep2() {
     if (dElecFilled.length < 1) { alert('Please select at least 1 elective grade'); return; }
   }
 
+  // Calculate aggregate from all filled grades
+  const ids = ['g_english','g_math','g_science','g_e1','g_e2','g_e3'];
+  const vals = ids.map(id => { var el = document.getElementById(id); return el && el.value ? parseInt(el.value) : null; }).filter(v => v !== null);
+  const sorted = [...vals].sort((a,b)=>a-b);
+  aggregate = sorted.slice(0,6).reduce((a,b)=>a+b,0);
+  const label = aggregate <= 8 ? 'Outstanding' : aggregate <= 12 ? 'Excellent' : aggregate <= 18 ? 'Very Good' : aggregate <= 24 ? 'Good' : 'Fair';
+  document.getElementById('step1').classList.add('hidden');
+  document.getElementById('step2').classList.remove('hidden');
+  document.getElementById('aggregateDisplay').textContent = aggregate + ' · ' + label;
+  step2Reached = true;
+  document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
+  renderPrograms('all');
+}
+
 function filterPrograms(cat) {
   currentCategory = cat;
   document.querySelectorAll('.filter-btn').forEach(b => {
