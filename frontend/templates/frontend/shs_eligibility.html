@@ -23,6 +23,59 @@ var step2Reached = false;
 
 
 {% endblock %}
+
+<style>
+@media (max-width: 640px) {
+  /* Card wrapper */
+  .border.border-gray-100, 
+  [style*="border-top:0.5px solid #f1f5f9"] {
+    border-radius: 12px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  /* Grade select full width on mobile */
+  select[id^="g_"], select[id^="s_e"] {
+    width: 100% !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Table becomes block on mobile */
+  table, thead, tbody, tr, td, th {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  /* Hide table header */
+  thead { display: none !important; }
+
+  /* Each row becomes a card */
+  tbody tr {
+    background: #fff !important;
+    border: 0.5px solid #e5e7eb !important;
+    border-radius: 14px !important;
+    margin-bottom: 10px !important;
+    padding: 12px 14px !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05) !important;
+    border-top: 0.5px solid #e5e7eb !important;
+  }
+
+  /* Remove inner padding on tds */
+  tbody td {
+    padding: 3px 0 !important;
+    border: none !important;
+  }
+
+  /* Table wrapper no overflow hidden on mobile */
+  [style*="border-radius:14px;overflow:hidden"] {
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    margin: 0 8px !important;
+  }
+}
+</style>
 {% block content %}
 
 <div class="max-w-3xl mx-auto px-4 py-12">
