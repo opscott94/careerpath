@@ -100,8 +100,10 @@ var step2Reached = false;
                 </select>
               </td>
             </tr>
-            <tr style="border-top:0.5px solid #f1f5f9;">
-              <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;">Integrated Science</td>
+            <tr id="science-row" style="border-top:0.5px solid #f1f5f9;">
+              <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;display:flex;align-items:center;gap:8px;">Integrated Science <span style="font-size:11px;color:#9ca3af;">(optional)</span>
+                <button type="button" onclick="document.getElementById('science-row').style.display='none';document.getElementById('add-science-btn').style.display='flex';" style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;padding:0;line-height:1;">×</button>
+              </td>
               <td style="padding:12px 12px;text-align:center;"><span style="font-size:11px;font-weight:600;background:#eff6ff;color:#1e40af;padding:3px 10px;border-radius:100px;">Core</span></td>
               <td style="padding:12px 16px;text-align:right;">
                 <select id="g_science" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
@@ -111,10 +113,8 @@ var step2Reached = false;
                 </select>
               </td>
             </tr>
-            <tr id="social-row" style="border-top:0.5px solid #f1f5f9;display:none;">
-              <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;display:flex;align-items:center;gap:8px;">Social Studies <span style="font-size:11px;color:#9ca3af;">(optional)</span>
-                <button type="button" onclick="document.getElementById('social-row').style.display='none';document.getElementById('add-social-btn').style.display='flex';" style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;padding:0;line-height:1;">×</button>
-              </td>
+            <tr id="social-row" style="border-top:0.5px solid #f1f5f9;">
+              <td style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;">Social Studies</td>
               <td style="padding:12px 12px;text-align:center;"><span style="font-size:11px;font-weight:600;background:#eff6ff;color:#1e40af;padding:3px 10px;border-radius:100px;">Core</span></td>
               <td style="padding:12px 16px;text-align:right;">
                 <select id="g_social" style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
@@ -152,8 +152,8 @@ var step2Reached = false;
           <button type="button" id="addElectiveBtn" onclick="addElective()" style="display:flex;align-items:center;gap:6px;background:none;border:0.5px solid #e5e7eb;border-radius:8px;padding:7px 14px;font-size:13px;color:#6b7280;cursor:pointer;">
             + Add elective
           </button>
-          <button type="button" id="add-social-btn" onclick="document.getElementById('social-row').style.display='';document.getElementById('add-social-btn').style.display='none';" style="display:flex;align-items:center;gap:6px;background:none;border:0.5px solid #e5e7eb;border-radius:8px;padding:7px 14px;font-size:13px;color:#6b7280;cursor:pointer;">
-            + Add Social Studies
+          <button type="button" id="add-science-btn" onclick="document.getElementById('science-row').style.display='';document.getElementById('add-science-btn').style.display='none';" style="display:none;align-items:center;gap:6px;background:none;border:0.5px solid #e5e7eb;border-radius:8px;padding:7px 14px;font-size:13px;color:#6b7280;cursor:pointer;">
+            + Add Integrated Science
           </button>
         </div>
       </div>
@@ -571,7 +571,7 @@ function showResults(key) {
 var electiveCount = 2;
 var eSubs = '<optgroup label="Science"><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Additional Mathematics</option><option>Agricultural Science</option></optgroup><optgroup label="General Arts"><option>Economics</option><option>Geography</option><option>Government</option><option>History</option><option>Literature in English</option><option>Christian Religious Studies</option><option>Islamic Religious Studies</option><option>RME</option></optgroup><optgroup label="Business"><option>Business Management</option><option>Accounting</option><option>Business Economics</option></optgroup><optgroup label="Computing"><option>Computer Science</option><option>ICT</option></optgroup><optgroup label="Applied Technology"><option>Design and Communication Technology</option><option>Electrical and Electronic Technology</option><option>Building Construction and Wood Technology</option><option>Automobile and Metal Technology</option></optgroup><optgroup label="Visual and Performing Arts"><option>Art and Design Foundation</option><option>Art and Design Studio</option><option>Music</option><option>Performing Arts</option></optgroup><optgroup label="Home Economics"><option>Food and Nutrition</option><option>Clothing and Textiles</option><option>Management in Living</option></optgroup><optgroup label="Languages"><option>French</option><option>Spanish</option><option>Arabic</option><option>Ghanaian Language</option></optgroup>';
 function addElective() {
-  if (electiveCount > 3) return;
+  if (electiveCount > 5) return;
   var n = electiveCount;
   var tbody = document.getElementById('extra-electives');
   if (!tbody) { console.error('no tbody'); return; }
@@ -600,7 +600,7 @@ function addElective() {
   row.appendChild(td3);
   tbody.appendChild(row);
   electiveCount++;
-  if (electiveCount > 3) document.getElementById('addElectiveBtn').style.display = 'none';
+  if (electiveCount > 5) document.getElementById('addElectiveBtn').style.display = 'none';
 }
 function removeElective(n) {
   var row = document.getElementById('extra-e' + n);
