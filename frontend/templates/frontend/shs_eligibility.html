@@ -265,39 +265,24 @@ programMeta = {
 };
 
 function goToStep2() {
-  var isMobile = window.innerWidth <= 640;
-
-  if (isMobile) {
-    // Mobile: read from mobile card selects
-    var mCore = ['m_g_english','m_g_math','m_g_science'];
-    var mElec = ['m_g_e1','m_g_e2','m_g_e3'];
-    for (var i=0; i<mCore.length; i++) {
-      var el = document.getElementById(mCore[i]);
-      if (!el || !el.value) { alert('Please select grades for all core subjects'); return; }
-    }
-    var mElecFilled = mElec.filter(id => { var el = document.getElementById(id); return el && el.value; });
-    if (mElecFilled.length < 3) { alert('Please select grades for all 3 electives'); return; }
-    // Sync to desktop selects for aggregate calculation
-    if (typeof syncMobileToDesktop === 'function') syncMobileToDesktop();
-  } else {
-    // Desktop: read from desktop table selects
-    var dCore = ['g_english','g_math','g_science'];
-    for (var j=0; j<dCore.length; j++) {
-      var el2 = document.getElementById(dCore[j]);
-      if (!el2 || !el2.value) { alert('Please select grades for all core subjects'); return; }
-    }
-    // Check elective 1 always exists; e2 and e3 may be dynamically added
-    var dElec = ['g_e1','g_e2','g_e3'];
-    var dElecFilled = dElec.filter(id => { var el = document.getElementById(id); return el && el.value; });
-    if (dElecFilled.length < 1) { alert('Please select at least 1 elective grade'); return; }
+  // Validate core grades
+  var coreIds = ['g_english','g_math','g_science'];
+  for (var i=0; i<coreIds.length; i++) {
+    var el = document.getElementById(coreIds[i]);
+    if (!el || !el.value) { alert('Please select grades for all 3 core subjects'); return; }
   }
+  // Validate at least 1 elective grade
+  var elecIds = ['g_e1','g_e2','g_e3'];
+  var filledElec = elecIds.filter(id => { var el = document.getElementById(id); return el && el.value; });
+  if (filledElec.length < 1) { alert('Please select at least 1 elective grade'); return; }
 
-  // Calculate aggregate from all filled grades
-  const ids = ['g_english','g_math','g_science','g_e1','g_e2','g_e3'];
-  const vals = ids.map(id => { var el = document.getElementById(id); return el && el.value ? parseInt(el.value) : null; }).filter(v => v !== null);
-  const sorted = [...vals].sort((a,b)=>a-b);
+  // Collect all filled grades for aggregate
+  var allIds = coreIds.concat(elecIds);
+  var vals = allIds.map(id => { var el = document.getElementById(id); return el && el.value ? parseInt(el.value) : null; }).filter(v => v !== null);
+  var sorted = vals.slice().sort((a,b)=>a-b);
   aggregate = sorted.slice(0,6).reduce((a,b)=>a+b,0);
-  const label = aggregate <= 8 ? 'Outstanding' : aggregate <= 12 ? 'Excellent' : aggregate <= 18 ? 'Very Good' : aggregate <= 24 ? 'Good' : 'Fair';
+  var label = aggregate <= 8 ? 'Outstanding' : aggregate <= 12 ? 'Excellent' : aggregate <= 18 ? 'Very Good' : aggregate <= 24 ? 'Good' : 'Fair';
+
   document.getElementById('step1').classList.add('hidden');
   document.getElementById('step2').classList.remove('hidden');
   document.getElementById('aggregateDisplay').textContent = aggregate + ' · ' + label;
@@ -305,6 +290,7 @@ function goToStep2() {
   document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
   renderPrograms('all');
 }
+
 
 function filterPrograms(cat) {
   currentCategory = cat;
