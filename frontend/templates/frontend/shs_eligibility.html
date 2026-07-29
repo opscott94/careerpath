@@ -582,7 +582,8 @@ function addElective() {
   td1.style.padding = '12px 16px';
   var s1 = document.createElement('select');
   s1.id = 's_e' + n;
-  s1.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;width:100%;max-width:200px;';
+  s1.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;width:100%;max-width:200px;';
+  s1.setAttribute('onchange', "this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';");
   s1.innerHTML = '<option value="">Elective ' + n + '</option>' + eSubs;
   td1.appendChild(s1);
   var td2 = document.createElement('td');
