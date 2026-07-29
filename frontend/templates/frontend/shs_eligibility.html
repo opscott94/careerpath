@@ -265,29 +265,27 @@ programMeta = {
 };
 
 function goToStep2() {
-  // Validate core grades
-  var coreIds = ['g_english','g_math','g_science'];
-  for (var i=0; i<coreIds.length; i++) {
-    var el = document.getElementById(coreIds[i]);
-    if (!el || !el.value) { alert('Please select grades for all 3 core subjects'); return; }
-  }
-  // Validate at least 1 elective grade
-  var elecIds = ['g_e1','g_e2','g_e3'];
-  var filledElec = elecIds.filter(id => { var el = document.getElementById(id); return el && el.value; });
-  if (filledElec.length < 1) { alert('Please select at least 1 elective grade'); return; }
+  const coreIds = ['g_english','g_math','g_science'];
+  const coreVals = coreIds.map(id => parseInt(document.getElementById(id).value));
+  if (coreVals.some(isNaN)) { alert('Please select grades for all 3 core subjects'); return; }
 
-  // Collect all filled grades for aggregate
-  var allIds = coreIds.concat(elecIds);
-  var vals = allIds.map(id => { var el = document.getElementById(id); return el && el.value ? parseInt(el.value) : null; }).filter(v => v !== null);
-  var sorted = vals.slice().sort((a,b)=>a-b);
+  const elecIds = ['g_e1','g_e2','g_e3'];
+  const elecVals = elecIds.map(id => { var el = document.getElementById(id); return el ? parseInt(el.value) : null; }).filter(v => v !== null);
+  if (elecVals.some(isNaN) || elecVals.length < 1) { alert('Please select at least 1 elective grade'); return; }
+
+  const allVals = coreVals.concat(elecVals);
+  const sorted = [...allVals].sort((a,b)=>a-b);
   aggregate = sorted.slice(0,6).reduce((a,b)=>a+b,0);
-  var label = aggregate <= 8 ? 'Outstanding' : aggregate <= 12 ? 'Excellent' : aggregate <= 18 ? 'Very Good' : aggregate <= 24 ? 'Good' : 'Fair';
+
+  const label = aggregate <= 8 ? 'Outstanding' : aggregate <= 12 ? 'Excellent' : aggregate <= 18 ? 'Very Good' : aggregate <= 24 ? 'Good' : 'Fair';
+  document.getElementById('aggregateBadge').textContent = aggregate;
+  document.getElementById('aggregateLabel').textContent = `Aggregate ${aggregate} · ${label}`;
 
   document.getElementById('step1').classList.add('hidden');
   document.getElementById('step2').classList.remove('hidden');
-  document.getElementById('aggregateDisplay').textContent = aggregate + ' · ' + label;
-  step2Reached = true;
+
   document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
+  step2Reached = true;
   renderPrograms('all');
 }
 
