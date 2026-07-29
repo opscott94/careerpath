@@ -345,10 +345,16 @@ programMeta = {
 };
 
 function goToStep2() {
-  const ids = ['g_english','g_math','g_science','g_e1','g_e2','g_e3'];
-  const vals = ids.map(id => parseInt(document.getElementById(id).value));
-  if (vals.some(isNaN)) { alert('Please select all 6 grades'); return; }
-  const sorted = [...vals].sort((a,b)=>a-b);
+  const coreIds = ['g_english','g_math','g_science'];
+  const coreVals = coreIds.map(id => parseInt(document.getElementById(id).value));
+  if (coreVals.some(isNaN)) { alert('Please select grades for all 3 core subjects'); return; }
+
+  const elecIds = ['g_e1','g_e2','g_e3'];
+  const elecVals = elecIds.map(id => { var el = document.getElementById(id); return el ? parseInt(el.value) : null; }).filter(v => v !== null);
+  if (elecVals.some(isNaN) || elecVals.length < 1) { alert('Please select at least 1 elective grade'); return; }
+
+  const allVals = coreVals.concat(elecVals);
+  const sorted = [...allVals].sort((a,b)=>a-b);
   aggregate = sorted.slice(0,6).reduce((a,b)=>a+b,0);
 
   const label = aggregate <= 8 ? 'Outstanding' : aggregate <= 12 ? 'Excellent' : aggregate <= 18 ? 'Very Good' : aggregate <= 24 ? 'Good' : 'Fair';
@@ -358,12 +364,11 @@ function goToStep2() {
   document.getElementById('step1').classList.add('hidden');
   document.getElementById('step2').classList.remove('hidden');
 
-  // Update step indicators
-  document.getElementById('step2-ind').classList.remove('opacity-40');
-  document.getElementById('step2-ind').querySelector('div').className = 'w-8 h-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center';
-
+  document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
+  step2Reached = true;
   renderPrograms('all');
 }
+
 
 function filterPrograms(cat) {
   currentCategory = cat;
@@ -535,8 +540,7 @@ function showResults(key) {
   document.getElementById('step3').classList.remove('hidden');
 
   // Update step 3 indicator
-  document.getElementById('step3-ind').classList.remove('opacity-40');
-  document.getElementById('step3-ind').querySelector('div').className = 'w-8 h-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center';
+  document.getElementById('step3-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
 
   let uniCards = '';
   const unis = getUnisForProgram(key);
