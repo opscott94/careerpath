@@ -40,19 +40,28 @@ def career_search(request):
 def ai_career_match(request):
     """
     AI-powered career matching endpoint (two-step approach).
-    Step 1: Small LLM call to determine career + search keywords from the interest.
-            Instructions are placed first to leverage Ollama's prompt caching.
+    Step 1: Check if frontend pre-generated Firebase AI results. If not, use local LLM.
     Step 2: Programmatic database search using SQL filtering via Q objects.
     """
     data = json.loads(request.body)
+    from django.db.models import Q
+    from django.conf import settings
+    from google.oauth2 import service_account
+    import google.auth.transport.requests
+    import urllib.request
+    import os
+
+    key_path = os.path.join(settings.BASE_DIR, 'gcp-key.json')
+
+    # If the key is not set, we cannot run Vertex AI, so fallback to keyword search
+    if not os.path.exists(key_path):
+        return JsonResponse({'ai_match': False, 'message': 'GCP service account key not found, fallback to keyword search'})
+
     query = data.get('query', '').lower().strip()
     if not query:
         return JsonResponse({'error': 'No query provided'}, status=400)
 
-    import urllib.request
-    from django.db.models import Q
-
-    # Step 1: Ask LLM to determine career and search keywords (structured for Ollama prompt caching)
+    # Ask Gemini to determine career and search keywords
     system_prompt = """You are a career counselor for Ghanaian students. Analyze the student's interest and respond ONLY with a JSON object in this format:
 {
   "career_name": "determined career title (e.g. Aerospace Engineer, Medical Doctor, Software Developer)",
@@ -76,44 +85,70 @@ CRITICAL RULES:
 6. Respond ONLY with the JSON object. Do NOT output any thinking process, reasoning, explanations, or introductory text. Skip any thinking phase and generate the JSON directly."""
 
     user_prompt = f"Student Stated Interest: \"{query}\""
+    full_prompt = f"{system_prompt}\n\n{user_prompt}"
 
-    try:
-        payload = {
-            "model": "gemma4:e4b",
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            "stream": False,
-            "format": "json",
-            "options": {
-                "temperature": 0.0,
-                "num_predict": 450,
-                "num_ctx": 1024
-            }
+    # Try calling the Gemini developer API
+    payload = {
+        "contents": [{
+            "role": "user",
+            "parts": [{"text": full_prompt}]
+        }],
+        "generationConfig": {
+            "responseMimeType": "application/json"
         }
+    }
 
-        req = urllib.request.Request(
-            "http://localhost:11434/api/chat",
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST"
-        )
-        with urllib.request.urlopen(req, timeout=150) as response:
-            res_data = json.loads(response.read().decode())
-            content = res_data["message"]["content"]
-            parsed = json.loads(content)
+    parsed = None
+    models_to_try = ["gemini-2.5-flash", "gemini-2.5-pro"]
+    
+    try:
+        # Load credentials and refresh token
+        scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+        creds = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
+        auth_req = google.auth.transport.requests.Request()
+        creds.refresh(auth_req)
+        token = creds.token
+        project_id = creds.project_id
+        
+        for model_name in models_to_try:
+            url = f"https://firebasevertexai.googleapis.com/v1beta/projects/{project_id}/locations/us-central1/publishers/google/models/{model_name}:generateContent"
+            try:
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {token}"
+                    },
+                    method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=30) as response:
+                    res_data = json.loads(response.read().decode())
+                    candidates = res_data.get("candidates", [])
+                    if candidates:
+                        text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                        parsed = json.loads(text_content)
+                        break
+            except Exception as e:
+                print(f"DEBUG: Backend Vertex AI call for model {model_name} failed: {e}")
+                continue
+    except Exception as e:
+        print(f"DEBUG: Backend Vertex AI authentication failed: {e}")
 
-            career_name = parsed.get("career_name", "")
-            career_description = parsed.get("career_description", "")
-            primary_keywords = parsed.get("primary_keywords", [])
-            secondary_keywords = parsed.get("secondary_keywords", [])
-            explanations = parsed.get("explanations", {})
+    if not parsed:
+        return JsonResponse({'ai_match': False, 'message': 'Gemini call failed, fallback to keyword search'})
 
-            if not career_name or (not primary_keywords and not secondary_keywords):
-                raise ValueError("Missing career_name or keywords")
+    career_name = parsed.get("career_name", "")
+    career_description = parsed.get("career_description", "")
+    primary_keywords = parsed.get("primary_keywords", [])
+    secondary_keywords = parsed.get("secondary_keywords", [])
+    explanations = parsed.get("explanations", {})
 
-        # Step 2: SQL-level filtering for candidate programs using AI keywords
+    if not career_name or (not primary_keywords and not secondary_keywords):
+        return JsonResponse({'ai_match': False, 'message': 'Incomplete response, fallback to keyword search'})
+
+    # Step 2: SQL-level filtering for candidate programs using AI keywords
+    try:
         all_keywords = primary_keywords + secondary_keywords
         query_filter = Q()
         for kw in all_keywords:

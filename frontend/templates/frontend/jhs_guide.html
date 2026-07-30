@@ -3,7 +3,9 @@
 {% block content %}
 
 <div class="max-w-3xl mx-auto px-4 py-12" style="position:relative;">
-  <div style="position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:url('https://images.pexels.com/photos/9879939/pexels-photo-9879939.jpeg');background-size:cover;background-position:center;opacity:0.08;"></div>
+  <div
+    style="position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:url('https://images.pexels.com/photos/9879939/pexels-photo-9879939.jpeg');background-size:cover;background-position:center;opacity:0.08;">
+  </div>
   <div class="text-center mb-10">
     <div class="text-5xl mb-4">🎓</div>
     <h1 class="text-3xl font-bold mb-3">JHS Career Guide</h1>
@@ -11,23 +13,31 @@
   </div>
 
   <div class="bg-white rounded-2xl shadow-sm p-8 mb-6">
-    <label class="block font-semibold mb-3 text-gray-700">What do you want to be? <span class="text-gray-400 font-normal">(type naturally)</span></label>
+    <label class="block font-semibold mb-3 text-gray-700">What do you want to be? <span
+        class="text-gray-400 font-normal">(type naturally)</span></label>
     <div class="flex gap-3">
       <input id="careerInput" type="text" placeholder="e.g. I want to be a doctor, software developer, lawyer..."
         class="flex-1 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
         onkeydown="if(event.key==='Enter') searchCareer()">
-      <button onclick="searchCareer()" class="bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary transition">
+      <button onclick="searchCareer()"
+        class="bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary transition">
         Search
       </button>
     </div>
     <div class="flex flex-wrap gap-2 mt-4">
       <span class="text-sm text-gray-400">Try:</span>
-        <button onclick="document.getElementById('careerInput').value='I want to be a doctor'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">doctor</button>
-      <button onclick="document.getElementById('careerInput').value='I want to be an engineer'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">engineer</button>
-      <button onclick="document.getElementById('careerInput').value='I want to be a lawyer'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">lawyer</button>
-      <button onclick="document.getElementById('careerInput').value='I want to be a nurse'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">nurse</button>
-      <button onclick="document.getElementById('careerInput').value='I want to be an accountant'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">accountant</button>
-      <button onclick="document.getElementById('careerInput').value='I want to be a journalist'; searchCareer()" class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">journalist</button>
+      <button onclick="document.getElementById('careerInput').value='I want to be a doctor'; searchCareer()"
+        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">doctor</button>
+      <button onclick="document.getElementById('careerInput').value='I want to be an engineer'; searchCareer()"
+        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">engineer</button>
+      <button onclick="document.getElementById('careerInput').value='I want to be a lawyer'; searchCareer()"
+        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">lawyer</button>
+      <button onclick="document.getElementById('careerInput').value='I want to be a nurse'; searchCareer()"
+        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">nurse</button>
+      <button onclick="document.getElementById('careerInput').value='I want to be an accountant'; searchCareer()"
+        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">accountant</button>
+      <button onclick="document.getElementById('careerInput').value='I want to be a journalist'; searchCareer()"
+        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">journalist</button>
     </div>
   </div>
 
@@ -43,50 +53,53 @@
 </div>
 
 <script>
-async function searchCareer() {
-  const query = document.getElementById('careerInput').value.trim();
-  if (!query) return;
-  document.getElementById('loadingDiv').classList.remove('hidden');
-  document.getElementById('loadingText').textContent = 'Our AI is finding your career path...';
-  document.getElementById('aiResultsDiv').classList.add('hidden');
-  document.getElementById('resultsDiv').classList.add('hidden');
-  document.getElementById('subjectDiv').classList.add('hidden');
-  document.getElementById('programDiv').classList.add('hidden');
-  document.getElementById('aiResultsDiv').innerHTML = '';
-  document.getElementById('resultsDiv').innerHTML = '';
-  document.getElementById('programDiv').innerHTML = '';
+  async function searchCareer() {
+    const query = document.getElementById('careerInput').value.trim();
+    if (!query) return;
+    document.getElementById('loadingDiv').classList.remove('hidden');
+    document.getElementById('loadingText').textContent = 'Our AI is finding your career path...';
+    document.getElementById('aiResultsDiv').classList.add('hidden');
+    document.getElementById('resultsDiv').classList.add('hidden');
+    document.getElementById('subjectDiv').classList.add('hidden');
+    document.getElementById('programDiv').classList.add('hidden');
+    document.getElementById('aiResultsDiv').innerHTML = '';
+    document.getElementById('resultsDiv').innerHTML = '';
+    document.getElementById('programDiv').innerHTML = '';
 
-  try {
-    const aiRes = await fetch('/api/ai-career-match/', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
-      body: JSON.stringify({query: query.toLowerCase()})
-    });
-    const aiData = await aiRes.json();
+    try {
+      const aiRes = await fetch('/api/ai-career-match/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify({ query: query })
+      });
+      const aiData = await aiRes.json();
 
-    if (aiData.ai_match && aiData.matched_programs && aiData.matched_programs.length > 0) {
-      document.getElementById('loadingDiv').classList.add('hidden');
-      renderAiResults(aiData);
-      return;
+      if (aiData.ai_match && aiData.matched_programs && aiData.matched_programs.length > 0) {
+        document.getElementById('loadingDiv').classList.add('hidden');
+        renderAiResults(aiData);
+        return;
+      }
+    } catch (e) {
+      console.error("Gemini AI match failed, falling back to keyword search:", e);
     }
-  } catch(e) {
-    // AI failed, fall back to keyword search
+
+    // Fallback to keyword search
+    document.getElementById('loadingText').textContent = 'Finding the best career match...';
+    const res = await fetch('/api/career-search/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+      body: JSON.stringify({ query: query.toLowerCase() })
+    });
+    const data = await res.json();
+    document.getElementById('loadingDiv').classList.add('hidden');
+    renderKeywordResults(data, query);
   }
 
-  // Fallback to keyword search
-  document.getElementById('loadingText').textContent = 'Finding the best career match...';
-  const res = await fetch('/api/career-search/', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
-    body: JSON.stringify({query: query.toLowerCase()})
-  });
-  const data = await res.json();
-  document.getElementById('loadingDiv').classList.add('hidden');
-  renderKeywordResults(data, query);
-}
+  // Bind handlers to global window scope so HTML attributes can access them from the module
+  window.searchCareer = searchCareer;
 
-function renderAiResults(aiData) {
-  let html = `
+  function renderAiResults(aiData) {
+    let html = `
     <div style="border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;margin-bottom:16px;">
       <div style="background:#052e16;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:14px;">
@@ -108,10 +121,10 @@ function renderAiResults(aiData) {
         </p>
         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
           ${aiData.matched_programs.map((p, i) => `
-            <div style="display:flex;align-items:flex-start;gap:12px;background:${i===0?'#fefce8':'#f9fafb'};border:2px solid ${i===0?'#fde68a':'#e5e7eb'};border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;"
+            <div style="display:flex;align-items:flex-start;gap:12px;background:${i === 0 ? '#fefce8' : '#f9fafb'};border:2px solid ${i === 0 ? '#fde68a' : '#e5e7eb'};border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;"
                  class="hover:border-primary card-hover"
                  onclick="getProgramDetails('${p.program_name.replace(/'/g, "\\'")}')">
-              <div style="width:32px;height:32px;background:${i===0?'#fef3c7':'#f3f4f6'};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:${i===0?'#92400e':'#6b7280'};flex-shrink:0;">${i+1}</div>
+              <div style="width:32px;height:32px;background:${i === 0 ? '#fef3c7' : '#f3f4f6'};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:${i === 0 ? '#92400e' : '#6b7280'};flex-shrink:0;">${i + 1}</div>
               <div style="flex:1;">
                 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
                   <p style="font-size:14px;font-weight:700;color:#1f2937;margin:0;">${p.program_name}</p>
@@ -134,25 +147,25 @@ function renderAiResults(aiData) {
         </div>
       </div>
     </div>`;
-  document.getElementById('aiResultsDiv').innerHTML = html;
-  document.getElementById('aiResultsDiv').classList.remove('hidden');
-}
+    document.getElementById('aiResultsDiv').innerHTML = html;
+    document.getElementById('aiResultsDiv').classList.remove('hidden');
+  }
 
-function renderKeywordResults(data, query) {
-  if (!data.results || data.results.length === 0) {
-    document.getElementById('resultsDiv').innerHTML = `
+  function renderKeywordResults(data, query) {
+    if (!data.results || data.results.length === 0) {
+      document.getElementById('resultsDiv').innerHTML = `
       <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 text-center">
         <div class="text-4xl mb-3">🤔</div>
         <p class="font-semibold text-yellow-800">No careers found for "${query}"</p>
         <p class="text-yellow-700 text-sm mt-1">Try words like: doctor, engineer, lawyer, nurse, teacher, accountant</p>
       </div>`;
-    document.getElementById('resultsDiv').classList.remove('hidden');
-    return;
-  }
+      document.getElementById('resultsDiv').classList.remove('hidden');
+      return;
+    }
 
-  let html = '<h2 class="font-bold text-lg mb-4 text-gray-700">Best matches for you:</h2><div class="space-y-3">';
-  data.results.forEach(c => {
-    html += `
+    let html = '<h2 class="font-bold text-lg mb-4 text-gray-700">Best matches for you:</h2><div class="space-y-3">';
+    data.results.forEach(c => {
+      html += `
       <div class="bg-white rounded-2xl shadow-sm p-5 card-hover cursor-pointer border-2 border-transparent hover:border-primary"
            onclick="getSubjects(${c.id}, '${c.name}')">
         <div class="flex items-center justify-between">
@@ -167,22 +180,22 @@ function renderKeywordResults(data, query) {
         </div>
         <p class="text-gray-500 text-sm mt-3">${c.why_text}</p>
       </div>`;
-  });
-  html += '</div>';
-  document.getElementById('resultsDiv').innerHTML = html;
-  document.getElementById('resultsDiv').classList.remove('hidden');
-}
+    });
+    html += '</div>';
+    document.getElementById('resultsDiv').innerHTML = html;
+    document.getElementById('resultsDiv').classList.remove('hidden');
+  }
 
-async function getSubjects(careerId, careerName) {
-  document.getElementById('subjectDiv').classList.add('hidden');
-  const res = await fetch('/api/subject-recommendation/', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
-    body: JSON.stringify({career_id: careerId})
-  });
-  const d = await res.json();
+  async function getSubjects(careerId, careerName) {
+    document.getElementById('subjectDiv').classList.add('hidden');
+    const res = await fetch('/api/subject-recommendation/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+      body: JSON.stringify({ career_id: careerId })
+    });
+    const d = await res.json();
 
-  let html = `
+    let html = `
     <div class="mt-6" style="border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;">
 
       <div style="background:#052e16;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
@@ -205,14 +218,14 @@ async function getSubjects(careerId, careerName) {
           📌 Core subjects (all students)
         </p>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;">
-          ${d.core_subjects.map(s=>`<span style="font-size:12px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:5px 12px;border-radius:100px;">${s.name}</span>`).join('')}
+          ${d.core_subjects.map(s => `<span style="font-size:12px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:5px 12px;border-radius:100px;">${s.name}</span>`).join('')}
         </div>
 
         <p style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;">
           ⭐ Required electives
         </p>
         <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
-          ${d.mandatory_electives.map(s=>`
+          ${d.mandatory_electives.map(s => `
             <div style="display:flex;align-items:center;gap:10px;background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:10px 14px;">
               <span style="font-size:11px;font-weight:700;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:100px;flex-shrink:0;">Required</span>
               <span style="font-size:13px;color:#78350f;font-weight:500;">${s.name}</span>
@@ -223,7 +236,7 @@ async function getSubjects(careerId, careerName) {
           💡 Recommended electives
         </p>
         <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
-          ${d.recommended_electives.map(s=>`
+          ${d.recommended_electives.map(s => `
             <div style="padding:10px 14px;border:1px solid #bfdbfe;border-radius:10px;background:#eff6ff;">
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:${s.reason ? '4px' : '0'};">
                 <span style="font-size:11px;font-weight:700;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:100px;flex-shrink:0;">Recommended</span>
@@ -241,31 +254,31 @@ async function getSubjects(careerId, careerName) {
         </div>
       </div>
     </div>`;
-  document.getElementById('subjectDiv').innerHTML = html;
-  document.getElementById('subjectDiv').classList.remove('hidden');
-  document.getElementById('subjectDiv').scrollIntoView({behavior:'smooth'});
-}
+    document.getElementById('subjectDiv').innerHTML = html;
+    document.getElementById('subjectDiv').classList.remove('hidden');
+    document.getElementById('subjectDiv').scrollIntoView({ behavior: 'smooth' });
+  }
 
-function getEmoji(icon) {
-  const map = {stethoscope:'🩺',bridge:'🌉',laptop:'💻',chart:'📊',scales:'⚖️',hospital:'🏥',seedling:'🌱',building:'🏛️',pill:'💊',newspaper:'📰',microscope:'🔬','chart increasing':'📈'};
-  return map[icon] || '🎯';
-}
+  function getEmoji(icon) {
+    const map = { stethoscope: '🩺', bridge: '🌉', laptop: '💻', chart: '📊', scales: '⚖️', hospital: '🏥', seedling: '🌱', building: '🏛️', pill: '💊', newspaper: '📰', microscope: '🔬', 'chart increasing': '📈' };
+    return map[icon] || '🎯';
+  }
 
-function getCookie(name) {
-  let v = document.cookie.match('(^|;) ?'+name+'=([^;]*)(;|$)');
-  return v ? v[2] : null;
-}
+  function getCookie(name) {
+    let v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+  }
 
-async function getProgramDetails(programName) {
-  document.getElementById('programDiv').classList.add('hidden');
-  const res = await fetch('/api/program-details/', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
-    body: JSON.stringify({program_name: programName})
-  });
-  const d = await res.json();
+  async function getProgramDetails(programName) {
+    document.getElementById('programDiv').classList.add('hidden');
+    const res = await fetch('/api/program-details/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+      body: JSON.stringify({ program_name: programName })
+    });
+    const d = await res.json();
 
-  let html = `
+    let html = `
     <div class="mt-6" style="border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;">
 
       <div style="background:#052e16;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
@@ -295,10 +308,10 @@ async function getProgramDetails(programName) {
               📌 Core subjects (required pass)
             </p>
             <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
-              ${off.core_subjects.length > 0 
-                ? off.core_subjects.map(s=>`<span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">${s.name}</span>`).join('')
-                : '<span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">Core Mathematics</span><span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">English Language</span><span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">Integrated Science</span><span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">Social Studies</span>'
-              }
+              ${off.core_subjects.length > 0
+        ? off.core_subjects.map(s => `<span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">${s.name}</span>`).join('')
+        : '<span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">Core Mathematics</span><span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">English Language</span><span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">Integrated Science</span><span style="font-size:11px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:100px;">Social Studies</span>'
+      }
             </div>
 
             <p style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;">
@@ -339,9 +352,9 @@ async function getProgramDetails(programName) {
         </div>
       </div>
     </div>`;
-  document.getElementById('programDiv').innerHTML = html;
-  document.getElementById('programDiv').classList.remove('hidden');
-  document.getElementById('programDiv').scrollIntoView({behavior:'smooth'});
-}
+    document.getElementById('programDiv').innerHTML = html;
+    document.getElementById('programDiv').classList.remove('hidden');
+    document.getElementById('programDiv').scrollIntoView({ behavior: 'smooth' });
+  }
 </script>
 {% endblock %}

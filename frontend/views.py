@@ -5,7 +5,12 @@ def landing(request):
     return render(request, 'frontend/landing.html', {'unis': unis})
 
 def jhs_guide(request):
-    return render(request, 'frontend/jhs_guide.html')
+    import os
+    import dotenv
+    dotenv.load_dotenv(override=True)
+    gemini_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDnUoGfv6RdAdUDkhFk9zWg3qy1TFzugaQ')
+    print("DEBUG: views.py gemini_key =", repr(gemini_key))
+    return render(request, 'frontend/jhs_guide.html', {'GEMINI_API_KEY': gemini_key})
 
 def shs_eligibility(request):
     return render(request, 'frontend/shs_eligibility.html')
