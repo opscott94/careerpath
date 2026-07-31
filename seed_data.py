@@ -2055,6 +2055,46 @@ req_815.elective_subjects.add(s_phys)
 req_816 = ProgramRequirement.objects.create(program=p_1112, learning_area=la_vpa)
 req_817 = ProgramRequirement.objects.create(program=p_1112, learning_area=la_science)
 
+# --- AUTO-ASSIGN CAMPUSES AND NOTES FOR PROGRAMS ---
+print("Assigning campuses and notes to programs...")
+for prog in Program.objects.select_related('university').all():
+    lower_name = prog.name.lower()
+    uni_code = prog.university.short_name.upper()
+
+    campus = 'Main Campus'
+    note = ''
+
+    if '(obuasi campus)' in lower_name or 'obuasi' in lower_name:
+        campus = 'Obuasi Campus'
+        note = ''
+    elif '(city campus)' in lower_name or 'accra city' in lower_name:
+        campus = 'Accra City Campus'
+        note = ''
+    elif '(sunyani' in lower_name:
+        campus = 'Sunyani Main Campus'
+    elif '(dormaa' in lower_name:
+        campus = 'Dormaa Campus'
+    elif '(nyankpala' in lower_name:
+        campus = 'Nyankpala Campus'
+    elif uni_code == 'UG' and any(k in lower_name for k in ['medicine', 'mbchb', 'surgery', 'pharmacy', 'pharm d', 'dental', 'nursing', 'midwifery', 'medical lab', 'physiotherapy', 'radiography', 'dietetics', 'public health']):
+        campus = 'Korle-Bu Campus'
+        note = 'Offered at Korle-Bu Teaching Hospital / Health Sciences Campus.'
+    elif uni_code == 'KNUST' and any(k in lower_name for k in ['medicine', 'mbchb', 'surgery', 'pharmacy', 'pharm d', 'dental']):
+        campus = 'Main Campus (Kumasi)'
+        note = 'Clinical training includes rotation at Komfo Anokye Teaching Hospital (KATH).'
+    elif uni_code == 'UDS' and any(k in lower_name for k in ['agric', 'crop', 'soil', 'animal', 'biotechnology']):
+        campus = 'Nyankpala Campus'
+        note = 'Offered at the Faculty of Agriculture, Nyankpala.'
+    elif uni_code == 'UDS' and any(k in lower_name for k in ['medicine', 'nursing', 'health', 'medical lab']):
+        campus = 'Tamale Campus'
+        note = 'Clinical training at Tamale Teaching Hospital (TTH).'
+    elif uni_code == 'UENR' and any(k in lower_name for k in ['engineering', 'computer', 'natural resources', 'science']):
+        campus = 'Sunyani Main Campus'
+
+    prog.campus = campus
+    prog.note = note
+    prog.save()
+
 print("=== SEED COMPLETE ===")
 from careers.models import LearningArea, Subject, Career
 from eligibility.models import University, Program, ProgramRequirement

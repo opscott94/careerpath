@@ -303,343 +303,235 @@ var step2Reached = false;
 
 <script>
 let aggregate = 0;
-let allPrograms = [];
+let evaluatedData = null;
 let currentCategory = 'all';
 
 const catColors = {
-  'health': {border:'#1d9e75', bg:'#e1f5ee', text:'#0f6e56'},
-  'engineering': {border:'#378add', bg:'#e6f1fb', text:'#185fa5'},
-  'computing': {border:'#378add', bg:'#e6f1fb', text:'#185fa5'},
-  'business': {border:'#ba7517', bg:'#faeeda', text:'#854f0b'},
-  'law': {border:'#d85a30', bg:'#faece7', text:'#993c1d'},
-  'science': {border:'#639922', bg:'#eaf3de', text:'#3b6d11'},
-  'agriculture': {border:'#639922', bg:'#eaf3de', text:'#3b6d11'},
-  'arts': {border:'#d4537e', bg:'#fbeaf0', text:'#993556'},
-};
-programMeta = {
-  'medicine': {cat:'health', icon:'🩺', label:'Medicine & Surgery (MBChB)', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics or Maths']},
-  'pharmacy': {cat:'health', icon:'💊', label:'Doctor of Pharmacy (Pharm D)', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics or Maths']},
-  'nursing': {cat:'health', icon:'🏥', label:'BSc Nursing', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics or Maths']},
-  'midwifery': {cat:'health', icon:'👶', label:'BSc Midwifery', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics']},
-  'medical lab': {cat:'health', icon:'🔬', label:'BSc Medical Laboratory Science', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics']},
-  'dental': {cat:'health', icon:'🦷', label:'Bachelor of Dental Surgery (BDS)', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics']},
-  'physiotherapy': {cat:'health', icon:'🏃', label:'BSc Physiotherapy', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics']},
-  'dietetics': {cat:'health', icon:'🥗', label:'BSc Dietetics', desc:'Health Sciences', subjects:['Biology','Chemistry','Physics']},
-  'civil engineering': {cat:'engineering', icon:'🌉', label:'BSc Civil Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Maths']},
-  'mechanical engineering': {cat:'engineering', icon:'⚙️', label:'BSc Mechanical Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Maths']},
-  'electrical engineering': {cat:'engineering', icon:'⚡', label:'BSc Electrical/Electronic Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Maths']},
-  'biomedical engineering': {cat:'engineering', icon:'🔩', label:'BSc Biomedical Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Biology']},
-  'computer engineering': {cat:'engineering', icon:'💻', label:'BSc Computer Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Maths']},
-  'chemical engineering': {cat:'engineering', icon:'⚗️', label:'BSc Chemical Engineering', desc:'Engineering', subjects:['Physics','Chemistry','Maths']},
-  'computer science': {cat:'computing', icon:'🖥️', label:'BSc Computer Science', desc:'Computing & IT', subjects:['Physics','Maths','Chemistry/ICT']},
-  'information technology': {cat:'computing', icon:'📱', label:'BSc Information Technology', desc:'Computing & IT', subjects:['Physics','Maths','Any elective']},
-  'accounting': {cat:'business', icon:'📊', label:'BSc Business Admin (Accounting)', desc:'Business & Economics', subjects:['Business Mgt','Accounting','Economics']},
-  'marketing': {cat:'business', icon:'📣', label:'BSc Business Admin (Marketing)', desc:'Business & Economics', subjects:['Business Mgt','Accounting','Economics']},
-  'law': {cat:'law', icon:'⚖️', label:'LLB Bachelor of Laws', desc:'Law', subjects:['Any 3 electives','English required']},
-  'economics': {cat:'law', icon:'📈', label:'BSc/BA Economics', desc:'Social Sciences', subjects:['Economics','Geography','Maths']},
-  'biochemistry': {cat:'science', icon:'🧬', label:'BSc Biochemistry', desc:'Natural Sciences', subjects:['Biology','Chemistry','Physics/Maths']},
-  'mathematics': {cat:'science', icon:'📐', label:'BSc Mathematics', desc:'Natural Sciences', subjects:['Maths','Physics','Chemistry/Biology']},
-  'chemistry': {cat:'science', icon:'⚗️', label:'BSc Chemistry', desc:'Natural Sciences', subjects:['Chemistry','Physics','Maths']},
-  'agriculture': {cat:'agric', icon:'🌾', label:'BSc Agriculture', desc:'Agriculture', subjects:['Biology','Chemistry','Physics/Maths']},
-  'agribusiness': {cat:'agric', icon:'🚜', label:'BSc Agribusiness', desc:'Agriculture', subjects:['Economics','Biology','Chemistry']},
+  'health': {border:'#1d9e75', bg:'#e1f5ee', text:'#0f6e56', label:'Health Sciences'},
+  'engineering': {border:'#378add', bg:'#e6f1fb', text:'#185fa5', label:'Engineering'},
+  'computing': {border:'#378add', bg:'#e6f1fb', text:'#185fa5', label:'Computing & IT'},
+  'business': {border:'#ba7517', bg:'#faeeda', text:'#854f0b', label:'Business'},
+  'law': {border:'#d85a30', bg:'#faece7', text:'#993c1d', label:'Law & Social Sciences'},
+  'science': {border:'#639922', bg:'#eaf3de', text:'#3b6d11', label:'Natural Sciences'},
+  'agric': {border:'#639922', bg:'#eaf3de', text:'#3b6d11', label:'Agriculture'},
+  'all': {border:'#4b5563', bg:'#f3f4f6', text:'#1f2937', label:'General'},
 };
 
-function goToStep2() {
-  const coreIds = ['g_english','g_math','g_science'];
-  const coreVals = coreIds.map(id => parseInt(document.getElementById(id).value));
-  if (coreVals.some(isNaN)) { alert('Please select grades for all 3 core subjects'); return; }
+async function goToStep2() {
+  const gEng = document.getElementById('g_english').value;
+  const gMath = document.getElementById('g_math').value;
+  const gSci = document.getElementById('g_science').value;
+  const gSoc = document.getElementById('g_social').value;
 
-  const elecIds = ['g_e1','g_e2','g_e3'];
-  const elecVals = elecIds.map(id => { var el = document.getElementById(id); return el ? parseInt(el.value) : null; }).filter(v => v !== null);
-  if (elecVals.some(isNaN) || elecVals.length < 1) { alert('Please select at least 1 elective grade'); return; }
+  if (!gEng || !gMath || (!gSci && !gSoc)) {
+    alert('Please select grades for English Language, Core Mathematics, and at least one of Integrated Science or Social Studies.');
+    return;
+  }
 
-  const allVals = coreVals.concat(elecVals);
-  const sorted = [...allVals].sort((a,b)=>a-b);
-  aggregate = sorted.slice(0,6).reduce((a,b)=>a+b,0);
+  // Collect electives
+  const electives = [];
+  const sE1 = document.getElementById('s_e1')?.value;
+  const gE1 = document.getElementById('g_e1')?.value;
+  if (sE1 && gE1) electives.push({name: sE1, grade: parseInt(gE1)});
 
-  const label = aggregate <= 8 ? 'Outstanding' : aggregate <= 12 ? 'Excellent' : aggregate <= 18 ? 'Very Good' : aggregate <= 24 ? 'Good' : 'Fair';
-  document.getElementById('aggregateBadge').textContent = aggregate;
-  document.getElementById('aggregateLabel').textContent = `Aggregate ${aggregate} · ${label}`;
+  for (let i = 2; i <= 5; i++) {
+    const sEl = document.getElementById('s_e' + i)?.value;
+    const gEl = document.getElementById('g_e' + i)?.value;
+    if (sEl && gEl) electives.push({name: sEl, grade: parseInt(gEl)});
+  }
 
-  document.getElementById('step1').classList.add('hidden');
-  document.getElementById('step2').classList.remove('hidden');
+  if (electives.length < 3) {
+    alert('Please select at least 3 elective subjects and their grades.');
+    return;
+  }
 
-  document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
-  step2Reached = true;
-  renderPrograms('all');
+  const payload = {
+    core_grades: {
+      'English Language': parseInt(gEng),
+      'Core Mathematics': parseInt(gMath),
+      'Integrated Science': gSci ? parseInt(gSci) : 9,
+      'Social Studies': gSoc ? parseInt(gSoc) : 9
+    },
+    electives: electives
+  };
+
+  try {
+    const resp = await fetch('/api/evaluate-eligibility/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const data = await resp.json();
+
+    if (data.error) {
+      alert(data.error);
+      return;
+    }
+
+    evaluatedData = data;
+    aggregate = data.aggregate;
+
+    document.getElementById('aggregateBadge').textContent = data.aggregate;
+    document.getElementById('aggregateLabel').textContent = `Aggregate ${data.aggregate} · ${data.label}`;
+
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+
+    document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
+    step2Reached = true;
+    renderPrograms('all');
+  } catch (err) {
+    alert('Failed to calculate eligibility. Please check your connection.');
+    console.error(err);
+  }
 }
 
-
-function filterPrograms(cat) {
+function filterPrograms(cat, btn) {
   currentCategory = cat;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.className = 'filter-btn text-sm px-4 py-2 rounded-full border border-gray-200 text-gray-600 font-medium hover:border-green-400';
-  });
-  event.target.className = 'filter-btn active text-sm px-4 py-2 rounded-full border-2 border-green-600 text-green-600 font-medium bg-green-50';
+  if (btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.className = 'filter-btn text-sm px-4 py-2 rounded-full border border-gray-200 text-gray-600 font-medium hover:border-green-400';
+    });
+    btn.className = 'filter-btn active text-sm px-4 py-2 rounded-full border-2 border-green-600 text-green-600 font-medium bg-green-50';
+  }
   renderPrograms(cat);
 }
 
-function getUserElectives() {
-  const e1 = (document.getElementById('s_e1')?.value || '').toLowerCase();
-  const e2 = (document.getElementById('s_e2')?.value || '').toLowerCase();
-  const e3 = (document.getElementById('s_e3')?.value || '').toLowerCase();
-  return [e1, e2, e3].filter(Boolean);
-}
-
-function programMatchesElectives(prog, userElectives) {
-  if (!userElectives.length) return true;
-
-  // Normalize user electives
-  const ue = userElectives.map(s => s.toLowerCase());
-
-  // Helper: user has subject
-  const has = (s) => ue.includes(s.toLowerCase());
-
-  // Detect user's stream from their electives
-  const isScienceStudent = (has('biology') || has('chemistry') || has('physics') || has('additional mathematics') || has('agricultural science'));
-  const isBusinessStudent = (has('business management') || has('accounting')) && !has('biology') && !has('physics') && !has('chemistry');
-  const isArtsStudent = (has('economics') || has('government') || has('history') || has('geography') || has('literature in english') || has('christian religious studies') || has('islamic religious studies')) && !has('biology') && !has('physics') && !has('chemistry');
-  const isComputingStudent = (has('computer science') || has('ict')) && !has('biology');
-
-  // Strict match per program category
-  const cat = prog.cat;
-
-  // Health Sciences: need Biology + Chemistry + (Physics or Additional Maths)
-  if (cat === 'health') {
-    return has('biology') && has('chemistry') && (has('physics') || has('additional mathematics'));
-  }
-
-  // Engineering: need Physics + Chemistry + (Maths or Additional Maths)
-  if (cat === 'engineering') {
-    return has('physics') && has('chemistry') && (has('additional mathematics') || has('biology'));
-  }
-
-  // Computing: need Computer Science or ICT, and Physics or Maths
-  if (cat === 'computing') {
-    return (has('computer science') || has('ict')) || (has('physics') && has('additional mathematics'));
-  }
-
-  // Business: need Business Mgt or Accounting or Economics
-  if (cat === 'business') {
-    return has('business management') || has('accounting') || has('economics');
-  }
-
-  // Law & Social Sciences: open to arts students, not pure science
-  if (cat === 'law') {
-    return !isScienceStudent || has('economics') || has('government') || has('history');
-  }
-
-  // Natural Sciences: need Biology/Chemistry/Physics
-  if (cat === 'science') {
-    return (has('biology') || has('chemistry') || has('physics') || has('additional mathematics'));
-  }
-
-  // Agriculture: need Biology + Chemistry
-  if (cat === 'agric') {
-    return has('biology') && has('chemistry');
-  }
-
-  return true;
-}
-
 function renderPrograms(cat) {
-  const search = (document.getElementById('programSearch').value || '').toLowerCase();
+  if (!evaluatedData || !evaluatedData.results) return;
+
+  const searchInput = document.getElementById('programSearch');
+  const search = searchInput && searchInput.value ? searchInput.value.toLowerCase().trim() : '';
   const list = document.getElementById('programList');
-  const userElectives = getUserElectives();
+
   let html = '';
   let count = 0;
-  Object.entries(programMeta).forEach(([key, prog]) => {
-    if (cat !== 'all' && prog.cat !== cat) return;
-    if (search && !prog.label.toLowerCase().includes(search) && !key.includes(search)) return;
-    if (!programMatchesElectives(prog, userElectives)) return;
+
+  evaluatedData.results.forEach((prog, index) => {
+    if (cat !== 'all' && prog.category !== cat) return;
+    if (search && !prog.program_name.toLowerCase().includes(search)) return;
+
     count++;
-    const unis = getUnisForProgram(key);
+    const styleObj = catColors[prog.category] || catColors['all'];
+    const uniNames = prog.universities.map(u => `${u.short_name} (${u.cutoff ? 'Cutoff ' + u.cutoff : 'No cutoff'})`);
+
+    const statusBadge = prog.is_eligible
+      ? '<span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:3px 10px;border-radius:100px;border:1px solid #bbf7d0;">✓ Eligible</span>'
+      : prog.is_borderline
+      ? '<span style="font-size:11px;font-weight:700;background:#fef3c7;color:#d97706;padding:3px 10px;border-radius:100px;border:1px solid #fde68a;">~ Borderline</span>'
+      : '<span style="font-size:11px;font-weight:700;background:#fee2e2;color:#dc2626;padding:3px 10px;border-radius:100px;border:1px solid #fca5a5;">✗ Cutoff Exceeded</span>';
+
     html += `
-      <div onclick="showResults('${key}')" style="border-left:3px solid ${catColors[prog.cat]?.border||'#1d9e75'};border-radius:12px;border-top:0.5px solid #e5e7eb;border-right:0.5px solid #e5e7eb;border-bottom:0.5px solid #e5e7eb;" class="flex items-center gap-4 p-4 cursor-pointer transition group hover:bg-gray-50">
+      <div onclick="showResults(${index})" style="border-left:4px solid ${styleObj.border};border-radius:12px;border-top:0.5px solid #e5e7eb;border-right:0.5px solid #e5e7eb;border-bottom:0.5px solid #e5e7eb;background:#fff;" class="flex items-center gap-4 p-4 cursor-pointer transition group hover:shadow-md hover:border-green-300">
         <div class="flex-1">
-          <p class="font-semibold text-gray-800 group-hover:text-green-800">${prog.label}</p>
-          <div style="margin-top:4px;">
-            <span style="font-size:11px;font-weight:600;background:${catColors[prog.cat]?.bg||'#e1f5ee'};color:${catColors[prog.cat]?.text||'#0f6e56'};padding:2px 8px;border-radius:4px;">${prog.desc}</span>
+          <div class="flex items-center gap-2 mb-1">
+            <p class="font-bold text-gray-900 group-hover:text-green-800 text-base">${prog.program_name}</p>
+            ${statusBadge}
           </div>
-          <p class="text-xs text-gray-400 mt-0.5">${unis.join(' · ')}</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span style="font-size:10px;font-weight:600;background:${styleObj.bg};color:${styleObj.text};padding:2px 8px;border-radius:4px;">${prog.faculty || styleObj.label}</span>
+            ${prog.min_cutoff ? `<span class="text-xs text-gray-500 font-medium">Best Cutoff: <strong>${prog.min_cutoff}</strong></span>` : ''}
+          </div>
+          <p class="text-xs text-gray-500">${uniNames.join(' · ')}</p>
         </div>
-        <div class="text-gray-300 group-hover:text-green-500">→</div>
+        <div class="text-gray-400 group-hover:text-green-600 text-xl font-bold">→</div>
       </div>`;
   });
-  if (!html) html = '<p class="text-center text-gray-400 py-8">No programs found. Try a different search.</p>';
-  list.innerHTML = html || '<p style="text-align:center;color:#9ca3af;padding:24px;font-size:14px;">No programs match your selected electives. Try different subjects.</p>';
+
+  if (!html) {
+    html = '<p class="text-center text-gray-400 py-8 text-sm">No qualified programs match your filter or search criteria.</p>';
+  }
+
+  list.innerHTML = html;
 }
 
-function getUnisForProgram(key) {
-  const uniMap = {
-    'medicine':['KNUST','UG','UCC','UDS','UENR'],
-    'pharmacy':['KNUST','UG','UCC','UDS','UENR'],
-    'nursing':['KNUST','UG','UCC','UDS','UENR'],
-    'midwifery':['KNUST','UG','UCC'],
-    'medical lab':['KNUST','UG','UDS','UENR'],
-    'dental':['KNUST'],
-    'physiotherapy':['KNUST','UENR'],
-    'dietetics':['KNUST','UG','UCC','UENR'],
-    'civil engineering':['KNUST','UDS','UENR'],
-    'mechanical engineering':['KNUST','UDS','UENR'],
-    'electrical engineering':['KNUST','UDS','UENR'],
-    'biomedical engineering':['KNUST','UG','UENR'],
-    'computer engineering':['KNUST','UDS','UENR'],
-    'chemical engineering':['KNUST','UG'],
-    'computer science':['KNUST','UG','UDS','UENR'],
-    'information technology':['KNUST','UG','UENR'],
-    'accounting':['KNUST','UG'],
-    'marketing':['KNUST'],
-    'law':['KNUST','UG','UENR'],
-    'economics':['KNUST','UG','UDS','UENR'],
-    'biochemistry':['KNUST','UG'],
-    'mathematics':['KNUST','UG','UDS','UENR'],
-    'chemistry':['KNUST'],
-    'agriculture':['KNUST','UG','UDS','UENR'],
-    'agribusiness':['KNUST','UG','UENR'],
-  };
-  return uniMap[key] || ['KNUST'];
-}
-
-const cutoffs = {
-  'medicine': {KNUST:6, UG:8, UCC:9, UDS:6, UENR:8},
-  'pharmacy': {KNUST:6, UG:10, UCC:12, UDS:6, UENR:10},
-  'nursing': {KNUST:7, UG:12, UCC:9, UDS:6, UENR:15},
-  'midwifery': {KNUST:8, UG:12, UCC:9},
-  'medical lab': {KNUST:7, UG:12, UDS:6, UENR:12},
-  'dental': {KNUST:6},
-  'physiotherapy': {KNUST:12, UENR:14},
-  'dietetics': {KNUST:9, UG:14, UCC:16, UENR:14},
-  'civil engineering': {KNUST:7, UDS:6, UENR:6},
-  'mechanical engineering': {KNUST:7, UDS:6, UENR:6},
-  'electrical engineering': {KNUST:6, UDS:6, UENR:6},
-  'biomedical engineering': {KNUST:6, UG:6, UENR:6},
-  'computer engineering': {KNUST:6, UDS:6, UENR:7},
-  'chemical engineering': {KNUST:7, UG:18},
-  'computer science': {KNUST:7, UG:15, UDS:6, UENR:7},
-  'information technology': {KNUST:10, UG:15, UENR:10},
-  'accounting': {KNUST:7, UG:15},
-  'marketing': {KNUST:9},
-  'law': {KNUST:6, UG:12, UENR:7},
-  'economics': {KNUST:10, UG:16, UDS:6, UENR:6},
-  'biochemistry': {KNUST:9, UG:16},
-  'mathematics': {KNUST:15, UG:20, UDS:6, UENR:6},
-  'chemistry': {KNUST:15},
-  'agriculture': {KNUST:20, UG:18, UDS:6, UENR:6},
-  'agribusiness': {KNUST:15, UG:20, UENR:6},
-};
-
-const uniColors = {KNUST:'#15803d', UG:'#1d4ed8', UCC:'#dc2626', UDS:'#7c3aed', UENR:'#d97706'};
-const uniLocations = {KNUST:'Kumasi', UG:'Legon, Accra', UCC:'Cape Coast', UDS:'Tamale', UENR:'Sunyani'};
-
-function showResults(key) {
-  const prog = programMeta[key];
-  const progCutoffs = cutoffs[key] || {};
+function showResults(index) {
+  if (!evaluatedData || !evaluatedData.results || !evaluatedData.results[index]) return;
+  const prog = evaluatedData.results[index];
 
   document.getElementById('step2').classList.add('hidden');
   document.getElementById('step3').classList.remove('hidden');
 
-  // Update step 3 indicator
   document.getElementById('step3-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
 
+  const uniColors = {KNUST:'#15803d', UG:'#1d4ed8', UCC:'#dc2626', UDS:'#7c3aed', UENR:'#d97706'};
+  const styleObj = catColors[prog.category] || catColors['all'];
+
   let uniCards = '';
-  const unis = getUnisForProgram(key);
+  prog.universities.forEach(u => {
+    const statusBadge = u.eligible
+      ? '<span style="background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">✓ Eligible</span>'
+      : u.borderline
+      ? '<span style="background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">~ Borderline</span>'
+      : '<span style="background:#fee2e2;color:#dc2626;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">✗ Cutoff Exceeded</span>';
 
-  // Sort: eligible first, then borderline, then not eligible
-  const sorted = unis.map(uni => {
-    const co = progCutoffs[uni];
-    const eligible = co && aggregate <= co;
-    const borderline = co && !eligible && aggregate <= co + 3;
-    return {uni, co, eligible, borderline};
-  }).sort((a,b) => {
-    if (a.eligible && !b.eligible) return -1;
-    if (!a.eligible && b.eligible) return 1;
-    if (a.borderline && !b.borderline) return -1;
-    if (!a.borderline && b.borderline) return 1;
-    return 0;
-  });
-
-  sorted.forEach(({uni, co, eligible, borderline}) => {
-    const margin = co ? co - aggregate : 0;
-    const statusBadge = eligible
-      ? '<span style="background:#dcfce7;color:#15803d;" class="badge">✓ Eligible</span>'
-      : borderline
-      ? '<span style="background:#fef3c7;color:#d97706;" class="badge">~ Borderline</span>'
-      : '<span style="background:#fee2e2;color:#dc2626;" class="badge">✗ Not yet eligible</span>';
-
-    const borderColor = eligible ? '#86efac' : borderline ? '#fcd34d' : '#fca5a5';
-    const uniLogos = {
-      'KNUST': '/static/images/knust.png',
-      'UG': '/static/images/ug.png',
-      'UCC': '/static/images/ucc.png',
-      'UDS': '/static/images/uds.png',
-      'UENR': '/static/images/uenr.png'
-    };
-    const initials = uni.substring(0,2);
-    const color = uniColors[uni] || '#16a34a';
-    const logoImg = uniLogos[uni] ? `<img src="${uniLogos[uni]}" style="width:40px;height:40px;object-fit:contain;">` : `<div class="w-10 h-10 rounded-xl text-white font-bold text-sm flex items-center justify-center flex-shrink-0" style="background:${color};">${initials}</div>`;
+    const color = uniColors[u.short_name] || '#16a34a';
 
     uniCards += `
-      <div class="card p-6 mb-4" style="border-left:4px solid ${borderColor};">
+      <div class="card p-6 mb-4" style="border-left:4px solid ${u.eligible ? '#86efac' : u.borderline ? '#fcd34d' : '#fca5a5'};">
         <div class="flex items-start justify-between mb-4">
           <div class="flex items-center gap-3">
-            ${logoImg}
-            <div style="display:none;" class="w-10 h-10 rounded-xl text-white font-bold text-sm flex items-center justify-center flex-shrink-0" style="background:${color};">${initials}</div>
+            <div class="w-10 h-10 rounded-xl text-white font-bold text-sm flex items-center justify-center flex-shrink-0" style="background:${color};">${u.short_name.substring(0,2)}</div>
             <div>
-              <p class="font-bold text-gray-900">${uni}</p>
-              <p class="text-xs text-gray-400">${prog.label}</p>
+              <p class="font-bold text-gray-900 text-lg">${u.full_name} (${u.short_name})</p>
+              <p class="text-xs text-gray-500">${prog.program_name}</p>
             </div>
           </div>
           <div class="text-right">
             ${statusBadge}
-            ${co ? `<div class="mt-2"><span class="text-xs text-gray-400">Cut-off: ${co} · Yours: </span><span class="text-lg font-black" style="color:${color};">${aggregate}</span></div>` : ''}
-            ${eligible && margin > 0 ? `<p class="text-xs text-green-600 font-medium">${margin} pts ahead of cut-off</p>` : ''}
-            ${borderline ? `<p class="text-xs text-yellow-600 font-medium">${Math.abs(margin)} pts from cut-off</p>` : ''}
-            ${!eligible && !borderline && co ? `<p class="text-xs text-red-500 font-medium">${Math.abs(margin)} pts above cut-off</p>` : ''}
+            ${u.cutoff ? `<div class="mt-2"><span class="text-xs text-gray-400">Cut-off: ${u.cutoff} · Yours: </span><span class="text-lg font-black" style="color:${color};">${aggregate}</span></div>` : ''}
+            ${u.eligible && u.margin < 0 ? `<p class="text-xs text-green-600 font-medium">${Math.abs(u.margin)} pts ahead of cut-off</p>` : ''}
+            ${u.eligible && u.margin === 0 ? `<p class="text-xs text-green-600 font-medium">Exact cut-off match!</p>` : ''}
+            ${u.borderline ? `<p class="text-xs text-yellow-600 font-medium">${Math.abs(u.margin)} pts from cut-off</p>` : ''}
+            ${!u.eligible && !u.borderline && u.cutoff ? `<p class="text-xs text-red-500 font-medium">${Math.abs(u.margin)} pts above cut-off</p>` : ''}
           </div>
         </div>
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Required Subjects</p>
-            <div class="flex flex-wrap gap-1">
-              ${prog.subjects.map(s=>`<span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">${s}</span>`).join('')}
-            </div>
+        <div class="border-t border-gray-100 pt-3">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Campus Cut-offs & Offerings</p>
+          <div class="flex flex-col gap-2">
+            ${(u.campuses && u.campuses.length > 0) ? u.campuses.map(c => `
+              <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border border-gray-100 text-xs">
+                <div>
+                  <span class="font-bold text-gray-800">📍 ${c.campus_name}</span>
+                  ${c.note ? `<span class="ml-2 text-amber-800 bg-amber-50 px-2 py-0.5 rounded font-medium border border-amber-200">📌 ${c.note}</span>` : ''}
+                </div>
+                <div class="text-right">
+                  <span class="font-black" style="color:${color};">Cut-off: ${c.cutoff || 'N/A'}</span>
+                  ${c.eligible ? `<span class="ml-2 bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">✓ Eligible</span>` : `<span class="ml-2 bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold">~ Borderline</span>`}
+                </div>
+              </div>
+            `).join('') : `
+              <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border border-gray-100 text-xs">
+                <span class="font-bold text-gray-800">📍 ${u.campus || 'Main Campus'}</span>
+                <span class="font-black" style="color:${color};">Cut-off: ${u.cutoff || 'N/A'}</span>
+              </div>
+            `}
           </div>
-          <div class="text-right text-xs text-gray-400 flex items-center gap-1">📍 ${uniLocations[uni] || ''}</div>
         </div>
       </div>`;
   });
 
-  const eligible_count = sorted.filter(x=>x.eligible).length;
-  const borderline_count = sorted.filter(x=>x.borderline).length;
-
   document.getElementById('step3Content').innerHTML = `
     <div class="card p-6 mb-6">
       <div class="flex items-center gap-4">
-        <span style="font-size:11px;font-weight:600;background:${catColors[prog.cat]?.bg||'#e1f5ee'};color:${catColors[prog.cat]?.text||'#0f6e56'};padding:3px 10px;border-radius:4px;">${prog.desc}</span>
+        <span style="font-size:12px;font-weight:600;background:${styleObj.bg};color:${styleObj.text};padding:4px 12px;border-radius:6px;">${prog.faculty || styleObj.label}</span>
         <div class="flex-1">
-          <h2 class="display text-xl font-bold text-gray-900">${prog.label}</h2>
-          <p class="text-gray-400 text-sm">${prog.desc}</p>
-          <div class="flex items-center gap-2 mt-2">
-            <div class="w-12 h-12 bg-green-600 text-white font-black rounded-xl flex items-center justify-center text-lg">${aggregate}</div>
-            <span class="text-sm text-gray-500">Your aggregate</span>
-          </div>
+          <h2 class="display text-2xl font-bold text-gray-900">${prog.program_name}</h2>
+          <p class="text-gray-500 text-sm">Offered at ${prog.universities.length} Ghanaian ${prog.universities.length > 1 ? 'Universities' : 'University'}</p>
+        </div>
+        <div class="text-right">
+          <div class="w-14 h-14 bg-green-600 text-white font-black rounded-xl flex items-center justify-center text-xl shadow-md">${aggregate}</div>
+          <span class="text-xs text-gray-400 font-medium mt-1 block">Your Aggregate</span>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-wrap items-center gap-4 mb-4 text-xs">
-      <span class="flex items-center gap-1"><span class="w-2 h-2 bg-green-400 rounded-full"></span> Eligible now (${eligible_count})</span>
-      <span class="flex items-center gap-1"><span class="w-2 h-2 bg-yellow-400 rounded-full"></span> Borderline within 3 pts (${borderline_count})</span>
-      <span class="flex items-center gap-1"><span class="w-2 h-2 bg-red-300 rounded-full"></span> Not yet eligible</span>
-    </div>
-
-    <h3 class="font-bold text-gray-700 mb-3 text-sm uppercase tracking-wide">Universities Offering This Program</h3>
+    <h3 class="font-bold text-gray-700 mb-3 text-sm uppercase tracking-wide">University Admission Offerings</h3>
     ${uniCards}
 
     <button onclick="document.getElementById('step3').classList.add('hidden'); document.getElementById('step2').classList.remove('hidden');"
       class="w-full mt-4 py-3 border-2 border-gray-200 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 transition">
-      ← Back to Programs
+      ← Back to Matching Programs
     </button>
   `;
 

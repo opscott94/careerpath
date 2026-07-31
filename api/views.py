@@ -1,9 +1,11 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.db.models import Q
 from careers.models import Career, Subject
 from eligibility.models import University, Program
 import json
+import re
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -161,12 +163,13 @@ CRITICAL RULES:
             'requirements__learning_area',
         ).distinct()
 
-        # Group candidate programs by name (case-insensitive) to avoid redundant university listings
+        # Group candidate programs by base name (removing campus suffix e.g. "(Obuasi Campus)") to avoid duplicate recommendations
         grouped_programs = {}
         for p in programs:
             score = 0
-            name_lower = p.name.lower()
-            name_key = p.name.strip()
+            base_name = re.sub(r'\s*\([^)]*campus\)', '', p.name, flags=re.IGNORECASE).strip()
+            name_lower = base_name.lower()
+            name_key = base_name
             faculty_lower = (p.faculty or '').lower()
             la_names = [req.learning_area.name.lower() for req in p.requirements.all() if req.learning_area]
 
@@ -193,8 +196,8 @@ CRITICAL RULES:
                         score += 1
 
             if score > 0:
-                is_direct = any(kw.lower() in p.name.lower() for kw in primary_keywords)
-                key = name_key.lower()
+                is_direct = any(kw.lower() in base_name.lower() for kw in primary_keywords)
+                key = base_name.lower()
                 
                 # Track matched keywords for this specific program offering
                 current_kws = set()
@@ -207,7 +210,7 @@ CRITICAL RULES:
 
                 if key not in grouped_programs:
                     grouped_programs[key] = {
-                        'name': name_key,
+                        'name': base_name,
                         'score': score,
                         'is_direct': is_direct,
                         'min_cutoff': p.aggregate,
@@ -307,13 +310,19 @@ CRITICAL RULES:
 def program_details(request):
     """
     Returns the requirements and details of all university offerings matching a program name.
+    Groups offerings by university so that a university with multiple campuses shows 
+    a single card with all campus cutoffs & notes.
     """
     data = json.loads(request.body)
-    program_name = data.get('program_name')
+    program_name = data.get('program_name', '').strip()
     if not program_name:
         return JsonResponse({'error': 'No program_name provided'}, status=400)
 
-    programs = Program.objects.filter(name__iexact=program_name.strip()).select_related('university').prefetch_related(
+    base_name = re.sub(r'\s*\([^)]*campus\)', '', program_name, flags=re.IGNORECASE).strip()
+
+    programs = Program.objects.filter(
+        Q(name__iexact=program_name) | Q(name__icontains=base_name)
+    ).select_related('university').prefetch_related(
         'core_subjects',
         'requirements__learning_area',
         'requirements__mandatory_subjects',
@@ -323,34 +332,48 @@ def program_details(request):
     if not programs:
         return JsonResponse({'error': 'Program not found'}, status=404)
 
-    offerings = []
-    for program in programs:
-        core_subjects = [{'name': s.name} for s in program.core_subjects.all()]
-        requirements = []
-        for req in program.requirements.all():
-            la_name = req.learning_area.name if req.learning_area else "General Entry"
-            mandatory = [{'name': s.name} for s in req.mandatory_subjects.all()]
-            electives = [{'name': s.name} for s in req.elective_subjects.all()]
-            requirements.append({
-                'learning_area': la_name,
-                'mandatory_subjects': mandatory,
-                'elective_subjects': electives,
-            })
-        offerings.append({
-            'university': program.university.name,
-            'university_short': program.university.short_name,
-            'faculty': program.faculty,
-            'duration_years': program.duration_years,
-            'cutoff': program.aggregate,
-            'core_subjects': core_subjects,
-            'requirements': requirements,
+    grouped_by_uni = {}
+    for p in programs:
+        uni = p.university
+        uni_key = uni.short_name
+        if uni_key not in grouped_by_uni:
+            grouped_by_uni[uni_key] = {
+                'university': uni.name,
+                'university_short': uni.short_name,
+                'faculty': p.faculty,
+                'duration_years': p.duration_years,
+                'min_cutoff': p.aggregate,
+                'campuses': [],
+                'core_subjects': [{'name': s.name} for s in p.core_subjects.all()],
+                'requirements': []
+            }
+            for req in p.requirements.all():
+                la_name = req.learning_area.name if req.learning_area else "General Entry"
+                mandatory = [{'name': s.name} for s in req.mandatory_subjects.all()]
+                electives = [{'name': s.name} for s in req.elective_subjects.all()]
+                grouped_by_uni[uni_key]['requirements'].append({
+                    'learning_area': la_name,
+                    'mandatory_subjects': mandatory,
+                    'elective_subjects': electives,
+                })
+
+        g = grouped_by_uni[uni_key]
+        if p.aggregate is not None:
+            if g['min_cutoff'] is None or p.aggregate < g['min_cutoff']:
+                g['min_cutoff'] = p.aggregate
+
+        g['campuses'].append({
+            'campus_name': p.campus or 'Main Campus',
+            'cutoff': p.aggregate,
+            'note': p.note or '',
+            'faculty': p.faculty,
         })
 
-    # Sort offerings by WASSCE cutoff aggregate ascending (best/lowest cutoff first)
-    offerings.sort(key=lambda x: (x['cutoff'] is None, x['cutoff'] or 999))
+    offerings = list(grouped_by_uni.values())
+    offerings.sort(key=lambda x: (x['min_cutoff'] is None, x['min_cutoff'] or 999))
 
     return JsonResponse({
-        'program_name': program_name,
+        'program_name': base_name or program_name,
         'offerings': offerings
     })
 
@@ -420,6 +443,8 @@ def universities_list(request):
                 'name': prog.name,
                 'faculty': prog.faculty,
                 'cutoff': prog.aggregate,
+                'campus': prog.campus or 'Main Campus',
+                'note': prog.note or '',
             })
         data.append({
             'id': uni.id,
@@ -429,3 +454,205 @@ def universities_list(request):
             'programs': programs,
         })
     return JsonResponse({'universities': data})
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def evaluate_eligibility(request):
+    """
+    Takes a student's core and elective subjects + WASSCE grades,
+    calculates their Best 6 aggregate, and evaluates program eligibility
+    across all 172 university degree programs in the database.
+    """
+    data = json.loads(request.body)
+    core_grades = data.get('core_grades', {})
+    elective_inputs = data.get('electives', [])
+
+    eng = int(core_grades.get('English Language', 9))
+    math = int(core_grades.get('Core Mathematics', 9))
+    sci = int(core_grades.get('Integrated Science', 9))
+    soc = int(core_grades.get('Social Studies', 9))
+
+    best_3rd_core = min(sci, soc)
+    core_sum = eng + math + best_3rd_core
+
+    valid_electives = []
+    for e in elective_inputs:
+        name = e.get('name', '').strip()
+        grade = e.get('grade')
+        if name and grade and int(grade) <= 6:
+            valid_electives.append({'name': name, 'grade': int(grade)})
+
+    sorted_elec_grades = sorted([e['grade'] for e in valid_electives])
+
+    if len(sorted_elec_grades) < 3:
+        return JsonResponse({'error': 'At least 3 passing elective grades (A1 to C6) are required for aggregate calculation.'}, status=400)
+
+    aggregate = core_sum + sum(sorted_elec_grades[:3])
+    user_elective_names = [e['name'].lower() for e in valid_electives]
+
+    science_subs = {'biology', 'chemistry', 'physics', 'additional mathematics', 'agricultural science'}
+    business_subs = {'business management', 'accounting', 'business economics'}
+    computing_subs = {'computer science', 'ict'}
+    arts_subs = {'economics', 'geography', 'government', 'history', 'literature in english', 'christian religious studies', 'islamic religious studies', 'rme'}
+    tech_subs = {'design and communication technology', 'electrical and electronic technology', 'building construction and wood technology', 'automobile and metal technology'}
+
+    has_science = any(s in user_elective_names for s in science_subs)
+    has_business = any(s in user_elective_names for s in business_subs)
+    has_computing = any(s in user_elective_names for s in computing_subs)
+    has_arts = any(s in user_elective_names for s in arts_subs)
+    has_tech = any(s in user_elective_names for s in tech_subs)
+
+    cores_passed = (eng <= 6 and math <= 6 and best_3rd_core <= 6)
+
+    all_programs = Program.objects.select_related('university').prefetch_related(
+        'core_subjects',
+        'requirements__learning_area',
+        'requirements__mandatory_subjects',
+        'requirements__elective_subjects'
+    ).all()
+
+    grouped = {}
+    for p in all_programs:
+        p_name = p.name.strip()
+        key = p_name.lower()
+
+        if not cores_passed:
+            continue
+
+        requirements = p.requirements.all()
+        is_qualified = False
+
+        if not requirements.exists():
+            is_qualified = True
+        else:
+            for req in requirements:
+                la_name = (req.learning_area.name.lower() if req.learning_area else '').strip()
+                m_subs = [s.name.strip().lower() for s in req.mandatory_subjects.all()]
+                e_subs = [s.name.strip().lower() for s in req.elective_subjects.all()]
+
+                if m_subs and not all(m in user_elective_names for m in m_subs):
+                    continue
+
+                if e_subs:
+                    if any(e in user_elective_names for e in e_subs):
+                        is_qualified = True
+                        break
+                elif la_name:
+                    if la_name == 'science' and has_science:
+                        is_qualified = True
+                        break
+                    elif la_name == 'business' and has_business:
+                        is_qualified = True
+                        break
+                    elif 'arts' in la_name and (has_arts or has_business):
+                        is_qualified = True
+                        break
+                    elif la_name == 'computing' and (has_computing or has_science):
+                        is_qualified = True
+                        break
+                    elif 'technology' in la_name and (has_tech or has_science):
+                        is_qualified = True
+                        break
+                    else:
+                        if not m_subs:
+                            is_qualified = True
+                            break
+                else:
+                    is_qualified = True
+                    break
+
+        if is_qualified:
+            cutoff = p.aggregate
+            is_eligible = (cutoff is not None and aggregate <= cutoff)
+            is_borderline = (cutoff is not None and not is_eligible and aggregate <= cutoff + 3)
+
+            category = 'all'
+            lower_pname = base_pname.lower()
+            if any(k in lower_pname for k in ['medicine', 'surgery', 'pharmacy', 'nursing', 'midwifery', 'medical', 'dental', 'health', 'optometry', 'herbal', 'physiotherapy', 'dietetics']):
+                category = 'health'
+            elif 'engineering' in lower_pname or 'architecture' in lower_pname:
+                category = 'engineering'
+            elif any(k in lower_pname for k in ['computer', 'information technology', 'software', 'ict', 'data']):
+                category = 'computing'
+            elif any(k in lower_pname for k in ['business', 'accounting', 'marketing', 'banking', 'finance', 'management', 'agribusiness', 'administration']):
+                category = 'business'
+            elif any(k in lower_pname for k in ['law', 'llb', 'political', 'sociology', 'social', 'history']):
+                category = 'law'
+            elif any(k in lower_pname for k in ['agriculture', 'crop', 'animal', 'soil', 'agric']):
+                category = 'agric'
+            elif any(k in lower_pname for k in ['biology', 'chemistry', 'physics', 'mathematics', 'biochemistry', 'science']):
+                category = 'science'
+
+            if key not in grouped:
+                grouped[key] = {
+                    'program_name': base_pname,
+                    'category': category,
+                    'faculty': p.faculty,
+                    'min_cutoff': cutoff,
+                    'is_eligible': is_eligible,
+                    'is_borderline': is_borderline,
+                    'universities_dict': {},
+                    'core_subjects': [s.name for s in p.core_subjects.all()],
+                }
+
+            g = grouped[key]
+            if cutoff is not None:
+                if g['min_cutoff'] is None or cutoff < g['min_cutoff']:
+                    g['min_cutoff'] = cutoff
+            if is_eligible:
+                g['is_eligible'] = True
+            elif is_borderline and not g['is_eligible']:
+                g['is_borderline'] = True
+
+            u_code = p.university.short_name
+            if u_code not in g['universities_dict']:
+                g['universities_dict'][u_code] = {
+                    'short_name': u_code,
+                    'full_name': p.university.name,
+                    'location': p.university.location,
+                    'cutoff': cutoff,
+                    'eligible': is_eligible,
+                    'borderline': is_borderline,
+                    'campuses': []
+                }
+
+            ud = g['universities_dict'][u_code]
+            if cutoff is not None:
+                if ud['cutoff'] is None or cutoff < ud['cutoff']:
+                    ud['cutoff'] = cutoff
+            if is_eligible:
+                ud['eligible'] = True
+            elif is_borderline and not ud['eligible']:
+                ud['borderline'] = True
+
+            ud['campuses'].append({
+                'campus_name': p.campus or 'Main Campus',
+                'cutoff': cutoff,
+                'eligible': is_eligible,
+                'borderline': is_borderline,
+                'margin': (cutoff - aggregate) if cutoff else None,
+                'note': p.note or ''
+            })
+
+    results = []
+    for g_data in grouped.values():
+        unis_list = list(g_data['universities_dict'].values())
+        unis_list.sort(key=lambda u: (not u['eligible'], not u['borderline'], u['cutoff'] or 999))
+        g_data['universities'] = unis_list
+        del g_data['universities_dict']
+        results.append(g_data)
+
+    results.sort(key=lambda x: (not x['is_eligible'], not x['is_borderline'], x['min_cutoff'] or 999))
+
+    label = 'Outstanding' if aggregate <= 8 else 'Excellent' if aggregate <= 12 else 'Very Good' if aggregate <= 18 else 'Good' if aggregate <= 24 else 'Fair'
+
+    return JsonResponse({
+        'aggregate': aggregate,
+        'label': label,
+        'total_qualified_programs': len(results),
+        'eligible_count': sum(1 for r in results if r['is_eligible']),
+        'borderline_count': sum(1 for r in results if r['is_borderline']),
+        'results': results
+    })
+

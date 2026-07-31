@@ -21,6 +21,8 @@ class Program(models.Model):
     duration_years = models.IntegerField(default=4)
     aggregate = models.IntegerField(help_text='WASSCE aggregate cut-off (lower is better)', null=True, blank=True)
     year = models.IntegerField(default=2024, null=True, blank=True)
+    campus = models.CharField(max_length=150, default='Main Campus', blank=True)
+    note = models.TextField(blank=True, help_text='Additional notes or requirements for this program offering')
     core_subjects = models.ManyToManyField(
         Subject, 
         related_name='programs', 

@@ -8,4 +8,5 @@ urlpatterns = [
     path('subject-recommendation/', views.subject_recommendation, name='subject_recommendation'),
     path('wassce-check/', views.wassce_check, name='wassce_check'),
     path('universities/', views.universities_list, name='universities_list'),
+    path('evaluate-eligibility/', views.evaluate_eligibility, name='evaluate_eligibility'),
 ]

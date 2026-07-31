@@ -295,13 +295,45 @@
       <div style="padding:20px 24px;display:flex;flex-direction:column;gap:24px;">
         ${d.offerings.map((off, idx) => `
           <div style="${idx > 0 ? 'border-top: 1px solid #e2e8f0; padding-top: 20px;' : ''}">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-              <h3 style="font-size:16px;font-weight:700;color:#1e293b;margin:0;">
-                🏫 ${off.university} (${off.university_short})
-              </h3>
-              <span style="font-size:12px;font-weight:600;background:#f0fdf4;color:#15803d;padding:4px 12px;border-radius:100px;">
-                Cutoff: ${off.cutoff || 'N/A'}
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+              <div>
+                <h3 style="font-size:16px;font-weight:700;color:#1e293b;margin:0;">
+                  🏫 ${off.university} (${off.university_short})
+                </h3>
+                <p style="font-size:12px;color:#64748b;margin:2px 0 0;">
+                  Offered across ${off.campuses ? off.campuses.length : 1} Campus${(off.campuses && off.campuses.length > 1) ? 'es' : ''}
+                </p>
+              </div>
+              <span style="font-size:12px;font-weight:700;background:#f0fdf4;color:#15803d;padding:4px 12px;border-radius:100px;border:1px solid #bbf7d0;">
+                Best Cutoff: ${off.min_cutoff || off.cutoff || 'N/A'}
               </span>
+            </div>
+
+            <!-- Campus & Cutoff List -->
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:16px;display:flex;flex-direction:column;gap:8px;">
+              <p style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.05em;margin:0;">
+                📍 Campus Cut-offs & Locations
+              </p>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                ${(off.campuses && off.campuses.length > 0) ? off.campuses.map(c => `
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;flex-wrap:wrap;gap:6px;">
+                    <div>
+                      <span style="font-size:13px;font-weight:700;color:#0f172a;">📍 ${c.campus_name}</span>
+                      ${c.note ? `<span style="font-size:11px;color:#92400e;background:#fef3c7;padding:2px 8px;border-radius:4px;margin-left:8px;font-weight:500;">📌 ${c.note}</span>` : ''}
+                    </div>
+                    <span style="font-size:12px;font-weight:700;color:#15803d;background:#dcfce7;padding:3px 10px;border-radius:100px;">
+                      Cutoff: ${c.cutoff || 'N/A'}
+                    </span>
+                  </div>
+                `).join('') : `
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;">
+                    <span style="font-size:13px;font-weight:700;color:#0f172a;">📍 ${off.campus || 'Main Campus'}</span>
+                    <span style="font-size:12px;font-weight:700;color:#15803d;background:#dcfce7;padding:3px 10px;border-radius:100px;">
+                      Cutoff: ${off.cutoff || 'N/A'}
+                    </span>
+                  </div>
+                `}
+              </div>
             </div>
 
             <p style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;display:flex;align-items:center;gap:6px;">

@@ -18,9 +18,9 @@ class UniversityAdmin(admin.ModelAdmin):
 
 @admin.register(Program)
 class ProgramAdmin(admin.ModelAdmin):
-    list_display = ['name', 'university', 'faculty', 'aggregate', 'year']
-    list_filter = ['university']
-    search_fields = ['name']
+    list_display = ['name', 'university', 'campus', 'faculty', 'aggregate', 'year']
+    list_filter = ['university', 'campus', 'faculty']
+    search_fields = ['name', 'campus', 'note']
     filter_horizontal = ['core_subjects']
     inlines = [ProgramRequirementInline]
 
