@@ -3,15 +3,15 @@
 {% block content %}
 
 <style>
-.tab-btn { background:none;border:none;padding:12px 20px;font-size:14px;font-weight:500;color:#6b7280;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s; }
+.tab-btn { background:none;border:none;padding:12px 24px 12px 0;font-size:14px;font-weight:500;color:#6b7280;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;margin-right:8px; }
 .tab-btn.active { color:#052e16;border-bottom:2px solid #15803d;font-weight:700; }
 .tab-content { display:none; }
 .tab-content.active { display:block; }
 </style>
 
 <!-- Hero -->
-<div style="position:relative;height:420px;overflow:hidden;">
-  <img src="{{ uni.image }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" alt="{{ uni.name }}">
+<div style="position:relative;height:520px;overflow:hidden;">
+  <img src="{{ uni.image }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;" alt="{{ uni.name }}">
   <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);"></div>
 
   <a href="/" style="position:absolute;top:24px;left:24px;font-size:12px;color:#fff;text-decoration:none;background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:100px;backdrop-filter:blur(4px);">← Back</a>
@@ -47,7 +47,7 @@
   </div>
 
   <!-- Tabs -->
-  <div style="border-bottom:1px solid #e5e7eb;margin-bottom:32px;">
+  <div style="border-bottom:1px solid #e5e7eb;margin-bottom:32px;margin-left:0;">
     <button class="tab-btn active" onclick="switchTab('admissions')">Admissions</button>
     <button class="tab-btn" onclick="switchTab('programmes')">Programmes</button>
     <button class="tab-btn" onclick="switchTab('campus')">Campus Life</button>
