@@ -7,4 +7,5 @@ urlpatterns = [
     path('shs-eligibility/', views.shs_eligibility, name='shs_eligibility'),
     path('roadmap/', views.roadmap, name='roadmap'),
     path('jhs-guide/career/<int:career_id>/', views.career_detail, name='career_detail'),
+    path('university/<str:uni_key>/', views.university_detail, name='university_detail'),
 ]
