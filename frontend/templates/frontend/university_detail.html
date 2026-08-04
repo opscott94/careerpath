@@ -1,39 +1,70 @@
 {% extends "frontend/base.html" %}
 {% block title %}{{ uni.name }} — CareerPath Ghana{% endblock %}
 {% block content %}
-<div style="max-width:900px;margin:0 auto;padding:32px 20px;">
 
-  <!-- Header -->
-  <div style="background:{{ uni.color }};border-radius:20px;padding:32px;margin-bottom:24px;position:relative;overflow:hidden;">
-    <div style="position:absolute;inset:0;opacity:0.05;background:radial-gradient(circle at 70% 50%, #fff 0%, transparent 70%);"></div>
-    <a href="/" style="font-size:12px;color:#86efac;text-decoration:none;display:inline-block;margin-bottom:16px;">← Back to Home</a>
-    <p style="font-size:11px;font-weight:700;color:#86efac;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 8px;">{{ uni.location }}</p>
-    <h1 style="font-size:2.5rem;font-weight:900;color:#fff;margin:0 0 4px;">{{ uni.name }}</h1>
-    <p style="font-size:14px;color:#86efac;margin:0 0 16px;">{{ uni.full }} &middot; Est. {{ uni.est }}</p>
-    <p style="font-size:13px;color:#d1fae5;line-height:1.6;max-width:600px;margin:0;">{{ uni.about }}</p>
+<!-- Hero Section -->
+<div style="position:relative;height:400px;overflow:hidden;">
+  <div style="position:absolute;inset:0;background:linear-gradient(135deg, {{ uni.color }} 0%, #1a1a2e 100%);"></div>
+  <div style="position:absolute;inset:0;background:url('https://images.pexels.com/photos/1454360/pexels-photo-1454360.jpeg') center/cover no-repeat;opacity:0.25;"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);"></div>
+
+  <!-- Back button -->
+  <a href="/" style="position:absolute;top:24px;left:24px;font-size:12px;color:#fff;text-decoration:none;background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:100px;backdrop-filter:blur(4px);">← Back</a>
+
+  <!-- Hero text -->
+  <div style="position:absolute;bottom:32px;left:32px;">
+    <p style="font-size:11px;font-weight:700;color:#86efac;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 6px;">{{ uni.location }}</p>
+    <h1 style="font-size:3rem;font-weight:900;color:#fff;margin:0 0 4px;line-height:1;">{{ uni.full }}</h1>
+    <div style="display:flex;gap:12px;margin-top:12px;">
+      <span style="font-size:12px;color:#fff;background:rgba(255,255,255,0.15);padding:4px 12px;border-radius:100px;">{{ uni.location }}</span>
+      <span style="font-size:12px;color:#fff;background:rgba(255,255,255,0.15);padding:4px 12px;border-radius:100px;">Est. {{ uni.est }}</span>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div style="position:absolute;top:24px;right:24px;background:#fff;border-radius:16px;padding:20px;width:220px;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+    <p style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 12px;">Quick Actions</p>
+    <a href="/shs-eligibility/" style="display:block;background:#15803d;color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;margin-bottom:8px;">Check My Eligibility</a>
+    <a href="#programs" style="display:block;background:#052e16;color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;margin-bottom:8px;">Browse Programmes</a>
+    <a href="https://{{ uni.name|lower }}.edu.gh" target="_blank" style="display:block;background:none;border:1px solid #e5e7eb;color:#374151;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:500;text-align:center;">Visit Official Website</a>
+  </div>
+</div>
+
+<!-- About Section -->
+<div style="max-width:900px;margin:0 auto;padding:40px 20px;">
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:32px;margin-bottom:40px;">
+    <div>
+      <h2 style="font-size:22px;font-weight:700;color:#111827;margin:0 0 12px;">About the <span style="color:#15803d;">University</span></h2>
+      <p style="font-size:14px;color:#4b5563;line-height:1.7;margin:0;">{{ uni.about }}</p>
+    </div>
+    <div style="border-radius:16px;overflow:hidden;height:200px;">
+      <img src="https://images.pexels.com/photos/1454360/pexels-photo-1454360.jpeg" style="width:100%;height:100%;object-fit:cover;" alt="{{ uni.name }} campus">
+    </div>
   </div>
 
   <!-- Programs -->
-  <div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
-    <h2 style="font-size:18px;font-weight:700;color:#111827;margin:0;">Programs & Cut-off Points</h2>
-    <span style="font-size:12px;color:#6b7280;">{{ programs|length }} programs · Lower is better</span>
-  </div>
-
-  <div style="display:flex;flex-direction:column;gap:8px;">
-    {% for prog, cutoff in programs %}
-    <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
-      <p style="font-size:14px;font-weight:500;color:#111827;margin:0;">{{ prog }}</p>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:11px;color:#6b7280;">Cut-off</span>
-        <div style="background:{% if cutoff <= 8 %}#dcfce7;color:#15803d{% elif cutoff <= 15 %}#fef3c7;color:#d97706{% else %}#fee2e2;color:#dc2626{% endif %};padding:4px 12px;border-radius:8px;font-size:13px;font-weight:700;">{{ cutoff }}</div>
-      </div>
+  <div id="programs">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2 style="font-size:20px;font-weight:700;color:#111827;margin:0;">Programmes & Cut-off Points</h2>
+      <span style="font-size:12px;color:#6b7280;background:#f9fafb;padding:4px 12px;border-radius:100px;border:1px solid #e5e7eb;">{{ programs|length }} programmes · Lower is better</span>
     </div>
-    {% endfor %}
-  </div>
 
-  <div style="margin-top:24px;padding:16px;background:#f0fdf4;border-radius:12px;border:1px solid #d1fae5;">
-    <p style="font-size:12px;color:#065f46;margin:0;">💡 Cut-off points are based on 2024/2025 admission data. Lower aggregate = better performance. Check eligibility using our <a href="/shs-eligibility/" style="color:#15803d;font-weight:600;">UNI Eligibility Checker</a>.</p>
-  </div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+      {% for prog, cutoff in programs %}
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
+        <p style="font-size:14px;font-weight:500;color:#111827;margin:0;">{{ prog }}</p>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span style="font-size:11px;color:#9ca3af;">Cut-off</span>
+          <div style="{% if cutoff <= 8 %}background:#dcfce7;color:#15803d;{% elif cutoff <= 15 %}background:#fef3c7;color:#d97706;{% else %}background:#fee2e2;color:#dc2626;{% endif %}padding:4px 14px;border-radius:8px;font-size:14px;font-weight:800;">{{ cutoff }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
 
+    <div style="padding:16px;background:#f0fdf4;border-radius:12px;border:1px solid #d1fae5;">
+      <p style="font-size:12px;color:#065f46;margin:0;">💡 Cut-off points are based on 2024/2025 admission data. Lower aggregate = better. <a href="/shs-eligibility/" style="color:#15803d;font-weight:600;">Check your eligibility →</a></p>
+    </div>
+  </div>
 </div>
+
 {% endblock %}
