@@ -38,44 +38,122 @@ def university_detail(request, uni_key):
         'uenr': {'name': 'UENR', 'full': 'University of Energy and Natural Resources', 'location': 'Sunyani, Bono Region', 'est': 2011, 'color': '#7c2d12', 'about': 'UENR focuses on energy and natural resources education and research. It is one of the newer technical universities in Ghana located in Sunyani.'},
     }
     
-    cutoffs = {
-        'Medicine & Surgery (MBChB)': {'KNUST':6, 'UG':8, 'UCC':9, 'UDS':6, 'UENR':8},
-        'Doctor of Pharmacy (Pharm D)': {'KNUST':6, 'UG':10, 'UCC':12, 'UDS':6, 'UENR':10},
-        'BSc Nursing': {'KNUST':7, 'UG':12, 'UCC':9, 'UDS':6, 'UENR':15},
-        'BSc Midwifery': {'KNUST':8, 'UG':12, 'UCC':9},
-        'BSc Medical Laboratory Science': {'KNUST':7, 'UG':12, 'UDS':6, 'UENR':12},
-        'Bachelor of Dental Surgery (BDS)': {'KNUST':6},
-        'BSc Physiotherapy': {'KNUST':12, 'UENR':14},
-        'BSc Dietetics': {'KNUST':9, 'UG':14, 'UCC':16, 'UENR':14},
-        'BSc Civil Engineering': {'KNUST':7, 'UDS':6, 'UENR':6},
-        'BSc Mechanical Engineering': {'KNUST':7, 'UDS':6, 'UENR':6},
-        'BSc Electrical/Electronic Engineering': {'KNUST':6, 'UDS':6, 'UENR':6},
-        'BSc Biomedical Engineering': {'KNUST':6, 'UG':6, 'UENR':6},
-        'BSc Computer Engineering': {'KNUST':6, 'UDS':6, 'UENR':7},
-        'BSc Chemical Engineering': {'KNUST':7, 'UG':18},
-        'BSc Computer Science': {'KNUST':7, 'UG':15, 'UDS':6, 'UENR':7},
-        'BSc Information Technology': {'KNUST':10, 'UG':15, 'UENR':10},
-        'BSc Business Admin (Accounting)': {'KNUST':7, 'UG':15},
-        'BSc Business Admin (Marketing)': {'KNUST':9},
-        'LLB Bachelor of Laws': {'KNUST':6, 'UG':12, 'UENR':7},
-        'BSc/BA Economics': {'KNUST':10, 'UG':16, 'UDS':6, 'UENR':6},
-        'BSc Biochemistry': {'KNUST':9, 'UG':16},
-        'BSc Mathematics': {'KNUST':8, 'UG':14, 'UDS':6},
-        'BSc Chemistry': {'KNUST':9, 'UG':15},
-        'BSc Agriculture': {'KNUST':12, 'UG':18, 'UDS':6, 'UENR':10},
-        'BSc Agribusiness': {'KNUST':12, 'UG':18, 'UDS':6},
+    grouped_programs = {
+        'Health Sciences': {
+            'Medicine & Surgery (MBChB)': {'KNUST':6, 'UG':8, 'UCC':9, 'UDS':6, 'UENR':8},
+            'Doctor of Pharmacy (Pharm D)': {'KNUST':6, 'UG':10, 'UCC':12, 'UDS':6, 'UENR':10},
+            'BSc Nursing': {'KNUST':7, 'UG':12, 'UCC':9, 'UDS':6, 'UENR':15},
+            'BSc Midwifery': {'KNUST':8, 'UG':12, 'UCC':9},
+            'BSc Medical Laboratory Science': {'KNUST':7, 'UG':12, 'UDS':6, 'UENR':12},
+            'Bachelor of Dental Surgery (BDS)': {'KNUST':6},
+            'BSc Physiotherapy': {'KNUST':12, 'UENR':14},
+            'BSc Dietetics': {'KNUST':9, 'UG':14, 'UCC':16, 'UENR':14},
+            'BSc Optometry': {'KNUST':9, 'UG':15},
+            'BSc Public Health': {'KNUST':12, 'UG':15, 'UCC':14, 'UDS':8, 'UENR':14},
+            'BSc Health Information Management': {'UCC':14, 'UDS':8},
+            'BSc Physician Assistant Studies': {'KNUST':10, 'UCC':12, 'UDS':8},
+        },
+        'Engineering & Technology': {
+            'BSc Civil Engineering': {'KNUST':7, 'UDS':6, 'UENR':6},
+            'BSc Mechanical Engineering': {'KNUST':7, 'UDS':6, 'UENR':6},
+            'BSc Electrical/Electronic Engineering': {'KNUST':6, 'UDS':6, 'UENR':6},
+            'BSc Biomedical Engineering': {'KNUST':6, 'UG':6, 'UENR':6},
+            'BSc Computer Engineering': {'KNUST':6, 'UDS':6, 'UENR':7},
+            'BSc Chemical Engineering': {'KNUST':7, 'UG':18},
+            'BSc Petroleum Engineering': {'KNUST':8, 'UDS':7},
+            'BSc Geological Engineering': {'KNUST':9, 'UDS':7},
+            'BSc Materials Engineering': {'KNUST':10},
+            'BSc Industrial Engineering': {'KNUST':9, 'UENR':8},
+            'BSc Renewable Energy Engineering': {'UENR':7},
+            'BSc Telecommunications Engineering': {'KNUST':8, 'UENR':8},
+        },
+        'Computing & IT': {
+            'BSc Computer Science': {'KNUST':7, 'UG':15, 'UDS':6, 'UENR':7},
+            'BSc Information Technology': {'KNUST':10, 'UG':15, 'UENR':10},
+            'BSc Computer Science & Engineering': {'UCC':12},
+            'BSc Information Systems': {'UG':18, 'UCC':14},
+            'BSc Data Science': {'KNUST':10, 'UG':16},
+            'BSc Cybersecurity': {'KNUST':10, 'UENR':10},
+        },
+        'Business & Economics': {
+            'BSc Business Administration (Accounting)': {'KNUST':7, 'UG':15},
+            'BSc Business Administration (Marketing)': {'KNUST':9, 'UCC':12},
+            'BSc Business Administration (Finance)': {'KNUST':8, 'UG':16, 'UCC':12},
+            'BSc Business Administration (Management)': {'KNUST':9, 'UCC':14},
+            'BSc Economics': {'KNUST':10, 'UG':16, 'UDS':6, 'UENR':6},
+            'BA Economics': {'UCC':14, 'UDS':8},
+            'BSc Actuarial Science': {'KNUST':8, 'UG':14},
+            'BSc Banking & Finance': {'UG':16, 'UCC':14, 'UENR':10},
+            'BSc Supply Chain Management': {'KNUST':12, 'UCC':16},
+            'BSc Human Resource Management': {'KNUST':14, 'UCC':16},
+        },
+        'Law & Social Sciences': {
+            'LLB Bachelor of Laws': {'KNUST':6, 'UG':12, 'UENR':7},
+            'BA Political Science': {'UG':18, 'UCC':16},
+            'BA Sociology': {'UG':20, 'UCC':16},
+            'BA Psychology': {'UG':18, 'UCC':16},
+            'BA Social Work': {'UCC':16, 'UDS':10},
+            'BA Geography & Rural Development': {'KNUST':14, 'UG':18},
+            'BSc Development Planning': {'KNUST':14, 'UDS':10},
+        },
+        'Natural Sciences': {
+            'BSc Biochemistry': {'KNUST':9, 'UG':16},
+            'BSc Mathematics': {'KNUST':8, 'UG':14, 'UDS':6},
+            'BSc Chemistry': {'KNUST':9, 'UG':15},
+            'BSc Physics': {'KNUST':10, 'UG':16, 'UCC':16},
+            'BSc Biology': {'UG':16, 'UCC':16},
+            'BSc Statistics': {'KNUST':10, 'UG':16, 'UCC':16},
+            'BSc Actuarial Mathematics': {'KNUST':9},
+            'BSc Environmental Science': {'KNUST':12, 'UG':18, 'UENR':10},
+            'BSc Meteorology & Climate Science': {'KNUST':12, 'UG':18},
+        },
+        'Agriculture & Natural Resources': {
+            'BSc Agriculture': {'KNUST':12, 'UG':18, 'UDS':6, 'UENR':10},
+            'BSc Agribusiness': {'KNUST':12, 'UG':18, 'UDS':6},
+            'BSc Food Science & Technology': {'KNUST':10, 'UG':18, 'UCC':16},
+            'BSc Forestry': {'KNUST':14, 'UG':20},
+            'BSc Fisheries & Aquatic Sciences': {'KNUST':14, 'UG':20, 'UCC':18},
+            'BSc Natural Resource Management': {'UENR':10, 'UDS':8},
+            'BSc Veterinary Medicine': {'KNUST':8},
+        },
+        'Arts & Humanities': {
+            'BA Communication Studies': {'UG':20, 'UCC':18, 'KNUST':16},
+            'BA Journalism': {'UG':20, 'UCC':18},
+            'BA English': {'UG':20, 'UCC':18},
+            'BA History': {'UG':22, 'UCC':20},
+            'BA Philosophy': {'UG':22, 'UCC':20},
+            'BA French': {'UG':22, 'UCC':20},
+            'BSc Information Studies': {'UG':20, 'KNUST':16},
+            'BA Theatre Arts': {'KNUST':18, 'UG':22},
+            'BA Fine Arts': {'KNUST':16, 'UG':22},
+        },
+        'Education': {
+            'BSc Education (Science)': {'UCC':14, 'UDS':10, 'UEW':12},
+            'BSc Education (Mathematics)': {'UCC':14, 'UDS':10},
+            'BA Education (English)': {'UCC':16, 'UDS':12},
+            'BA Education (Social Studies)': {'UCC':18, 'UDS':12},
+            'BSc Basic Education': {'UCC':18, 'UDS':12, 'UENR':16},
+        },
     }
-    
     uni = uni_data.get(uni_key.lower())
     if not uni:
         from django.http import Http404
         raise Http404
     
     uni_name = uni['name']
-    programs = [(prog, co) for prog, cos in cutoffs.items() if uni_name in cos for co in [cos[uni_name]]]
-    programs.sort(key=lambda x: x[1])
-    
+    # Build grouped programs for this university
+    uni_grouped = {}
+    for category, progs in grouped_programs.items():
+        cat_programs = [(prog, cos[uni_name]) for prog, cos in progs.items() if uni_name in cos]
+        cat_programs.sort(key=lambda x: x[1])
+        if cat_programs:
+            uni_grouped[category] = cat_programs
+
+    # Flat list for backward compat
+    programs = [(p, c) for cat in uni_grouped.values() for p, c in cat]
+
     return render(request, 'frontend/university_detail.html', {
         'uni': uni,
         'programs': programs,
+        'grouped_programs': uni_grouped,
     })
