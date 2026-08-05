@@ -25,8 +25,8 @@ def roadmap(request):
 
 def university_detail(request, uni_key):
     uni_data = {
-        'knust': {'name': 'KNUST', 'full': 'Kwame Nkrumah University of Science and Technology', 'location': 'Kumasi, Ashanti Region', 'est': 1952, 'color': '#052e16', 'website': 'https://knust.edu.gh', 'image': 'https://treck.knust.edu.gh/sites/default/files/styles/large/public/2020-04/covid-19-notice.jpg?itok=JcsOOXdY', 'thumb': 'https://pbs.twimg.com/media/ErS9PB8WMAA6ZmG.jpg', 'thumb': 'https://pbs.twimg.com/media/ErS9PB8WMAA6ZmG.jpg', 'about': 'Kwame Nkrumah University of Science and Technology (KNUST) is a public research university in Kumasi, the Ashanti Regional capital. Founded in 1952 as the Kumasi College of Technology, it was granted full university status in 1961 and named after Ghana\'s first president, Kwame Nkrumah. KNUST is the largest university in the Ashanti Region and Ghana\'s top-ranked university in West Africa by U.S. News & World Report. Its sprawling 2,500-acre campus houses six semi-autonomous colleges covering engineering, health sciences, agriculture, art, science and social sciences. Notable alumni include UN Secretary-General Kofi Annan and former Vice-President Aliu Mahama.'},
-        'ug': {'name': 'UG', 'full': 'University of Ghana', 'location': 'Legon, Accra', 'est': 1948, 'color': '#0c1445', 'website': 'https://ug.edu.gh', 'image': 'https://www.graphic.com.gh/images/2025/jun/26/aaaaUG.jpg', 'thumb': 'https://images.unsplash.com/photo-1762340034235-881592eaa7a3?q=80&w=1672&auto=format&fit=crop', 'thumb': 'https://images.unsplash.com/photo-1762340034235-881592eaa7a3?q=80&w=1672&auto=format&fit=crop', 'about': 'The University of Ghana, founded on August 11, 1948 as the University College of the Gold Coast, is the oldest and largest public university in Ghana. Located in Legon, Accra, it gained full university status by an Act of Parliament in 1961, with Ghana\'s first president Kwame Nkrumah as its first Chancellor. With over 60,000 students, UG operates on a collegiate system covering arts, sciences, social sciences, medicine, agriculture and law. It is a leading research university in Africa and home to distinguished alumni including Nobel Peace Prize laureate Kofi Annan.'},
+        'knust': {'name': 'KNUST', 'full': 'Kwame Nkrumah University of Science and Technology', 'location': 'Kumasi, Ashanti Region', 'est': 1952, 'color': '#052e16', 'website': 'https://knust.edu.gh', 'image': 'https://treck.knust.edu.gh/sites/default/files/styles/large/public/2020-04/covid-19-notice.jpg?itok=JcsOOXdY', 'thumb': 'https://images.unsplash.com/photo-1650668786332-be3a9f4513d4?q=80&w=2232&auto=format&fit=crop', 'about': 'Kwame Nkrumah University of Science and Technology (KNUST) is a public research university in Kumasi, the Ashanti Regional capital. Founded in 1952 as the Kumasi College of Technology, it was granted full university status in 1961 and named after Ghana\'s first president, Kwame Nkrumah. KNUST is the largest university in the Ashanti Region and Ghana\'s top-ranked university in West Africa by U.S. News & World Report. Its sprawling 2,500-acre campus houses six semi-autonomous colleges covering engineering, health sciences, agriculture, art, science and social sciences. Notable alumni include UN Secretary-General Kofi Annan and former Vice-President Aliu Mahama.'},
+        'ug': {'name': 'UG', 'full': 'University of Ghana', 'location': 'Legon, Accra', 'est': 1948, 'color': '#0c1445', 'website': 'https://ug.edu.gh', 'image': 'https://www.graphic.com.gh/images/2025/jun/26/aaaaUG.jpg', 'thumb': 'https://images.unsplash.com/photo-1762340034235-881592eaa7a3?q=80&w=1672&auto=format&fit=crop', 'about': 'The University of Ghana, founded on August 11, 1948 as the University College of the Gold Coast, is the oldest and largest public university in Ghana. Located in Legon, Accra, it gained full university status by an Act of Parliament in 1961, with Ghana\'s first president Kwame Nkrumah as its first Chancellor. With over 60,000 students, UG operates on a collegiate system covering arts, sciences, social sciences, medicine, agriculture and law. It is a leading research university in Africa and home to distinguished alumni including Nobel Peace Prize laureate Kofi Annan.'},
         'ucc': {'name': 'UCC', 'full': 'University of Cape Coast', 'location': 'Cape Coast, Central Region', 'est': 1962, 'color': '#7f1d1d', 'website': 'https://ucc.edu.gh', 'image': 'https://geshub.org/wp-content/uploads/2023/01/University-of-Cape-Coast-720x375.png', 'about': 'The University of Cape Coast was established in October 1962 as a university college affiliated to the University of Ghana, Legon. It gained full autonomous university status on 1st October 1971. Uniquely situated on a hill overlooking the Atlantic Ocean near the historic Cape Coast Castle, UCC\'s campus is one of the few seafront universities in the world. Originally mandated to train graduate professional teachers, UCC has since expanded into a comprehensive collegiate university covering humanities, science, agriculture, education and health sciences, with over 70,000 students.'},
         'uds': {'name': 'UDS', 'full': 'University for Development Studies', 'location': 'Tamale, Northern Region', 'est': 1992, 'color': '#4c1d95', 'website': 'https://uds.edu.gh', 'image': 'https://uds.edu.gh/logmein/uploads/posts/dc197f2771bc06880a1ee8bbe9570882.jpg', 'about': 'The University for Development Studies (UDS), established in May 1992 by PNDC Law 279, is Ghana\'s first public university in the North and the fifth public university in the country. Headquartered in Tamale, UDS operates across multiple campuses with a unique mission: to blend the academic world with that of the community for the development of northern Ghana and beyond. It began academic work in September 1993 with 39 students in the Faculty of Agriculture at Nyankpala. UDS consistently ranks among Ghana\'s top four universities and runs graduate and undergraduate programmes alongside community outreach activities.'},
         'uenr': {'name': 'UENR', 'full': 'University of Energy and Natural Resources', 'location': 'Sunyani, Bono Region', 'est': 2011, 'color': '#7c2d12', 'website': 'https://uenr.edu.gh', 'image': 'https://i0.wp.com/galexgh.com/wp-content/uploads/2021/09/EoD7M0VW8AAHCIr.jpg', 'about': 'The University of Energy and Natural Resources (UENR) was established by an Act of Parliament (Act 830) on December 31, 2011, making it one of Ghana\'s newest public universities. Located in Sunyani in the Bono Region, UENR is a national institution with a unique focus on energy and natural resource management. It emphasises interdisciplinary research integrating economics, law, policy, science, technology and engineering to tackle Ghana\'s energy and environmental challenges. UENR offers programmes in renewable energy, engineering, agriculture, health sciences and natural resource management.'},
@@ -38,122 +38,44 @@ def university_detail(request, uni_key):
         'uenr': {'name': 'UENR', 'full': 'University of Energy and Natural Resources', 'location': 'Sunyani, Bono Region', 'est': 2011, 'color': '#7c2d12', 'about': 'UENR focuses on energy and natural resources education and research. It is one of the newer technical universities in Ghana located in Sunyani.'},
     }
     
-    grouped_programs = {
-        'Health Sciences': {
-            'Medicine & Surgery (MBChB)': {'KNUST':6, 'UG':8, 'UCC':9, 'UDS':6, 'UENR':8},
-            'Doctor of Pharmacy (Pharm D)': {'KNUST':6, 'UG':10, 'UCC':12, 'UDS':6, 'UENR':10},
-            'BSc Nursing': {'KNUST':7, 'UG':12, 'UCC':9, 'UDS':6, 'UENR':15},
-            'BSc Midwifery': {'KNUST':8, 'UG':12, 'UCC':9},
-            'BSc Medical Laboratory Science': {'KNUST':7, 'UG':12, 'UDS':6, 'UENR':12},
-            'Bachelor of Dental Surgery (BDS)': {'KNUST':6},
-            'BSc Physiotherapy': {'KNUST':12, 'UENR':14},
-            'BSc Dietetics': {'KNUST':9, 'UG':14, 'UCC':16, 'UENR':14},
-            'BSc Optometry': {'KNUST':9, 'UG':15},
-            'BSc Public Health': {'KNUST':12, 'UG':15, 'UCC':14, 'UDS':8, 'UENR':14},
-            'BSc Health Information Management': {'UCC':14, 'UDS':8},
-            'BSc Physician Assistant Studies': {'KNUST':10, 'UCC':12, 'UDS':8},
-        },
-        'Engineering & Technology': {
-            'BSc Civil Engineering': {'KNUST':7, 'UDS':6, 'UENR':6},
-            'BSc Mechanical Engineering': {'KNUST':7, 'UDS':6, 'UENR':6},
-            'BSc Electrical/Electronic Engineering': {'KNUST':6, 'UDS':6, 'UENR':6},
-            'BSc Biomedical Engineering': {'KNUST':6, 'UG':6, 'UENR':6},
-            'BSc Computer Engineering': {'KNUST':6, 'UDS':6, 'UENR':7},
-            'BSc Chemical Engineering': {'KNUST':7, 'UG':18},
-            'BSc Petroleum Engineering': {'KNUST':8, 'UDS':7},
-            'BSc Geological Engineering': {'KNUST':9, 'UDS':7},
-            'BSc Materials Engineering': {'KNUST':10},
-            'BSc Industrial Engineering': {'KNUST':9, 'UENR':8},
-            'BSc Renewable Energy Engineering': {'UENR':7},
-            'BSc Telecommunications Engineering': {'KNUST':8, 'UENR':8},
-        },
-        'Computing & IT': {
-            'BSc Computer Science': {'KNUST':7, 'UG':15, 'UDS':6, 'UENR':7},
-            'BSc Information Technology': {'KNUST':10, 'UG':15, 'UENR':10},
-            'BSc Computer Science & Engineering': {'UCC':12},
-            'BSc Information Systems': {'UG':18, 'UCC':14},
-            'BSc Data Science': {'KNUST':10, 'UG':16},
-            'BSc Cybersecurity': {'KNUST':10, 'UENR':10},
-        },
-        'Business & Economics': {
-            'BSc Business Administration (Accounting)': {'KNUST':7, 'UG':15},
-            'BSc Business Administration (Marketing)': {'KNUST':9, 'UCC':12},
-            'BSc Business Administration (Finance)': {'KNUST':8, 'UG':16, 'UCC':12},
-            'BSc Business Administration (Management)': {'KNUST':9, 'UCC':14},
-            'BSc Economics': {'KNUST':10, 'UG':16, 'UDS':6, 'UENR':6},
-            'BA Economics': {'UCC':14, 'UDS':8},
-            'BSc Actuarial Science': {'KNUST':8, 'UG':14},
-            'BSc Banking & Finance': {'UG':16, 'UCC':14, 'UENR':10},
-            'BSc Supply Chain Management': {'KNUST':12, 'UCC':16},
-            'BSc Human Resource Management': {'KNUST':14, 'UCC':16},
-        },
-        'Law & Social Sciences': {
-            'LLB Bachelor of Laws': {'KNUST':6, 'UG':12, 'UENR':7},
-            'BA Political Science': {'UG':18, 'UCC':16},
-            'BA Sociology': {'UG':20, 'UCC':16},
-            'BA Psychology': {'UG':18, 'UCC':16},
-            'BA Social Work': {'UCC':16, 'UDS':10},
-            'BA Geography & Rural Development': {'KNUST':14, 'UG':18},
-            'BSc Development Planning': {'KNUST':14, 'UDS':10},
-        },
-        'Natural Sciences': {
-            'BSc Biochemistry': {'KNUST':9, 'UG':16},
-            'BSc Mathematics': {'KNUST':8, 'UG':14, 'UDS':6},
-            'BSc Chemistry': {'KNUST':9, 'UG':15},
-            'BSc Physics': {'KNUST':10, 'UG':16, 'UCC':16},
-            'BSc Biology': {'UG':16, 'UCC':16},
-            'BSc Statistics': {'KNUST':10, 'UG':16, 'UCC':16},
-            'BSc Actuarial Mathematics': {'KNUST':9},
-            'BSc Environmental Science': {'KNUST':12, 'UG':18, 'UENR':10},
-            'BSc Meteorology & Climate Science': {'KNUST':12, 'UG':18},
-        },
-        'Agriculture & Natural Resources': {
-            'BSc Agriculture': {'KNUST':12, 'UG':18, 'UDS':6, 'UENR':10},
-            'BSc Agribusiness': {'KNUST':12, 'UG':18, 'UDS':6},
-            'BSc Food Science & Technology': {'KNUST':10, 'UG':18, 'UCC':16},
-            'BSc Forestry': {'KNUST':14, 'UG':20},
-            'BSc Fisheries & Aquatic Sciences': {'KNUST':14, 'UG':20, 'UCC':18},
-            'BSc Natural Resource Management': {'UENR':10, 'UDS':8},
-            'BSc Veterinary Medicine': {'KNUST':8},
-        },
-        'Arts & Humanities': {
-            'BA Communication Studies': {'UG':20, 'UCC':18, 'KNUST':16},
-            'BA Journalism': {'UG':20, 'UCC':18},
-            'BA English': {'UG':20, 'UCC':18},
-            'BA History': {'UG':22, 'UCC':20},
-            'BA Philosophy': {'UG':22, 'UCC':20},
-            'BA French': {'UG':22, 'UCC':20},
-            'BSc Information Studies': {'UG':20, 'KNUST':16},
-            'BA Theatre Arts': {'KNUST':18, 'UG':22},
-            'BA Fine Arts': {'KNUST':16, 'UG':22},
-        },
-        'Education': {
-            'BSc Education (Science)': {'UCC':14, 'UDS':10, 'UEW':12},
-            'BSc Education (Mathematics)': {'UCC':14, 'UDS':10},
-            'BA Education (English)': {'UCC':16, 'UDS':12},
-            'BA Education (Social Studies)': {'UCC':18, 'UDS':12},
-            'BSc Basic Education': {'UCC':18, 'UDS':12, 'UENR':16},
-        },
+    cutoffs = {
+        'Medicine & Surgery (MBChB)': {'KNUST':6, 'UG':8, 'UCC':9, 'UDS':6, 'UENR':8},
+        'Doctor of Pharmacy (Pharm D)': {'KNUST':6, 'UG':10, 'UCC':12, 'UDS':6, 'UENR':10},
+        'BSc Nursing': {'KNUST':7, 'UG':12, 'UCC':9, 'UDS':6, 'UENR':15},
+        'BSc Midwifery': {'KNUST':8, 'UG':12, 'UCC':9},
+        'BSc Medical Laboratory Science': {'KNUST':7, 'UG':12, 'UDS':6, 'UENR':12},
+        'Bachelor of Dental Surgery (BDS)': {'KNUST':6},
+        'BSc Physiotherapy': {'KNUST':12, 'UENR':14},
+        'BSc Dietetics': {'KNUST':9, 'UG':14, 'UCC':16, 'UENR':14},
+        'BSc Civil Engineering': {'KNUST':7, 'UDS':6, 'UENR':6},
+        'BSc Mechanical Engineering': {'KNUST':7, 'UDS':6, 'UENR':6},
+        'BSc Electrical/Electronic Engineering': {'KNUST':6, 'UDS':6, 'UENR':6},
+        'BSc Biomedical Engineering': {'KNUST':6, 'UG':6, 'UENR':6},
+        'BSc Computer Engineering': {'KNUST':6, 'UDS':6, 'UENR':7},
+        'BSc Chemical Engineering': {'KNUST':7, 'UG':18},
+        'BSc Computer Science': {'KNUST':7, 'UG':15, 'UDS':6, 'UENR':7},
+        'BSc Information Technology': {'KNUST':10, 'UG':15, 'UENR':10},
+        'BSc Business Admin (Accounting)': {'KNUST':7, 'UG':15},
+        'BSc Business Admin (Marketing)': {'KNUST':9},
+        'LLB Bachelor of Laws': {'KNUST':6, 'UG':12, 'UENR':7},
+        'BSc/BA Economics': {'KNUST':10, 'UG':16, 'UDS':6, 'UENR':6},
+        'BSc Biochemistry': {'KNUST':9, 'UG':16},
+        'BSc Mathematics': {'KNUST':8, 'UG':14, 'UDS':6},
+        'BSc Chemistry': {'KNUST':9, 'UG':15},
+        'BSc Agriculture': {'KNUST':12, 'UG':18, 'UDS':6, 'UENR':10},
+        'BSc Agribusiness': {'KNUST':12, 'UG':18, 'UDS':6},
     }
+    
     uni = uni_data.get(uni_key.lower())
     if not uni:
         from django.http import Http404
         raise Http404
     
     uni_name = uni['name']
-    # Build grouped programs for this university
-    uni_grouped = {}
-    for category, progs in grouped_programs.items():
-        cat_programs = [(prog, cos[uni_name]) for prog, cos in progs.items() if uni_name in cos]
-        cat_programs.sort(key=lambda x: x[1])
-        if cat_programs:
-            uni_grouped[category] = cat_programs
-
-    # Flat list for backward compat
-    programs = [(p, c) for cat in uni_grouped.values() for p, c in cat]
-
+    programs = [(prog, co) for prog, cos in cutoffs.items() if uni_name in cos for co in [cos[uni_name]]]
+    programs.sort(key=lambda x: x[1])
+    
     return render(request, 'frontend/university_detail.html', {
         'uni': uni,
         'programs': programs,
-        'grouped_programs': uni_grouped,
     })
