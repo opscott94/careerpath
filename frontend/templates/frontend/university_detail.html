@@ -35,13 +35,19 @@
 
 <!-- About + Image -->
 <div style="max-width:960px;margin:0 auto;padding:40px 20px 0;">
-  <div style="display:grid;grid-template-columns:1fr 320px;gap:32px;margin-bottom:32px;">
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:32px;margin-bottom:32px;align-items:start;">
     <div>
       <h2 style="font-size:22px;font-weight:700;color:#111827;margin:0 0 12px;">About the <span style="color:#15803d;">University</span></h2>
-      <p style="font-size:14px;color:#4b5563;line-height:1.7;margin:0;">{{ uni.about }}</p>
+      <p style="font-size:14px;color:#4b5563;line-height:1.8;margin:0 0 16px;">{{ uni.about }}</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:12px;background:#f0fdf4;color:#15803d;border:1px solid #d1fae5;padding:4px 12px;border-radius:100px;">🏛 Est. {{ uni.est }}</span>
+        <span style="font-size:12px;background:#f0fdf4;color:#15803d;border:1px solid #d1fae5;padding:4px 12px;border-radius:100px;">📍 {{ uni.location }}</span>
+        <span style="font-size:12px;background:#f0fdf4;color:#15803d;border:1px solid #d1fae5;padding:4px 12px;border-radius:100px;">🎓 {{ programs|length }}+ programmes</span>
+        <span style="font-size:12px;background:#f0fdf4;color:#15803d;border:1px solid #d1fae5;padding:4px 12px;border-radius:100px;">🏫 Public University</span>
+      </div>
     </div>
-    <div style="border-radius:16px;overflow:hidden;height:200px;">
-      <img src="{{ uni.image }}" style="width:100%;height:100%;object-fit:cover;" alt="{{ uni.name }} campus">
+    <div style="border-radius:16px;overflow:hidden;height:220px;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
+      <img src="{{ uni.image }}" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;" alt="{{ uni.name }} campus">
     </div>
   </div>
 
