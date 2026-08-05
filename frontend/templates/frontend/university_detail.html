@@ -41,7 +41,7 @@
       <p style="font-size:15px;color:#4b5563;line-height:1.8;margin:0;text-align:left;">{{ uni.about }}</p>
     </div>
     <div style="border-radius:16px;overflow:hidden;height:220px;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
-      <img src="{{ uni.image }}" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;" alt="{{ uni.name }} campus">
+      <img src="{{ uni.thumb|default:uni.image }}" style="width:100%;height:100%;object-fit:cover;object-position:center center;" alt="{{ uni.name }} campus">
     </div>
   </div>
 
