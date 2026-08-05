@@ -1,3 +1,4 @@
+from .program_data import PROGRAMS_BY_UNI
 from django.shortcuts import render
 
 def landing(request):
@@ -38,42 +39,25 @@ def university_detail(request, uni_key):
         'uenr': {'name': 'UENR', 'full': 'University of Energy and Natural Resources', 'location': 'Sunyani, Bono Region', 'est': 2011, 'color': '#7c2d12', 'about': 'UENR focuses on energy and natural resources education and research. It is one of the newer technical universities in Ghana located in Sunyani.'},
     }
     
-    cutoffs = {
-        'Medicine & Surgery (MBChB)': {'KNUST':6, 'UG':8, 'UCC':9, 'UDS':6, 'UENR':8},
-        'Doctor of Pharmacy (Pharm D)': {'KNUST':6, 'UG':10, 'UCC':12, 'UDS':6, 'UENR':10},
-        'BSc Nursing': {'KNUST':7, 'UG':12, 'UCC':9, 'UDS':6, 'UENR':15},
-        'BSc Midwifery': {'KNUST':8, 'UG':12, 'UCC':9},
-        'BSc Medical Laboratory Science': {'KNUST':7, 'UG':12, 'UDS':6, 'UENR':12},
-        'Bachelor of Dental Surgery (BDS)': {'KNUST':6},
-        'BSc Physiotherapy': {'KNUST':12, 'UENR':14},
-        'BSc Dietetics': {'KNUST':9, 'UG':14, 'UCC':16, 'UENR':14},
-        'BSc Civil Engineering': {'KNUST':7, 'UDS':6, 'UENR':6},
-        'BSc Mechanical Engineering': {'KNUST':7, 'UDS':6, 'UENR':6},
-        'BSc Electrical/Electronic Engineering': {'KNUST':6, 'UDS':6, 'UENR':6},
-        'BSc Biomedical Engineering': {'KNUST':6, 'UG':6, 'UENR':6},
-        'BSc Computer Engineering': {'KNUST':6, 'UDS':6, 'UENR':7},
-        'BSc Chemical Engineering': {'KNUST':7, 'UG':18},
-        'BSc Computer Science': {'KNUST':7, 'UG':15, 'UDS':6, 'UENR':7},
-        'BSc Information Technology': {'KNUST':10, 'UG':15, 'UENR':10},
-        'BSc Business Admin (Accounting)': {'KNUST':7, 'UG':15},
-        'BSc Business Admin (Marketing)': {'KNUST':9},
-        'LLB Bachelor of Laws': {'KNUST':6, 'UG':12, 'UENR':7},
-        'BSc/BA Economics': {'KNUST':10, 'UG':16, 'UDS':6, 'UENR':6},
-        'BSc Biochemistry': {'KNUST':9, 'UG':16},
-        'BSc Mathematics': {'KNUST':8, 'UG':14, 'UDS':6},
-        'BSc Chemistry': {'KNUST':9, 'UG':15},
-        'BSc Agriculture': {'KNUST':12, 'UG':18, 'UDS':6, 'UENR':10},
-        'BSc Agribusiness': {'KNUST':12, 'UG':18, 'UDS':6},
-    }
-    
     uni = uni_data.get(uni_key.lower())
     if not uni:
         from django.http import Http404
         raise Http404
     
     uni_name = uni['name']
-    programs = [(prog, co) for prog, cos in cutoffs.items() if uni_name in cos for co in [cos[uni_name]]]
-    programs.sort(key=lambda x: x[1])
+    programs = []
+    for category, entries in PROGRAMS_BY_UNI.get(uni_name, {}).items():
+        for entry in entries:
+            name = entry[0]
+            cutoff = entry[1]
+            note = entry[2] if len(entry) > 2 else None
+            display = cutoff if cutoff is not None else (note or 'N/A')
+            programs.append((name, display))
+
+    def _sort_key(item):
+        val = item[1]
+        return (0, val) if isinstance(val, int) else (1, str(val))
+    programs.sort(key=_sort_key)
     
     return render(request, 'frontend/university_detail.html', {
         'uni': uni,
