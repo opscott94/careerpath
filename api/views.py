@@ -512,10 +512,11 @@ def evaluate_eligibility(request):
         'requirements__elective_subjects'
     ).all()
 
-    grouped = {}
+    results = []
     for p in all_programs:
         p_name = p.name.strip()
-        key = p_name.lower()
+        base_pname = re.sub(r'\s*\([^)]*campus\)', '', p_name, flags=re.IGNORECASE).strip()
+        key = base_pname.lower()
 
         if not cores_passed:
             continue
@@ -567,8 +568,11 @@ def evaluate_eligibility(request):
             is_eligible = (cutoff is not None and aggregate <= cutoff)
             is_borderline = (cutoff is not None and not is_eligible and aggregate <= cutoff + 3)
 
+            if not is_eligible and not is_borderline:
+                continue
+
             category = 'all'
-            lower_pname = base_pname.lower()
+            lower_pname = p.name.lower()
             if any(k in lower_pname for k in ['medicine', 'surgery', 'pharmacy', 'nursing', 'midwifery', 'medical', 'dental', 'health', 'optometry', 'herbal', 'physiotherapy', 'dietetics']):
                 category = 'health'
             elif 'engineering' in lower_pname or 'architecture' in lower_pname:
@@ -584,66 +588,41 @@ def evaluate_eligibility(request):
             elif any(k in lower_pname for k in ['biology', 'chemistry', 'physics', 'mathematics', 'biochemistry', 'science']):
                 category = 'science'
 
-            if key not in grouped:
-                grouped[key] = {
-                    'program_name': base_pname,
-                    'category': category,
-                    'faculty': p.faculty,
-                    'min_cutoff': cutoff,
-                    'is_eligible': is_eligible,
-                    'is_borderline': is_borderline,
-                    'universities_dict': {},
-                    'core_subjects': [s.name for s in p.core_subjects.all()],
-                }
+            core_subjects = [{'id': s.id, 'name': s.name} for s in p.core_subjects.all()]
+            
+            requirements = []
+            for req in p.requirements.all():
+                la_name = req.learning_area.name if req.learning_area else "General Entry"
+                mandatory = [{'id': s.id, 'name': s.name} for s in req.mandatory_subjects.all()]
+                electives = [{'id': s.id, 'name': s.name} for s in req.elective_subjects.all()]
+                requirements.append({
+                    'id': req.id,
+                    'learning_area': la_name,
+                    'mandatory_subjects': mandatory,
+                    'elective_subjects': electives,
+                })
 
-            g = grouped[key]
-            if cutoff is not None:
-                if g['min_cutoff'] is None or cutoff < g['min_cutoff']:
-                    g['min_cutoff'] = cutoff
-            if is_eligible:
-                g['is_eligible'] = True
-            elif is_borderline and not g['is_eligible']:
-                g['is_borderline'] = True
-
-            u_code = p.university.short_name
-            if u_code not in g['universities_dict']:
-                g['universities_dict'][u_code] = {
-                    'short_name': u_code,
-                    'full_name': p.university.name,
-                    'location': p.university.location,
-                    'cutoff': cutoff,
-                    'eligible': is_eligible,
-                    'borderline': is_borderline,
-                    'campuses': []
-                }
-
-            ud = g['universities_dict'][u_code]
-            if cutoff is not None:
-                if ud['cutoff'] is None or cutoff < ud['cutoff']:
-                    ud['cutoff'] = cutoff
-            if is_eligible:
-                ud['eligible'] = True
-            elif is_borderline and not ud['eligible']:
-                ud['borderline'] = True
-
-            ud['campuses'].append({
-                'campus_name': p.campus or 'Main Campus',
+            results.append({
+                'id': p.id,
+                'program_name': p.name,
+                'university_name': p.university.name,
+                'university_short': p.university.short_name,
+                'university_location': p.university.location,
+                'faculty': p.faculty,
+                'duration_years': p.duration_years,
                 'cutoff': cutoff,
-                'eligible': is_eligible,
-                'borderline': is_borderline,
+                'year': p.year,
+                'campus': p.campus or 'Main Campus',
+                'note': p.note or '',
+                'is_eligible': is_eligible,
+                'is_borderline': is_borderline,
                 'margin': (cutoff - aggregate) if cutoff else None,
-                'note': p.note or ''
+                'category': category,
+                'core_subjects': core_subjects,
+                'requirements': requirements,
             })
 
-    results = []
-    for g_data in grouped.values():
-        unis_list = list(g_data['universities_dict'].values())
-        unis_list.sort(key=lambda u: (not u['eligible'], not u['borderline'], u['cutoff'] or 999))
-        g_data['universities'] = unis_list
-        del g_data['universities_dict']
-        results.append(g_data)
-
-    results.sort(key=lambda x: (not x['is_eligible'], not x['is_borderline'], x['min_cutoff'] or 999))
+    results.sort(key=lambda x: (not x['is_eligible'], not x['is_borderline'], x['cutoff'] or 999))
 
     label = 'Outstanding' if aggregate <= 8 else 'Excellent' if aggregate <= 12 else 'Very Good' if aggregate <= 18 else 'Good' if aggregate <= 24 else 'Fair'
 
