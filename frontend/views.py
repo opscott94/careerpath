@@ -3,7 +3,11 @@ from django.shortcuts import render
 
 def landing(request):
     unis = ['KNUST', 'UG', 'UCC', 'UDS', 'UENR']
-    return render(request, 'frontend/landing.html', {'unis': unis})
+    program_counts = {
+        uni: sum(len(entries) for entries in PROGRAMS_BY_UNI.get(uni, {}).values())
+        for uni in unis
+    }
+    return render(request, 'frontend/landing.html', {'unis': unis, 'program_counts': program_counts})
 
 def jhs_guide(request):
     import os
