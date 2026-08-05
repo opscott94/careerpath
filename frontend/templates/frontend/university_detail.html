@@ -84,37 +84,28 @@
 
   <!-- Programmes Tab -->
   <div id="tab-programmes" class="tab-content" style="padding-bottom:40px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-      <div>
-        <h3 style="font-size:20px;font-weight:700;color:#111827;margin:0 0 4px;">Programmes Offered</h3>
-        <p style="font-size:13px;color:#6b7280;margin:0;">{{ programs|length }} programmes · Lower aggregate is better</p>
-      </div>
-      <div style="display:flex;gap:8px;font-size:11px;">
-        <span style="background:#dcfce7;color:#15803d;padding:4px 10px;border-radius:6px;font-weight:600;">● ≤ 8</span>
-        <span style="background:#fef3c7;color:#d97706;padding:4px 10px;border-radius:6px;font-weight:600;">● 9–15</span>
-        <span style="background:#fee2e2;color:#dc2626;padding:4px 10px;border-radius:6px;font-weight:600;">● 16+</span>
-      </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h3 style="font-size:18px;font-weight:700;color:#111827;margin:0;">Programmes Offered</h3>
+      <span style="font-size:12px;color:#6b7280;background:#f9fafb;padding:4px 12px;border-radius:100px;border:1px solid #e5e7eb;">{{ programs|length }} programmes · Lower aggregate is better</span>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 120px;padding:8px 18px;background:#f9fafb;border-radius:10px 10px 0 0;border:0.5px solid #e5e7eb;border-bottom:none;">
-      <span style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;">Programme</span>
-      <span style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;text-align:center;">Cut-off</span>
-    </div>
-    <div style="border:0.5px solid #e5e7eb;border-radius:0 0 12px 12px;overflow:hidden;margin-bottom:20px;">
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
       {% for prog, cutoff in programs %}
-      <div style="display:grid;grid-template-columns:1fr 120px;padding:14px 18px;background:#fff;{% if not forloop.last %}border-bottom:0.5px solid #f1f5f9;{% endif %}align-items:center;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
         <p style="font-size:14px;font-weight:500;color:#111827;margin:0;">{{ prog }}</p>
-        <div style="display:flex;justify-content:center;">
-          <div style="{% if cutoff <= 8 %}background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;{% elif cutoff <= 15 %}background:#fef3c7;color:#d97706;border:1px solid #fde68a;{% else %}background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;{% endif %}padding:5px 16px;border-radius:8px;font-size:15px;font-weight:800;min-width:48px;text-align:center;">{{ cutoff }}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span style="font-size:11px;color:#9ca3af;">Cut-off</span>
+          <div style="{% if cutoff <= 8 %}background:#dcfce7;color:#15803d;{% elif cutoff <= 15 %}background:#fef3c7;color:#d97706;{% else %}background:#fee2e2;color:#dc2626;{% endif %}padding:4px 14px;border-radius:8px;font-size:14px;font-weight:800;">{{ cutoff }}</div>
         </div>
       </div>
       {% endfor %}
     </div>
-    <div style="padding:14px 18px;background:#f0fdf4;border-radius:12px;border:1px solid #d1fae5;">
+    <div style="padding:16px;background:#f0fdf4;border-radius:12px;border:1px solid #d1fae5;">
       <p style="font-size:12px;color:#065f46;margin:0;">💡 Cut-off points are based on 2024/2025 admission data. <a href="/shs-eligibility/" style="color:#15803d;font-weight:600;">Check your eligibility →</a></p>
     </div>
   </div>
 
-<div id="tab-campus" class="tab-content" style="padding-bottom:40px;">
+  <!-- Campus Life Tab -->
+  <div id="tab-campus" class="tab-content" style="padding-bottom:40px;">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
       <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:16px;padding:24px;">
         <p style="font-size:24px;margin:0 0 8px;">🏠</p>
