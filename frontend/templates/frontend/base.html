@@ -35,7 +35,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface);
 </head>
 <body>
 
-<nav style="background:#fff;border-bottom:1px solid #f1f5f9;position:sticky;top:0;z-index:50;">
+<nav style="background:transparent;position:absolute;top:0;left:0;right:0;z-index:50;">
   <div style="max-width:1152px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;">
     <div style="display:flex;align-items:center;gap:12px;">
       {% if request.path != '/' %}
@@ -44,10 +44,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface);
         <a href="/" style="display:flex;align-items:center;text-decoration:none;">
       <img src="/static/images/career.png" style="height:clamp(36px,6vw,56px);object-fit:contain;max-width:200px;">
     </a>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:100px;padding:6px 14px;">
-      <span style="font-size:14px;">🇬🇭</span>
-      <span style="font-size:13px;font-weight:600;color:#374151;">Ghana</span>
     </div>
   </div>
 </nav>
