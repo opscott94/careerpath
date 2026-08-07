@@ -36,7 +36,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface);
 <body>
 
 <nav style="background:rgba(255,255,255,0.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(241,245,249,0.5);position:sticky;top:0;z-index:50;">
-  <div style="max-width:1152px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;">
+  <div style="max-width:1320px;margin:0 auto;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;">
     <div style="display:flex;align-items:center;gap:12px;">
       {% if request.path != '/' %}
       <a href="javascript:history.back()" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;border:1px solid #e5e7eb;text-decoration:none;color:#6b7280;font-size:18px;background:#fff;">‹</a>
@@ -46,9 +46,9 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface);
     </a>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
-      <a href="/universities/" style="font-size:14px;font-weight:500;color:#374151;text-decoration:none;">Universities</a>
-      <a href="/jhs-guide/" style="font-size:14px;font-weight:500;color:#374151;text-decoration:none;">JHS Guide</a>
-      <a href="/shs-eligibility/" style="font-size:14px;font-weight:500;color:#374151;text-decoration:none;">Uni Eligibility</a>
+      <a href="/universities/" style="font-size:14px;font-weight:500;color:#374151;text-decoration:none;padding:8px 4px;border-bottom:2px solid transparent;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#15803d'" onmouseout="this.style.borderColor='transparent'">Universities</a>
+      <a href="/jhs-guide/" style="font-size:14px;font-weight:500;color:#374151;text-decoration:none;padding:8px 4px;border-bottom:2px solid transparent;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#15803d'" onmouseout="this.style.borderColor='transparent'">JHS Guide</a>
+      <a href="/shs-eligibility/" style="font-size:14px;font-weight:500;color:#374151;text-decoration:none;padding:8px 4px;border-bottom:2px solid transparent;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#15803d'" onmouseout="this.style.borderColor='transparent'">Uni Eligibility</a>
     </div>
   </div>
 </nav>

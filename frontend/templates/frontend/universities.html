@@ -1,16 +1,23 @@
 {% extends 'frontend/base.html' %}
 {% block title %}Universities — CareerPath Ghana{% endblock %}
 {% block content %}
-<div style="max-width:1152px;margin:0 auto;padding:48px 24px 80px;">
-  <p style="font-size:11px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 8px;">Universities</p>
-  <h1 style="font-size:2.2rem;font-weight:900;color:#111827;margin:0 0 32px;">Browse {{ unis|length }} universities in Ghana</h1>
+<div style="background:linear-gradient(145deg,#052e16,#166534);padding:48px 32px 40px;">
+  <div style="max-width:1320px;margin:0 auto;">
+    <p style="font-size:13px;color:#86efac;margin:0 0 12px;">
+      <a href="/" style="color:#86efac;text-decoration:none;">Home</a> &nbsp;›&nbsp;
+      <span style="color:#fff;">Universities</span>
+    </p>
+    <h1 style="font-size:2.2rem;font-weight:900;color:#fff;margin:0;">Browse universities in Ghana</h1>
+  </div>
+</div>
 
+<div style="max-width:1320px;margin:0 auto;padding:40px 32px 80px;">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     {% for uni in unis %}
     <div onclick="window.location='/university/{{ uni.key }}/'" style="cursor:pointer;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);transition:transform 0.2s;background:#fff;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
       <div style="position:relative;height:260px;background-image:url('{{ uni.thumb }}');background-size:cover;background-position:center;">
         <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.65),transparent 60%);"></div>
-        <div style="position:absolute;bottom:12px;left:16px;right:16px;">
+        <div style="position:absolute;bottom:16px;left:20px;right:20px;">
           <p style="color:#fff;font-size:20px;font-weight:700;margin:0;line-height:1.3;">{{ uni.full }}</p>
         </div>
       </div>
