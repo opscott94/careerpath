@@ -5,21 +5,23 @@
   <p style="font-size:11px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 8px;">Universities</p>
   <h1 style="font-size:2.2rem;font-weight:900;color:#111827;margin:0 0 32px;">Browse {{ unis|length }} universities in Ghana</h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     {% for uni in unis %}
     <div onclick="window.location='/university/{{ uni.key }}/'" style="cursor:pointer;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);transition:transform 0.2s;background:#fff;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-      <div style="position:relative;height:180px;background-image:url('{{ uni.thumb }}');background-size:cover;background-position:center;">
+      <div style="position:relative;height:260px;background-image:url('{{ uni.thumb }}');background-size:cover;background-position:center;">
         <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.65),transparent 60%);"></div>
         <div style="position:absolute;bottom:12px;left:16px;right:16px;">
-          <p style="color:#fff;font-size:16px;font-weight:700;margin:0;line-height:1.3;">{{ uni.full }}</p>
+          <p style="color:#fff;font-size:20px;font-weight:700;margin:0;line-height:1.3;">{{ uni.full }}</p>
         </div>
       </div>
-      <div style="padding:16px;">
-        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#6b7280;margin-bottom:6px;">
-          <span>📚</span><span>{{ uni.program_count }} Programmes</span>
+      <div style="padding:20px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><path d="M12 3L2 8l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <span style="font-size:13px;font-weight:600;color:#374151;">{{ uni.program_count }} Programmes</span>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#6b7280;">
-          <span>📍</span><span>{{ uni.location }}</span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><path d="M12 21s-7-6.5-7-11a7 7 0 0114 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          <span style="font-size:13px;color:#6b7280;">{{ uni.location }}</span>
         </div>
       </div>
     </div>
