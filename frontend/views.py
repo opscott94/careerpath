@@ -9,6 +9,19 @@ def landing(request):
     }
     return render(request, 'frontend/landing.html', {'unis': unis, 'program_counts': program_counts})
 
+def universities(request):
+    unis = [
+        {'key': 'knust', 'name': 'KNUST', 'full': 'Kwame Nkrumah University of Science and Technology', 'location': 'Kumasi, Ashanti', 'thumb': 'https://images.unsplash.com/photo-1650668786332-be3a9f4513d4?q=80&w=2232&auto=format&fit=crop', 'color': '#052e16'},
+        {'key': 'ug', 'name': 'University of Ghana', 'full': 'University of Ghana', 'location': 'Legon, Accra', 'thumb': 'https://images.unsplash.com/photo-1762340034235-881592eaa7a3?q=80&w=1672&auto=format&fit=crop', 'color': '#0c1445'},
+        {'key': 'ucc', 'name': 'University of Cape Coast', 'full': 'University of Cape Coast', 'location': 'Cape Coast, Central', 'thumb': 'https://geshub.org/wp-content/uploads/2023/01/University-of-Cape-Coast-720x375.png', 'color': '#7f1d1d'},
+        {'key': 'uds', 'name': 'University for Dev. Studies', 'full': 'University for Development Studies', 'location': 'Tamale, Northern', 'thumb': 'https://uds.edu.gh/logmein/uploads/posts/dc197f2771bc06880a1ee8bbe9570882.jpg', 'color': '#4c1d95'},
+        {'key': 'uenr', 'name': 'University of Energy and Natural Resources', 'full': 'University of Energy and Natural Resources', 'location': 'Sunyani, Bono', 'thumb': 'https://i0.wp.com/galexgh.com/wp-content/uploads/2021/09/EoD7M0VW8AAHCIr.jpg', 'color': '#7c2d12'},
+    ]
+    key_to_code = {'knust':'KNUST','ug':'UG','ucc':'UCC','uds':'UDS','uenr':'UENR'}
+    for u in unis:
+        u['program_count'] = sum(len(entries) for entries in PROGRAMS_BY_UNI.get(key_to_code[u['key']], {}).values())
+    return render(request, 'frontend/universities.html', {'unis': unis})
+
 def jhs_guide(request):
     import os
     import dotenv
