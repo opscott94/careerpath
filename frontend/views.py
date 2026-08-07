@@ -11,7 +11,7 @@ def landing(request):
 
 def universities(request):
     unis = [
-        {'key': 'knust', 'name': 'KNUST', 'full': 'Kwame Nkrumah University of Science and Technology', 'location': 'Kumasi, Ashanti', 'thumb': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqwiYjDiYA2db1IWXjvZ9r3iIxRmManHC8Z_wHiat1D-vj1hZlDvwTZUU&s', 'color': '#052e16'},
+        {'key': 'knust', 'name': 'KNUST', 'full': 'Kwame Nkrumah University of Science and Technology', 'location': 'Kumasi, Ashanti', 'thumb': 'https://pub-5bcc3edf34304d04b59dc91e1ad9d2fd.r2.dev/schoolfinder.tortoisepath.com/uploads/2024/07/13063314/KNUST-Campus-Kumasi-Ghana-SchoolFinder-TortoisePathcom.jpeg', 'color': '#052e16'},
         {'key': 'ug', 'name': 'University of Ghana', 'full': 'University of Ghana', 'location': 'Legon, Accra', 'thumb': 'https://images.unsplash.com/photo-1762340034235-881592eaa7a3?q=80&w=1672&auto=format&fit=crop', 'color': '#0c1445'},
         {'key': 'ucc', 'name': 'University of Cape Coast', 'full': 'University of Cape Coast', 'location': 'Cape Coast, Central', 'thumb': 'https://geshub.org/wp-content/uploads/2023/01/University-of-Cape-Coast-720x375.png', 'color': '#7f1d1d'},
         {'key': 'uds', 'name': 'University for Dev. Studies', 'full': 'University for Development Studies', 'location': 'Tamale, Northern', 'thumb': 'https://uds.edu.gh/logmein/uploads/posts/dc197f2771bc06880a1ee8bbe9570882.jpg', 'color': '#4c1d95'},
