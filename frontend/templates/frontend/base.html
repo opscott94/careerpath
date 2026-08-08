@@ -38,9 +38,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--surface);
 <nav style="background:rgba(255,255,255,0.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(241,245,249,0.5);position:sticky;top:0;z-index:50;">
   <div style="max-width:1320px;margin:0 auto;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;">
     <div style="display:flex;align-items:center;gap:12px;">
-      {% if request.path != '/' %}
-      <a href="javascript:history.back()" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;border:1px solid #e5e7eb;text-decoration:none;color:#6b7280;font-size:18px;background:#fff;">‹</a>
-      {% endif %}
         <a href="/" style="display:flex;align-items:center;text-decoration:none;">
       <img src="/static/images/career.png" style="height:clamp(36px,6vw,56px);object-fit:contain;max-width:200px;">
     </a>
