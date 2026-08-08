@@ -86,7 +86,7 @@
         <p style="font-size:14px;font-weight:500;color:#111827;margin:0;">{{ prog }}</p>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
           <span style="font-size:11px;color:#9ca3af;">Cut-off</span>
-          <div style="{% if cutoff <= 8 %}background:#dcfce7;color:#15803d;{% elif cutoff <= 15 %}background:#fef3c7;color:#d97706;{% else %}background:#fee2e2;color:#dc2626;{% endif %}padding:4px 14px;border-radius:8px;font-size:14px;font-weight:800;">{{ cutoff }}</div>
+          <div style="{% if cutoff <= 9 %}background:#dcfce7;color:#15803d;{% else %}background:#fef3c7;color:#d97706;{% endif %}padding:4px 14px;border-radius:8px;font-size:14px;font-weight:800;">{{ cutoff }}</div>
         </div>
       </div>
       {% endfor %}
