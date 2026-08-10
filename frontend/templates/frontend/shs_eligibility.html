@@ -667,7 +667,8 @@
           <label for="universityFilter" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
             🏫 Filter by University
           </label>
-          <select id="universityFilter" onchange="filterPrograms()" class="w-full border border-gray-200 rounded-xl px-3.5 py-3 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 font-medium text-gray-800 cursor-pointer">
+          <select id="universityFilter" onchange="filterPrograms()"
+            class="w-full border border-gray-200 rounded-xl px-3.5 py-3 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 font-medium text-gray-800 cursor-pointer">
             <option value="all">All Universities (Top 5)</option>
             <option value="KNUST">KNUST — Kwame Nkrumah Univ. of Science & Tech</option>
             <option value="UG">UG — University of Ghana</option>
@@ -901,10 +902,10 @@
         fallback_category: fallbackCategory
       };
 
-      let statusHeader = (directEligibleCount >= 3) 
-        ? `🎯 AI Target Career: ${data.career_name || query}` 
+      let statusHeader = (directEligibleCount >= 3)
+        ? `🎯 AI Target Career: ${data.career_name || query}`
         : `🎯 Direct Matches & 💡 Related Field Pathways: ${data.career_name || query}`;
-      
+
       let statusNote = (directEligibleCount >= 3)
         ? (data.career_description ? `<p style="margin:2px 0 0;font-size:11px;color:#166534;">${data.career_description}</p>` : '')
         : `<p style="margin:2px 0 0;font-size:11px;color:#854f0b;">${directEligibleCount === 0 ? 'No direct degree title met your aggregate cutoff' : `Only ${directEligibleCount} direct program met your aggregate cutoff`}. We have added <strong>related eligible pathways</strong> in ${catColors[fallbackCategory]?.label || 'this discipline'} to help you reach your career goal!</p>`;
