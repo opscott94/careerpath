@@ -714,6 +714,14 @@
   let evaluatedData = null;
   let currentCategory = 'all';
 
+  const uniLogos = {
+    KNUST: '/static/images/knust.png',
+    UG: '/static/images/ug.png',
+    UCC: '/static/images/ucc.png',
+    UDS: '/static/images/uds.png',
+    UENR: '/static/images/uenr.png'
+  };
+
   const catColors = {
     'health': { border: '#1d9e75', bg: '#e1f5ee', text: '#0f6e56', label: 'Health Sciences' },
     'engineering': { border: '#378add', bg: '#e6f1fb', text: '#185fa5', label: 'Engineering' },
@@ -1007,6 +1015,16 @@
         }
       }
 
+      const uniLogos = {
+        KNUST: '/static/images/knust.png',
+        UG: '/static/images/ug.png',
+        UCC: '/static/images/ucc.png',
+        UDS: '/static/images/uds.png',
+        UENR: '/static/images/uenr.png'
+      };
+
+      const logoUrl = uniLogos[(prog.university_short || '').toUpperCase()] || '/static/images/career.png';
+
       html += `
       <div onclick="showResults(${origIndex})" style="border-left:4px solid ${styleObj.border};border-radius:12px;border-top:0.5px solid #e5e7eb;border-right:0.5px solid #e5e7eb;border-bottom:0.5px solid #e5e7eb;background:#fff;" class="flex items-center gap-4 p-4 cursor-pointer transition group hover:shadow-md hover:border-green-300">
         <div class="flex-1">
@@ -1015,7 +1033,10 @@
             ${statusBadge}
           </div>
           <div class="flex items-center gap-2 mb-1.5 flex-wrap">
-            <span style="font-size:11px;font-weight:700;color:#15803d;background:#f0fdf4;padding:2px 8px;border-radius:6px;border:1px solid #bbf7d0;">🏫 ${prog.university_short}</span>
+            <span style="font-size:11px;font-weight:700;color:#15803d;background:#fff;padding:2px 8px;border-radius:6px;border:1px solid #bbf7d0;display:inline-flex;align-items:center;gap:5px;">
+              <img src="${logoUrl}" style="width:16px;height:16px;object-fit:contain;" alt="${prog.university_short}">
+              ${prog.university_short}
+            </span>
             <span style="font-size:10px;font-weight:600;background:${styleObj.bg};color:${styleObj.text};padding:2px 8px;border-radius:4px;">${prog.faculty || styleObj.label}</span>
             ${prog.cutoff ? `<span class="text-xs text-gray-500 font-medium">Cutoff: <strong>${prog.cutoff}</strong></span>` : ''}
             ${aiBadge}
@@ -1043,6 +1064,7 @@
     document.getElementById('step3-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
 
     const styleObj = catColors[prog.category] || catColors['all'];
+    const logoUrl = uniLogos[(prog.university_short || '').toUpperCase()] || '/static/images/career.png';
 
     const coreListHtml = (prog.core_subjects && prog.core_subjects.length > 0)
       ? prog.core_subjects.map(c => `<span style="font-size:11px;font-weight:600;background:#e0f2fe;color:#0369a1;padding:4px 10px;border-radius:6px;border:1px solid #bae6fd;">✓ ${c.name}</span>`).join(' ')
@@ -1088,14 +1110,19 @@
     <!-- Header Program Details Card -->
     <div class="card p-6 mb-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-        <div>
-          <div class="flex items-center gap-2 mb-1 flex-wrap">
-            <span style="font-size:12px;font-weight:700;background:#052e16;color:#fff;padding:3px 10px;border-radius:100px;">🏫 ${prog.university_short}</span>
-            <span style="font-size:12px;font-weight:600;background:${styleObj.bg};color:${styleObj.text};padding:3px 10px;border-radius:6px;">${prog.faculty || styleObj.label}</span>
-            ${statusBadge}
+        <div class="flex items-start gap-3">
+          <div style="width:52px;height:52px;border-radius:14px;background:#fff;border:1px solid #e5e7eb;padding:5px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);flex-shrink:0;">
+            <img src="${logoUrl}" style="width:100%;height:100%;object-fit:contain;" alt="${prog.university_short}">
           </div>
-          <h2 class="display text-2xl font-bold text-gray-900">${prog.program_name}</h2>
-          <p class="text-gray-600 text-sm mt-0.5"><strong>${prog.university_name}</strong> · ${prog.university_location}</p>
+          <div>
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <span style="font-size:12px;font-weight:700;background:#052e16;color:#fff;padding:3px 10px;border-radius:100px;">${prog.university_short}</span>
+              <span style="font-size:12px;font-weight:600;background:${styleObj.bg};color:${styleObj.text};padding:3px 10px;border-radius:6px;">${prog.faculty || styleObj.label}</span>
+              ${statusBadge}
+            </div>
+            <h2 class="display text-2xl font-bold text-gray-900">${prog.program_name}</h2>
+            <p class="text-gray-600 text-sm mt-0.5"><strong>${prog.university_name}</strong> · ${prog.university_location}</p>
+          </div>
         </div>
         <div class="flex items-center gap-3 self-start sm:self-auto">
           <div class="text-center">
