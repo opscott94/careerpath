@@ -95,8 +95,24 @@
     renderKeywordResults(data, query);
   }
 
+  function toggleRecommendedPrograms() {
+    const container = document.getElementById('recommendedProgsContainer');
+    const icon = document.getElementById('progToggleText');
+    if (!container) return;
+    if (container.style.display === 'none' || container.style.display === '') {
+      container.style.display = 'block';
+      if (icon) icon.innerHTML = '▲ Hide Programs';
+    } else {
+      container.style.display = 'none';
+      if (icon) icon.innerHTML = '▼ Show Programs';
+    }
+  }
+
   // Bind handlers to global window scope so HTML attributes can access them from the module
   window.searchCareer = searchCareer;
+  window.getProgramDetails = getProgramDetails;
+  window.getSubjects = getSubjects;
+  window.toggleRecommendedPrograms = toggleRecommendedPrograms;
 
   function renderAiResults(aiData) {
     let html = `
@@ -116,27 +132,87 @@
           ${aiData.career_description}
         </div>
 
-        <p style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;display:flex;align-items:center;gap:6px;">
-          Recommended University Programs (Click a program card to view details)
-        </p>
-        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
-          ${aiData.matched_programs.map((p, i) => `
-            <div style="display:flex;align-items:flex-start;gap:12px;background:${i === 0 ? '#fefce8' : '#f9fafb'};border:2px solid ${i === 0 ? '#fde68a' : '#e5e7eb'};border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;"
-                 class="hover:border-primary card-hover"
-                 onclick="getProgramDetails('${p.program_name.replace(/'/g, "\\'")}')">
-              <div style="width:32px;height:32px;background:${i === 0 ? '#fef3c7' : '#f3f4f6'};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:${i === 0 ? '#92400e' : '#6b7280'};flex-shrink:0;">${i + 1}</div>
-              <div style="flex:1;">
-                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
-                  <p style="font-size:14px;font-weight:700;color:#1f2937;margin:0;">${p.program_name}</p>
-                  <div style="display:flex;gap:6px;align-items:center;">
-                    <span style="font-size:11px;font-weight:600;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:100px;">${p.universities}</span>
-                    <span style="font-size:12px;color:#a8a29e;">View Details</span>
-                  </div>
-                </div>
-                <p style="font-size:12px;color:#6b7280;margin:4px 0 0;line-height:1.5;">${p.reason}</p>
+        ${aiData.elective_summary ? `
+        <!-- SHS Elective Subject Selection Summary (Clean & Minimal UI) -->
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <span style="font-size:12px;font-weight:700;color:#111827;text-transform:uppercase;letter-spacing:0.04em;">
+              SHS Elective Subject Requirements Guide
+            </span>
+            <span style="font-size:11px;font-weight:600;background:#f3f4f6;color:#374151;padding:3px 10px;border-radius:100px;border:1px solid #e5e7eb;">
+              Track: ${aiData.elective_summary.tracks ? aiData.elective_summary.tracks.join(', ') : 'Science Track'}
+            </span>
+          </div>
+          <p style="font-size:13px;color:#4b5563;margin:0 0 16px;line-height:1.5;">
+            To qualify for university programmes leading to a career in <strong>${aiData.career_name}</strong>, select the following SHS electives:
+          </p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:12px;">
+            <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;">
+              <span style="font-size:11px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:8px;">
+                Mandatory Electives
+              </span>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                ${aiData.elective_summary.mandatory_electives && aiData.elective_summary.mandatory_electives.length > 0
+                  ? aiData.elective_summary.mandatory_electives.map(s => `<span style="font-size:12px;font-weight:600;background:#dcfce7;color:#15803d;padding:4px 10px;border-radius:6px;border:1px solid #bbf7d0;">${s}</span>`).join('')
+                  : '<span style="font-size:12px;color:#6b7280;">Chemistry, Physics, Biology</span>'
+                }
               </div>
             </div>
-          `).join('')}
+
+            <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;">
+              <span style="font-size:11px;font-weight:700;color:#4b5563;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:8px;">
+                Recommended Electives
+              </span>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                ${aiData.elective_summary.recommended_electives && aiData.elective_summary.recommended_electives.length > 0
+                  ? aiData.elective_summary.recommended_electives.map(s => `<span style="font-size:12px;font-weight:600;background:#f3f4f6;color:#374151;padding:4px 10px;border-radius:6px;border:1px solid #e5e7eb;">${s}</span>`).join('')
+                  : '<span style="font-size:12px;color:#6b7280;">Elective Mathematics</span>'
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        ` : ''}
+
+        <!-- Collapsible Recommended University Programs (Collapsed by default) -->
+        <div style="border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;background:#fff;margin-bottom:20px;">
+          <button onclick="toggleRecommendedPrograms()" 
+                  style="width:100%;background:#f9fafb;border:none;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-align:left;transition:background 0.2s;"
+                  onmouseover="this.style.background='#f3f4f6'"
+                  onmouseout="this.style.background='#f9fafb'">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:13px;font-weight:700;color:#111827;text-transform:uppercase;letter-spacing:0.04em;">
+                Recommended University Programs (${aiData.matched_programs.length})
+              </span>
+              <span style="font-size:11px;color:#6b7280;background:#e5e7eb;padding:2px 8px;border-radius:100px;font-weight:600;">
+                Click to expand
+              </span>
+            </div>
+            <span id="progToggleText" style="font-size:12px;color:#15803d;font-weight:700;">▼ Show Programs</span>
+          </button>
+
+          <div id="recommendedProgsContainer" style="display:none;padding:16px;border-top:1px solid #e5e7eb;">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              ${aiData.matched_programs.map((p, i) => `
+                <div style="display:flex;align-items:flex-start;gap:12px;background:${i === 0 ? '#fefce8' : '#f9fafb'};border:1px solid ${i === 0 ? '#fde68a' : '#e5e7eb'};border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;"
+                     class="hover:border-primary card-hover"
+                     onclick="getProgramDetails('${p.program_name.replace(/'/g, "\\'")}')">
+                  <div style="width:28px;height:28px;background:${i === 0 ? '#fef3c7' : '#e5e7eb'};border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:${i === 0 ? '#92400e' : '#4b5563'};flex-shrink:0;">${i + 1}</div>
+                  <div style="flex:1;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+                      <p style="font-size:14px;font-weight:700;color:#1f2937;margin:0;">${p.program_name}</p>
+                      <div style="display:flex;gap:6px;align-items:center;">
+                        <span style="font-size:11px;font-weight:600;background:#e5e7eb;color:#374151;padding:2px 8px;border-radius:100px;">${p.universities}</span>
+                        <span style="font-size:12px;color:#15803d;font-weight:700;">View Details →</span>
+                      </div>
+                    </div>
+                    <p style="font-size:12px;color:#6b7280;margin:4px 0 0;line-height:1.5;">${p.reason}</p>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
         </div>
 
         <div style="border-top:1px solid #f1f5f9;padding-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">

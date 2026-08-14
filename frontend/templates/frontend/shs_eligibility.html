@@ -824,7 +824,7 @@
     }
 
     statusDiv.style.display = 'block';
-    statusDiv.innerHTML = '<span style="color:#047857;font-weight:600;">🤖 AI is matching your interest to your qualified degree programs...</span>';
+    statusDiv.innerHTML = '<span style="color:#047857;font-weight:600;">AI is matching your interest to your qualified degree programs...</span>';
     btn.disabled = true;
     btn.textContent = 'Searching...';
 
@@ -909,8 +909,8 @@
       };
 
       let statusHeader = (directEligibleCount >= 3)
-        ? `🎯 AI Target Career: ${data.career_name || query}`
-        : `🎯 Direct Matches & 💡 Related Field Pathways: ${data.career_name || query}`;
+        ? `AI Target Career: ${data.career_name || query}`
+        : `Direct Matches & Related Field Pathways: ${data.career_name || query}`;
 
       let statusNote = (directEligibleCount >= 3)
         ? (data.career_description ? `<p style="margin:2px 0 0;font-size:11px;color:#166534;">${data.career_description}</p>` : '')

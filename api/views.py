@@ -42,8 +42,8 @@ def career_search(request):
 def ai_career_match(request):
     """
     AI-powered career matching endpoint (two-step approach).
-    Step 1: Check if frontend pre-generated Firebase AI results. If not, use local LLM.
-    Step 2: Programmatic database search using SQL filtering via Q objects.
+    Step 1: Parse user query, clean conversational phrases, and query LLM / local domain map.
+    Step 2: Programmatic database search using SQL filtering with high-priority direct scoring.
     """
     data = json.loads(request.body)
     from django.db.models import Q
@@ -52,102 +52,204 @@ def ai_career_match(request):
     import google.auth.transport.requests
     import urllib.request
     import os
+    import re
+
+    raw_query = data.get('query', '').strip()
+    if not raw_query:
+        return JsonResponse({'error': 'No query provided'}, status=400)
+
+    # Clean conversational query prefixes ("I want to be a nurse" -> "nurse")
+    q_clean = raw_query.lower()
+    prefix_patterns = [
+        r"^i\s+(want|would\s+like|wish|hope)\s+to\s+(be|become|study|work\s+as|do|pursue)\s+(a|an)?\s*",
+        r"^i\s+want\s+(a|an)?\s*",
+        r"^i\s+am\s+interested\s+in\s+(becoming|a|an)?\s*",
+        r"^how\s+to\s+(become|be)\s+(a|an)?\s*",
+        r"^looking\s+for\s+(a|an)?\s*",
+    ]
+    for pat in prefix_patterns:
+        q_clean = re.sub(pat, "", q_clean, flags=re.IGNORECASE)
+    q_clean = q_clean.strip() or raw_query.lower().strip()
 
     key_path = os.path.join(settings.BASE_DIR, 'gcp-key.json')
 
-    # If the key is not set, we cannot run Vertex AI, so fallback to keyword search
-    if not os.path.exists(key_path):
-        return JsonResponse({'ai_match': False, 'message': 'GCP service account key not found, fallback to keyword search'})
+    # Domain Knowledge Fallback Map for Ghanaian University Programs
+    def get_domain_fallback(q_term):
+        q = q_term.lower()
+        if 'nurse' in q or 'nursing' in q or 'midwife' in q or 'midwifery' in q:
+            return {
+                'career_name': 'Registered Nurse / Midwife',
+                'career_description': 'Registered Nurses and Midwives provide primary patient care, clinical treatments, and maternal healthcare across hospitals and community health centers.',
+                'primary_keywords': ['Nursing', 'Midwifery', 'Nurse'],
+                'secondary_keywords': ['Health', 'Medical', 'Biology'],
+                'explanations': {
+                    'Nursing': 'Direct degree program training students in clinical nursing skills and patient care.',
+                    'Midwifery': 'Direct degree program specializing in maternal and infant healthcare.',
+                    'Health': 'Provides foundational medical and health sciences preparation.',
+                    'Medical': 'Provides basic clinical science foundations.',
+                    'Biology': 'Builds human biological sciences background.'
+                }
+            }
+        elif 'doctor' in q or 'medicine' in q or 'physician' in q:
+            return {
+                'career_name': 'Medical Doctor / Physician',
+                'career_description': 'Medical Doctors diagnose diseases, prescribe medical treatments, and perform clinical care across hospitals.',
+                'primary_keywords': ['Medicine', 'Surgery', 'Human Biology', 'Medical Laboratory'],
+                'secondary_keywords': ['Health', 'Biomedical', 'Biology'],
+                'explanations': {
+                    'Medicine': 'Direct MBChB degree program preparing medical doctors for clinical practice.',
+                    'Surgery': 'Core clinical component of medical doctor training.',
+                    'Human Biology': 'Pre-clinical undergraduate degree path for medical studies.'
+                }
+            }
+        elif 'optometrist' in q or 'eye' in q or 'vision' in q:
+            return {
+                'career_name': 'Optometrist',
+                'career_description': 'Optometrists diagnose, treat, and manage visual disorders and ocular health conditions.',
+                'primary_keywords': ['Optometry'],
+                'secondary_keywords': ['Medical', 'Biology', 'Health'],
+                'explanations': {
+                    'Optometry': 'Direct Doctor of Optometry degree program for vision care specialists.'
+                }
+            }
+        elif 'app' in q or 'software' in q or 'developer' in q or 'coder' in q or 'programmer' in q:
+            return {
+                'career_name': 'Software Engineer / Application Developer',
+                'career_description': 'Software Engineers design, build, and deploy computer applications, web systems, and mobile software.',
+                'primary_keywords': ['Computer Science', 'Software Engineering', 'Information Technology', 'Computer'],
+                'secondary_keywords': ['Mathematics', 'Engineering', 'Electrical'],
+                'explanations': {
+                    'Computer Science': 'Core degree program covering algorithms, programming languages, and software architecture.',
+                    'Software Engineering': 'Specialized engineering path focused on application development and software systems.',
+                    'Information Technology': 'Applied computing degree covering web, networking, and software systems.'
+                }
+            }
+        elif 'pilot' in q or 'aviation' in q or 'aero' in q:
+            return {
+                'career_name': 'Aeronautical Engineer / Flight Operations',
+                'career_description': 'Aeronautical Engineers and Flight Operations specialists design aircraft, manage flight systems, and operate aviation infrastructure.',
+                'primary_keywords': ['Aerospace', 'Aeronautical', 'Mechanical Engineering'],
+                'secondary_keywords': ['Physics', 'Electrical', 'Mathematics'],
+                'explanations': {
+                    'Aerospace': 'Direct engineering path for aircraft and propulsion system design.',
+                    'Mechanical Engineering': 'Provides mechanical design and aerodynamics fundamentals.'
+                }
+            }
+        elif 'law' in q or 'lawyer' in q or 'attorney' in q or 'legal' in q:
+            return {
+                'career_name': 'Lawyer / Legal Practitioner',
+                'career_description': 'Lawyers advise clients on legal rights, draft legal contracts, and represent parties in courts of law.',
+                'primary_keywords': ['Law', 'LLB', 'Legal'],
+                'secondary_keywords': ['Political', 'Sociology', 'History'],
+                'explanations': {
+                    'Law': 'Direct Bachelor of Laws (LLB) degree program required for legal education.',
+                    'LLB': 'Professional law degree track.'
+                }
+            }
+        elif 'pharmacy' in q or 'pharmacist' in q or 'drug' in q:
+            return {
+                'career_name': 'Pharmacist',
+                'career_description': 'Pharmacists compound, dispense, and monitor pharmaceutical medications for patient treatment.',
+                'primary_keywords': ['Pharmacy', 'Doctor of Pharmacy'],
+                'secondary_keywords': ['Chemistry', 'Biochemistry', 'Health'],
+                'explanations': {
+                    'PharmD': 'Direct Doctor of Pharmacy degree program.',
+                    'Pharmacy': 'Direct pharmaceutical sciences degree.'
+                }
+            }
+        return None
 
-    query = data.get('query', '').lower().strip()
-    if not query:
-        return JsonResponse({'error': 'No query provided'}, status=400)
-
-    # Ask Gemini to determine career and search keywords
-    system_prompt = """You are a career counselor for Ghanaian students. Analyze the student's interest and respond ONLY with a JSON object in this format:
+    # Step 1: Query Gemini LLM if key exists, with 5s fast timeout
+    parsed = None
+    if os.path.exists(key_path):
+        system_prompt = """You are a career counselor for Ghanaian students. Analyze the student's interest and respond ONLY with a JSON object in this format:
 {
-  "career_name": "determined career title (e.g. Aerospace Engineer, Medical Doctor, Software Developer)",
+  "career_name": "determined canonical career title (e.g. Nurse, Medical Doctor, Software Developer, Lawyer, Pilot)",
   "career_description": "1 sentence describing the career and its main activities",
   "primary_keywords": ["keyword1", "keyword2"],
   "secondary_keywords": ["keyword3", "keyword4"],
   "explanations": {
     "keyword1": "1-sentence explanation of how this direct subject relates to the career",
-    "keyword2": "1-sentence explanation of how this direct subject relates to the career",
-    "keyword3": "1-sentence explanation of how this secondary subject relates to the career",
-    "keyword4": "1-sentence explanation of how this secondary subject relates to the career"
+    "keyword2": "1-sentence explanation of how this direct subject relates to the career"
   }
 }
 
 CRITICAL RULES:
-1. The keywords MUST be academic subjects, degree fields, or department terms.
-2. "primary_keywords" MUST ONLY contain the most specific, direct specialized field name for the career (e.g. ["Optometry"] for Optometrist, ["Aerospace", "Aeronautical"] for Aerospace Engineer, ["Marine"] for Marine Engineer, ["Law", "LLB"] for Lawyer).
-3. "secondary_keywords" MUST contain related, general, or broader fields that can also lead to the career (e.g. ["Medicine", "Biology", "Medical"] for Optometrist, ["Mechanical", "Engineering"] for Aerospace/Marine Engineer).
-4. "explanations" MUST contain a key-value mapping for EACH keyword in both primary_keywords and secondary_keywords, explaining in a brief sentence how studying that subject prepares someone for the determined career.
-5. NEVER use job titles (like "Lawyer", "Accountant", "Software Developer", "Doctor") as keywords.
-6. Respond ONLY with the JSON object. Do NOT output any thinking process, reasoning, explanations, or introductory text. Skip any thinking phase and generate the JSON directly."""
+1. "career_name" MUST BE THE CANONICAL JOB TITLE (e.g. "Nurse", "Doctor", "Software Engineer"). NEVER output phrases like "I Want To Be A Nurse".
+2. "primary_keywords" MUST ONLY contain direct degree program names (e.g. ["Nursing", "Midwifery"] for Nurse, ["Medicine"] for Doctor, ["Optometry"] for Optometrist).
+3. Respond ONLY with JSON."""
 
-    user_prompt = f"Student Stated Interest: \"{query}\""
-    full_prompt = f"{system_prompt}\n\n{user_prompt}"
+        user_prompt = f"Student Stated Interest: \"{q_clean}\""
+        full_prompt = f"{system_prompt}\n\n{user_prompt}"
 
-    # Try calling the Gemini developer API
-    payload = {
-        "contents": [{
-            "role": "user",
-            "parts": [{"text": full_prompt}]
-        }],
-        "generationConfig": {
-            "responseMimeType": "application/json"
+        payload = {
+            "contents": [{"role": "user", "parts": [{"text": full_prompt}]}],
+            "generationConfig": {"responseMimeType": "application/json"}
         }
-    }
 
-    parsed = None
-    models_to_try = ["gemini-2.5-flash", "gemini-2.5-pro"]
-    
-    try:
-        # Load credentials and refresh token
-        scopes = ["https://www.googleapis.com/auth/cloud-platform"]
-        creds = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
-        auth_req = google.auth.transport.requests.Request()
-        creds.refresh(auth_req)
-        token = creds.token
-        project_id = creds.project_id
-        
-        for model_name in models_to_try:
-            url = f"https://firebasevertexai.googleapis.com/v1beta/projects/{project_id}/locations/us-central1/publishers/google/models/{model_name}:generateContent"
-            try:
-                req = urllib.request.Request(
-                    url,
-                    data=json.dumps(payload).encode("utf-8"),
-                    headers={
-                        "Content-Type": "application/json",
-                        "Authorization": f"Bearer {token}"
-                    },
-                    method="POST"
-                )
-                with urllib.request.urlopen(req, timeout=30) as response:
-                    res_data = json.loads(response.read().decode())
-                    candidates = res_data.get("candidates", [])
-                    if candidates:
-                        text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
-                        parsed = json.loads(text_content)
-                        break
-            except Exception as e:
-                print(f"DEBUG: Backend Vertex AI call for model {model_name} failed: {e}")
-                continue
-    except Exception as e:
-        print(f"DEBUG: Backend Vertex AI authentication failed: {e}")
+        try:
+            scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+            creds = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
+            auth_req = google.auth.transport.requests.Request()
+            creds.refresh(auth_req)
+            token = creds.token
+            project_id = creds.project_id
+
+            for model_name in ["gemini-2.5-flash", "gemini-2.5-pro"]:
+                url = f"https://firebasevertexai.googleapis.com/v1beta/projects/{project_id}/locations/us-central1/publishers/google/models/{model_name}:generateContent"
+                try:
+                    req_obj = urllib.request.Request(
+                        url,
+                        data=json.dumps(payload).encode("utf-8"),
+                        headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+                        method="POST"
+                    )
+                    with urllib.request.urlopen(req_obj, timeout=5) as response:
+                        res_data = json.loads(response.read().decode())
+                        candidates = res_data.get("candidates", [])
+                        if candidates:
+                            text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                            parsed = json.loads(text_content)
+                            break
+                except Exception as e:
+                    print(f"DEBUG: Vertex AI call for {model_name} failed: {e}")
+                    continue
+        except Exception as e:
+            print(f"DEBUG: Vertex AI auth failed: {e}")
+
+    # Fallback to domain knowledge map or database search
+    domain_map = get_domain_fallback(q_clean)
+    if domain_map and (not parsed or not parsed.get('primary_keywords')):
+        parsed = domain_map
 
     if not parsed:
-        return JsonResponse({'ai_match': False, 'message': 'Gemini call failed, fallback to keyword search'})
+        matched_careers = Career.objects.filter(
+            Q(name__icontains=q_clean) | Q(description__icontains=q_clean) | Q(why_text__icontains=q_clean)
+        )
+        if matched_careers.exists():
+            c = matched_careers.first()
+            career_name = c.name
+            career_description = c.why_text
+            primary_keywords = [c.name]
+            secondary_keywords = [c.learning_area.name] if c.learning_area else ["Science", "General Arts"]
+        else:
+            query_words = [w for w in q_clean.split() if len(w) > 2]
+            career_name = q_clean.title()
+            career_description = f"Academic and career pathway tailored for interests in {q_clean.title()}."
+            primary_keywords = query_words if query_words else [q_clean]
+            secondary_keywords = ["Science", "Engineering", "Health", "Business", "Arts", "Computing"]
 
-    career_name = parsed.get("career_name", "")
-    career_description = parsed.get("career_description", "")
-    primary_keywords = parsed.get("primary_keywords", [])
-    secondary_keywords = parsed.get("secondary_keywords", [])
-    explanations = parsed.get("explanations", {})
-
-    if not career_name or (not primary_keywords and not secondary_keywords):
-        return JsonResponse({'ai_match': False, 'message': 'Incomplete response, fallback to keyword search'})
+        explanations = {kw: f"Provides relevant academic preparation for {career_name}." for kw in (primary_keywords + secondary_keywords)}
+    else:
+        raw_cname = parsed.get("career_name", q_clean.title())
+        # Clean any remaining "I want to be" in career_name if LLM returned it
+        for pat in prefix_patterns:
+            raw_cname = re.sub(pat, "", raw_cname, flags=re.IGNORECASE)
+        career_name = raw_cname.strip().title() or q_clean.title()
+        career_description = parsed.get("career_description", f"Academic and career pathway for {career_name}.")
+        primary_keywords = parsed.get("primary_keywords", [q_clean])
+        secondary_keywords = parsed.get("secondary_keywords", [])
+        explanations = parsed.get("explanations", {})
 
     # Step 2: SQL-level filtering for candidate programs using AI keywords
     try:
@@ -156,29 +258,26 @@ CRITICAL RULES:
         for kw in all_keywords:
             kw = kw.strip()
             if kw:
-                query_filter |= Q(name__icontains=kw) | Q(faculty__icontains=kw) | Q(requirements__learning_area__name__icontains=kw)
+                query_filter |= Q(name__icontains=kw) | Q(college__icontains=kw) | Q(requirements__learning_area__name__icontains=kw)
 
-        # Only fetch matching programs from the database (distinct candidate set)
         programs = Program.objects.filter(query_filter).select_related('university').prefetch_related(
             'requirements__learning_area',
         ).distinct()
 
-        # Group candidate programs by base name (removing campus suffix e.g. "(Obuasi Campus)") to avoid duplicate recommendations
         grouped_programs = {}
         for p in programs:
             score = 0
             base_name = re.sub(r'\s*\([^)]*campus\)', '', p.name, flags=re.IGNORECASE).strip()
             name_lower = base_name.lower()
-            name_key = base_name
-            faculty_lower = (p.faculty or '').lower()
+            college_lower = (p.college or '').lower()
             la_names = [req.learning_area.name.lower() for req in p.requirements.all() if req.learning_area]
 
-            # Score primary keywords
+            # Score primary keywords (Give high score +25 for direct program name matches)
             for kw in primary_keywords:
                 kw_lower = kw.lower()
                 if kw_lower in name_lower:
-                    score += 10
-                if kw_lower in faculty_lower:
+                    score += 25
+                elif kw_lower in college_lower:
                     score += 5
                 for la in la_names:
                     if kw_lower in la:
@@ -189,7 +288,7 @@ CRITICAL RULES:
                 kw_lower = kw.lower()
                 if kw_lower in name_lower:
                     score += 3
-                if kw_lower in faculty_lower:
+                elif kw_lower in college_lower:
                     score += 1
                 for la in la_names:
                     if kw_lower in la:
@@ -199,13 +298,12 @@ CRITICAL RULES:
                 is_direct = any(kw.lower() in base_name.lower() for kw in primary_keywords)
                 key = base_name.lower()
                 
-                # Track matched keywords for this specific program offering
                 current_kws = set()
                 for kw in primary_keywords:
-                    if kw.lower() in name_lower or kw.lower() in faculty_lower or any(kw.lower() in la for la in la_names):
+                    if kw.lower() in name_lower or kw.lower() in college_lower or any(kw.lower() in la for la in la_names):
                         current_kws.add(kw)
                 for kw in secondary_keywords:
-                    if kw.lower() in name_lower or kw.lower() in faculty_lower or any(kw.lower() in la for la in la_names):
+                    if kw.lower() in name_lower or kw.lower() in college_lower or any(kw.lower() in la for la in la_names):
                         current_kws.add(kw)
 
                 if key not in grouped_programs:
@@ -231,20 +329,16 @@ CRITICAL RULES:
 
         groups = list(grouped_programs.values())
 
-        # Separate into primary and secondary groups
         primary_groups = []
         secondary_groups = []
         for g in groups:
             p_type = "Direct Program" if g['is_direct'] else "Secondary Pathway"
             
-            # Find the best matching explanation from explanations dict
             explanation = ""
-            # Try primary keywords first (if any matched)
             for m_kw in primary_keywords:
                 if m_kw in g['matched_kws']:
                     explanation = explanations.get(m_kw, "")
                     if not explanation:
-                        # Case-insensitive lookup fallback
                         for k, v in explanations.items():
                             if k.lower() == m_kw.lower():
                                 explanation = v
@@ -253,12 +347,10 @@ CRITICAL RULES:
                         break
             
             if not explanation:
-                # Try secondary keywords
                 for m_kw in secondary_keywords:
                     if m_kw in g['matched_kws']:
                         explanation = explanations.get(m_kw, "")
                         if not explanation:
-                            # Case-insensitive lookup fallback
                             for k, v in explanations.items():
                                 if k.lower() == m_kw.lower():
                                     explanation = v
@@ -275,9 +367,9 @@ CRITICAL RULES:
             else:
                 secondary_groups.append(g)
 
-        # Sort both groups: min_cutoff ascending (None/null goes last)
-        primary_groups.sort(key=lambda x: (x['min_cutoff'] is None, x['min_cutoff'] or 999))
-        secondary_groups.sort(key=lambda x: (x['min_cutoff'] is None, x['min_cutoff'] or 999))
+        # Sort primary_groups by highest score first, then cutoff
+        primary_groups.sort(key=lambda x: (-x['score'], x['min_cutoff'] is None, x['min_cutoff'] or 999))
+        secondary_groups.sort(key=lambda x: (-x['score'], x['min_cutoff'] is None, x['min_cutoff'] or 999))
 
         combined_groups = primary_groups + secondary_groups
         top_groups = combined_groups[:5]
@@ -290,18 +382,59 @@ CRITICAL RULES:
                     'universities': ", ".join(sorted(list(g['universities']))),
                     'reason': g['reason'],
                 })
+
+            # Aggregate SHS Elective Requirements Summary across top matched programs
+            mandatory_set = []
+            recommended_set = []
+            track_names = set()
+
+            top_names = [g['name'] for g in top_groups]
+            top_program_objs = Program.objects.filter(
+                Q(name__in=top_names)
+            ).prefetch_related('requirements__mandatory_subjects', 'requirements__elective_subjects', 'requirements__learning_area')
+
+            for p_obj in top_program_objs:
+                for req in p_obj.requirements.all():
+                    if req.learning_area:
+                        track_names.add(req.learning_area.name)
+                    for ms in req.mandatory_subjects.all():
+                        if ms.name not in mandatory_set:
+                            mandatory_set.append(ms.name)
+                    for es in req.elective_subjects.all():
+                        if es.name not in mandatory_set and es.name not in recommended_set:
+                            recommended_set.append(es.name)
+
+            if not mandatory_set:
+                if 'nurse' in q_clean or 'nursing' in q_clean:
+                    mandatory_set = ['Chemistry', 'Physics', 'Biology']
+                    recommended_set = ['Elective Mathematics', 'Food & Nutrition']
+                    track_names.add('Science Track')
+                elif 'doctor' in q_clean or 'medicine' in q_clean:
+                    mandatory_set = ['Chemistry', 'Physics', 'Biology']
+                    recommended_set = ['Elective Mathematics']
+                    track_names.add('Science Track')
+                elif 'app' in q_clean or 'software' in q_clean or 'code' in q_clean:
+                    mandatory_set = ['Elective Mathematics', 'Physics']
+                    recommended_set = ['Chemistry', 'Applied Technology']
+                    track_names.add('Science Track')
+
+            elective_summary = {
+                'tracks': list(track_names) if track_names else ['Science / Relevant Track'],
+                'mandatory_electives': mandatory_set[:4],
+                'recommended_electives': recommended_set[:4],
+            }
+
             return JsonResponse({
                 'ai_match': True,
                 'career_name': career_name,
                 'career_description': career_description,
+                'elective_summary': elective_summary,
                 'matched_programs': matched,
             })
 
-    except Exception:
-        # Fall back to keyword search if AI is unavailable
-        pass
+    except Exception as e:
+        print("DEBUG: ai_career_match SQL evaluation error:", e)
 
-    # If AI fails, return an indicator so frontend can fall back
     return JsonResponse({'ai_match': False, 'message': 'AI unavailable, use keyword search'})
 
 
@@ -340,7 +473,8 @@ def program_details(request):
             grouped_by_uni[uni_key] = {
                 'university': uni.name,
                 'university_short': uni.short_name,
-                'faculty': p.faculty,
+                'college': p.college,
+                'faculty': p.college,
                 'duration_years': p.duration_years,
                 'min_cutoff': p.aggregate,
                 'campuses': [],
@@ -366,7 +500,8 @@ def program_details(request):
             'campus_name': p.campus or 'Main Campus',
             'cutoff': p.aggregate,
             'note': p.note or '',
-            'faculty': p.faculty,
+            'college': p.college,
+            'faculty': p.college,
         })
 
     offerings = list(grouped_by_uni.values())
@@ -441,7 +576,8 @@ def universities_list(request):
             programs.append({
                 'id': prog.id,
                 'name': prog.name,
-                'faculty': prog.faculty,
+                'college': prog.college,
+                'faculty': prog.college,
                 'cutoff': prog.aggregate,
                 'campus': prog.campus or 'Main Campus',
                 'note': prog.note or '',
