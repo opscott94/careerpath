@@ -63,16 +63,16 @@
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
           <div
             style="width:40px;height:40px;background:rgba(74,222,128,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;">
-            🎓</div>
+          </div>
           <p style="font-size:18px;font-weight:700;color:#fff;margin:0;">UNI Eligibility Checker</p>
         </div>
         <p style="font-size:13px;color:#86efac;line-height:1.7;margin:0 0 14px;">Got your WASSCE results? Enter your
           grades and we'll show you every university program you're eligible for — across Ghana's top 5 universities.
         </p>
         <div style="display:flex;flex-wrap:wrap;gap:14px;">
-          <span style="font-size:12px;color:#bbf7d0;">✓ Enter WASSCE grades</span>
-          <span style="font-size:12px;color:#bbf7d0;">✓ Auto aggregate</span>
-          <span style="font-size:12px;color:#bbf7d0;">✓ See matching programs</span>
+          <span style="font-size:12px;color:#bbf7d0;">Enter WASSCE grades</span>
+          <span style="font-size:12px;color:#bbf7d0;">Auto aggregate</span>
+          <span style="font-size:12px;color:#bbf7d0;">See matching programs</span>
         </div>
       </div>
       <div class="desktop-table" style="padding:20px 24px 8px;">
@@ -621,7 +621,6 @@
         <div style="display:flex;align-items:center;gap:10px;">
           <div
             style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">
-            🤖
           </div>
           <div>
             <h3 style="font-size:14px;font-weight:700;margin:0 0 2px;color:#fff;">Not sure which program fits your
@@ -665,7 +664,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
         <div>
           <label for="universityFilter" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
-            🏫 Filter by University
+            Filter by University
           </label>
           <select id="universityFilter" onchange="filterPrograms()"
             class="w-full border border-gray-200 rounded-xl px-3.5 py-3 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 font-medium text-gray-800 cursor-pointer">
@@ -679,13 +678,12 @@
         </div>
         <div>
           <label for="programSearch" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
-            🔍 Search Qualified Programs
+            Search Qualified Programs
           </label>
           <div class="relative">
             <input id="programSearch" type="text" placeholder="e.g. Nursing, Engineering, Accounting..."
               oninput="filterPrograms()"
-              class="w-full border border-gray-200 rounded-xl px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50 text-sm">
-            <span class="absolute left-3 top-3.5 text-gray-400">🔍</span>
+              class="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50 text-sm">
           </div>
         </div>
       </div>
@@ -992,8 +990,8 @@
       const styleObj = catColors[prog.category] || catColors['all'];
 
       const statusBadge = prog.is_eligible
-        ? '<span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:3px 10px;border-radius:100px;border:1px solid #bbf7d0;">✓ Eligible</span>'
-        : '<span style="font-size:11px;font-weight:700;background:#fef3c7;color:#d97706;padding:3px 10px;border-radius:100px;border:1px solid #fde68a;">~ Borderline</span>';
+        ? '<span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:3px 10px;border-radius:100px;border:1px solid #bbf7d0;">Eligible</span>'
+        : '<span style="font-size:11px;font-weight:700;background:#fef3c7;color:#d97706;padding:3px 10px;border-radius:100px;border:1px solid #fde68a;">Borderline</span>';
 
       let aiReasonSnippet = '';
       let aiBadge = '';
@@ -1005,12 +1003,12 @@
         const reasonText = (matchObj && typeof matchObj === 'object') ? matchObj.reason : (matchObj || '');
 
         if (isFallbackItem) {
-          aiBadge = `<span style="font-size:10px;font-weight:700;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:100px;border:1px solid #fde68a;">💡 Related Pathway</span>`;
-          aiReasonSnippet = `<div style="font-size:11px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;padding:4px 10px;border-radius:6px;margin-top:6px;font-weight:500;">💡 <strong>Related Pathway:</strong> ${reasonText}</div>`;
+          aiBadge = `<span style="font-size:10px;font-weight:700;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:100px;border:1px solid #fde68a;">Related Pathway</span>`;
+          aiReasonSnippet = `<div style="font-size:11px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;padding:4px 10px;border-radius:6px;margin-top:6px;font-weight:500;"><strong>Related Pathway:</strong> ${reasonText}</div>`;
         } else if (matchedKey) {
-          aiBadge = `<span style="font-size:10px;font-weight:700;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:100px;border:1px solid #6ee7b7;">🎯 AI Recommended</span>`;
+          aiBadge = `<span style="font-size:10px;font-weight:700;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:100px;border:1px solid #6ee7b7;">AI Recommended</span>`;
           if (reasonText) {
-            aiReasonSnippet = `<div style="font-size:11px;color:#065f46;background:#f0fdf4;border:1px solid #bbf7d0;padding:4px 10px;border-radius:6px;margin-top:6px;font-weight:500;">🤖 <strong>AI Alignment:</strong> ${reasonText}</div>`;
+            aiReasonSnippet = `<div style="font-size:11px;color:#065f46;background:#f0fdf4;border:1px solid #bbf7d0;padding:4px 10px;border-radius:6px;margin-top:6px;font-weight:500;"><strong>AI Alignment:</strong> ${reasonText}</div>`;
           }
         }
       }
@@ -1037,11 +1035,11 @@
               <img src="${logoUrl}" style="width:16px;height:16px;object-fit:contain;" alt="${prog.university_short}">
               ${prog.university_short}
             </span>
-            <span style="font-size:10px;font-weight:600;background:${styleObj.bg};color:${styleObj.text};padding:2px 8px;border-radius:4px;">${prog.faculty || styleObj.label}</span>
+            <span style="font-size:10px;font-weight:600;background:${styleObj.bg};color:${styleObj.text};padding:2px 8px;border-radius:4px;">${prog.college || prog.faculty || styleObj.label}</span>
             ${prog.cutoff ? `<span class="text-xs text-gray-500 font-medium">Cutoff: <strong>${prog.cutoff}</strong></span>` : ''}
             ${aiBadge}
           </div>
-          <p class="text-xs text-gray-500">📍 ${prog.campus} · ${prog.university_name}</p>
+          <p class="text-xs text-gray-500">${prog.campus} · ${prog.university_name}</p>
           ${aiReasonSnippet}
         </div>
         <div class="text-gray-400 group-hover:text-green-600 text-xl font-bold">→</div>
@@ -1067,24 +1065,24 @@
     const logoUrl = uniLogos[(prog.university_short || '').toUpperCase()] || '/static/images/career.png';
 
     const coreListHtml = (prog.core_subjects && prog.core_subjects.length > 0)
-      ? prog.core_subjects.map(c => `<span style="font-size:11px;font-weight:600;background:#e0f2fe;color:#0369a1;padding:4px 10px;border-radius:6px;border:1px solid #bae6fd;">✓ ${c.name}</span>`).join(' ')
+      ? prog.core_subjects.map(c => `<span style="font-size:11px;font-weight:600;background:#e0f2fe;color:#0369a1;padding:4px 10px;border-radius:6px;border:1px solid #bae6fd;">${c.name}</span>`).join(' ')
       : '<span style="font-size:12px;color:#6b7280;">English Language, Core Mathematics, Integrated Science / Social Studies</span>';
 
     let reqsHtml = '';
     if (prog.requirements && prog.requirements.length > 0) {
       prog.requirements.forEach(req => {
         const mList = req.mandatory_subjects.length > 0
-          ? req.mandatory_subjects.map(s => `<span class="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded text-xs font-semibold">🔒 ${s.name}</span>`).join(' ')
+          ? req.mandatory_subjects.map(s => `<span class="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded text-xs font-semibold">${s.name}</span>`).join(' ')
           : '<span class="text-xs text-gray-400">None specified</span>';
 
         const eList = req.elective_subjects.length > 0
-          ? req.elective_subjects.map(s => `<span class="bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded text-xs font-semibold">⚡ ${s.name}</span>`).join(' ')
+          ? req.elective_subjects.map(s => `<span class="bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded text-xs font-semibold">${s.name}</span>`).join(' ')
           : '<span class="text-xs text-gray-400">Any relevant electives</span>';
 
         reqsHtml += `
         <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-3">
           <div class="flex items-center justify-between mb-2">
-            <span class="font-bold text-xs uppercase tracking-wider text-green-800 bg-green-100 px-2.5 py-0.5 rounded-md">🎯 Track: ${req.learning_area}</span>
+            <span class="font-bold text-xs uppercase tracking-wider text-green-800 bg-green-100 px-2.5 py-0.5 rounded-md">Track: ${req.learning_area}</span>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs mt-2">
             <div>
@@ -1103,8 +1101,8 @@
     }
 
     const statusBadge = prog.is_eligible
-      ? '<span style="background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">✓ Eligible for Admission</span>'
-      : '<span style="background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">~ Borderline</span>';
+      ? '<span style="background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">Eligible for Admission</span>'
+      : '<span style="background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">Borderline</span>';
 
     document.getElementById('step3Content').innerHTML = `
     <!-- Header Program Details Card -->
@@ -1117,7 +1115,7 @@
           <div>
             <div class="flex items-center gap-2 mb-1 flex-wrap">
               <span style="font-size:12px;font-weight:700;background:#052e16;color:#fff;padding:3px 10px;border-radius:100px;">${prog.university_short}</span>
-              <span style="font-size:12px;font-weight:600;background:${styleObj.bg};color:${styleObj.text};padding:3px 10px;border-radius:6px;">${prog.faculty || styleObj.label}</span>
+              <span style="font-size:12px;font-weight:600;background:${styleObj.bg};color:${styleObj.text};padding:3px 10px;border-radius:6px;">${prog.college || prog.faculty || styleObj.label}</span>
               ${statusBadge}
             </div>
             <h2 class="display text-2xl font-bold text-gray-900">${prog.program_name}</h2>
@@ -1139,28 +1137,28 @@
       <!-- Quick Program Specifications Grid -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-gray-100 text-xs">
         <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-          <span class="text-gray-400 font-medium block">📍 Campus</span>
+          <span class="text-gray-400 font-medium block">Campus</span>
           <span class="font-bold text-gray-800 text-sm">${prog.campus}</span>
         </div>
         <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-          <span class="text-gray-400 font-medium block">⏱️ Duration</span>
+          <span class="text-gray-400 font-medium block">Duration</span>
           <span class="font-bold text-gray-800 text-sm">${prog.duration_years} Years</span>
         </div>
         <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-          <span class="text-gray-400 font-medium block">📊 Cut-off Margin</span>
+          <span class="text-gray-400 font-medium block">Cut-off Margin</span>
           <span class="font-bold ${prog.margin < 0 ? 'text-green-700' : prog.margin === 0 ? 'text-green-600' : 'text-amber-700'} text-sm">
             ${prog.margin < 0 ? `${Math.abs(prog.margin)} pts ahead` : prog.margin === 0 ? 'Exact match' : `${Math.abs(prog.margin)} pts away`}
           </span>
         </div>
         <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-          <span class="text-gray-400 font-medium block">📅 Admissions Year</span>
+          <span class="text-gray-400 font-medium block">Admissions Year</span>
           <span class="font-bold text-gray-800 text-sm">${prog.year || '2024'}</span>
         </div>
       </div>
 
       ${prog.note ? `
-      <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900">
-        <p class="font-bold mb-0.5">📌 Special Offering Note:</p>
+      <div class="mt-4 p-3.5 bg-gray-100 border border-gray-200 rounded-xl text-xs text-gray-700">
+        <p class="font-bold text-gray-900 mb-0.5">Special Offering Note:</p>
         <p>${prog.note}</p>
       </div>` : ''}
     </div>
@@ -1168,7 +1166,7 @@
     <!-- Requirements Card (Program & ProgramRequirement Model Data) -->
     <div class="card p-6 mb-6">
       <h3 class="font-bold text-gray-800 text-base mb-3 flex items-center gap-2">
-        📋 Mandatory Core & Track Requirements
+        Mandatory Core & Track Requirements
       </h3>
       
       <div class="mb-5">

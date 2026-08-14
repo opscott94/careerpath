@@ -17,7 +17,7 @@ class University(models.Model):
 class Program(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='programs')
     name = models.CharField(max_length=200)
-    faculty = models.CharField(max_length=200, blank=True)
+    college = models.CharField(max_length=200, blank=True)
     duration_years = models.IntegerField(default=4)
     aggregate = models.IntegerField(help_text='WASSCE aggregate cut-off (lower is better)', null=True, blank=True)
     year = models.IntegerField(default=2024, null=True, blank=True)

@@ -1,13 +1,21 @@
 from .program_data import PROGRAMS_BY_UNI
 from django.shortcuts import render
+from eligibility.models import Program
+from django.db.models import Q
 
 def landing(request):
     unis = ['KNUST', 'UG', 'UCC', 'UDS', 'UENR']
-    program_counts = {
-        uni: sum(len(entries) for entries in PROGRAMS_BY_UNI.get(uni, {}).values())
-        for uni in unis
-    }
-    return render(request, 'frontend/landing.html', {'unis': unis, 'program_counts': program_counts})
+    program_counts = {}
+    for uni in unis:
+        program_counts[uni] = Program.objects.filter(
+            Q(university__short_name__iexact=uni) | Q(university__name__icontains=uni)
+        ).count()
+    total_programs = Program.objects.count()
+    return render(request, 'frontend/landing.html', {
+        'unis': unis, 
+        'program_counts': program_counts,
+        'total_programs': total_programs
+    })
 
 def universities(request):
     unis = [
@@ -21,7 +29,10 @@ def universities(request):
     ]
     key_to_code = {'knust':'KNUST','ug':'UG','ucc':'UCC','uds':'UDS','uenr':'UENR','uhas':'UHAS','upsa':'UPSA'}
     for u in unis:
-        u['program_count'] = sum(len(entries) for entries in PROGRAMS_BY_UNI.get(key_to_code[u['key']], {}).values())
+        code = key_to_code[u['key']]
+        u['program_count'] = Program.objects.filter(
+            Q(university__short_name__iexact=code) | Q(university__name__icontains=code)
+        ).count()
     return render(request, 'frontend/universities.html', {'unis': unis})
 
 def jhs_guide(request):
@@ -66,21 +77,72 @@ def university_detail(request, uni_key):
         raise Http404
     
     uni_name = uni['name']
-    programs = []
-    for category, entries in PROGRAMS_BY_UNI.get(uni_name, {}).items():
-        for entry in entries:
-            name = entry[0]
-            cutoff = entry[1]
-            note = entry[2] if len(entry) > 2 else None
-            display = cutoff if cutoff is not None else (note or 'N/A')
-            programs.append((name, display))
-
-    def _sort_key(item):
-        val = item[1]
-        return (0, val) if isinstance(val, int) else (1, str(val))
-    programs.sort(key=_sort_key)
     
+    from eligibility.models import University, Program
+    from django.db.models import Q
+
+    uni_obj = University.objects.filter(
+        Q(short_name__iexact=uni_name) | Q(short_name__iexact=uni_key)
+    ).first()
+
+    if uni_obj:
+        programs_qs = Program.objects.filter(university=uni_obj)
+    else:
+        programs_qs = Program.objects.filter(
+            Q(university__short_name__iexact=uni_name) | Q(university__short_name__iexact=uni_key)
+        )
+
+    programs_qs = programs_qs.prefetch_related(
+        'core_subjects',
+        'requirements__learning_area',
+        'requirements__mandatory_subjects',
+        'requirements__elective_subjects'
+    )
+
+    programs = list(programs_qs)
+    programs.sort(key=lambda p: (p.college or 'ZZZ', p.name.lower()))
+
+    grouped_programs_raw = {}
+    for p in programs:
+        col_name = p.college.strip() if p.college and p.college.strip() else 'General Programmes'
+        if col_name not in grouped_programs_raw:
+            grouped_programs_raw[col_name] = []
+        
+        reqs = []
+        for req in p.requirements.all():
+            reqs.append({
+                'learning_area': req.learning_area.name if req.learning_area else 'General Track',
+                'mandatory': [s.name for s in req.mandatory_subjects.all()],
+                'electives': [s.name for s in req.elective_subjects.all()]
+            })
+
+        grouped_programs_raw[col_name].append({
+            'id': p.id,
+            'name': p.name,
+            'college': col_name,
+            'campus': p.campus or 'Main Campus',
+            'duration_years': p.duration_years,
+            'aggregate': p.aggregate,
+            'year': p.year or 2024,
+            'note': p.note or '',
+            'core_subjects': [s.name for s in p.core_subjects.all()],
+            'requirements': reqs
+        })
+
+    # Sort colleges alphabetically and sort programs alphabetically inside each college
+    grouped_programs = dict(sorted(grouped_programs_raw.items(), key=lambda x: x[0].lower()))
+    for col_name in grouped_programs:
+        grouped_programs[col_name].sort(key=lambda item: item['name'].lower())
+
+    import json
+    program_map = {}
+    for col, p_list in grouped_programs.items():
+        for p in p_list:
+            program_map[str(p['id'])] = p
+
     return render(request, 'frontend/university_detail.html', {
         'uni': uni,
         'programs': programs,
+        'grouped_programs': grouped_programs,
+        'program_map_json': json.dumps(program_map),
     })

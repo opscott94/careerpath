@@ -3,23 +3,76 @@
 {% block content %}
 
 <style>
-.tab-btn { background:none;border:none;padding:12px 24px 12px 0;font-size:14px;font-weight:500;color:#6b7280;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;margin-right:8px; }
-.tab-btn.active { color:#052e16;border-bottom:2px solid #15803d;font-weight:700; }
-.tab-content { display:none; }
-.tab-content.active { display:block; }
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 24px 12px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    margin-right: 8px;
+  }
+
+  .tab-btn.active {
+    color: #052e16;
+    border-bottom: 2px solid #15803d;
+    font-weight: 700;
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  .cutoff-badge {
+    padding: 4px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .cutoff-green {
+    background: #dcfce7;
+    color: #15803d;
+  }
+
+  .cutoff-yellow {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  .cutoff-gray {
+    background: #f3f4f6;
+    color: #4b5563;
+  }
 </style>
 
 <!-- Hero -->
-<div style="position:relative;min-height:660px;background-image:url('{{ uni.image }}');background-size:cover;background-position:center 70%;background-repeat:no-repeat;">
-  <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.75) 100%);"></div>
+<div
+  style="position:relative;min-height:660px;background-image:url('{{ uni.image }}');background-size:cover;background-position:center 70%;background-repeat:no-repeat;">
+  <div
+    style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.75) 100%);">
+  </div>
 
-  <a href="/" style="position:absolute;top:24px;left:24px;font-size:12px;color:#fff;text-decoration:none;background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:100px;backdrop-filter:blur(4px);">← Back</a>
+  <a href="/"
+    style="position:absolute;top:24px;left:24px;font-size:12px;color:#fff;text-decoration:none;background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:100px;backdrop-filter:blur(4px);">←
+    Back</a>
 
   <div style="position:absolute;bottom:32px;left:32px;">
-    <p style="font-size:11px;font-weight:700;color:#86efac;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 6px;">{{ uni.location }}</p>
+    <p
+      style="font-size:11px;font-weight:700;color:#86efac;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 6px;">
+      {{ uni.location }}</p>
     <h1 style="font-size:2.8rem;font-weight:900;color:#fff;margin:0 0 8px;line-height:1.1;">{{ uni.full }}</h1>
     <div style="display:flex;gap:10px;margin-top:10px;">
-      <a href="{{ uni.website }}" target="_blank" style="font-size:12px;font-weight:600;color:#fff;background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:100px;text-decoration:none;">Visit Official Website</a>
+      <a href="{{ uni.website }}" target="_blank"
+        style="font-size:12px;font-weight:600;color:#fff;background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:100px;text-decoration:none;">Visit
+        Official Website</a>
     </div>
   </div>
 
@@ -29,11 +82,13 @@
 <div style="padding:40px 48px 0;">
   <div style="display:grid;grid-template-columns:1fr 300px;gap:32px;margin-bottom:32px;align-items:start;">
     <div>
-      <h2 style="font-size:22px;font-weight:700;color:#111827;margin:0 0 12px;">About the <span style="color:#15803d;">University</span></h2>
+      <h2 style="font-size:22px;font-weight:700;color:#111827;margin:0 0 12px;">About the <span
+          style="color:#15803d;">University</span></h2>
       <p style="font-size:15px;color:#4b5563;line-height:1.8;margin:0;text-align:left;">{{ uni.about }}</p>
     </div>
     <div style="border-radius:16px;overflow:hidden;height:220px;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
-      <img src="{{ uni.thumb|default:uni.image }}" style="width:100%;height:100%;object-fit:cover;object-position:center center;" alt="{{ uni.name }} campus">
+      <img src="{{ uni.thumb|default:uni.image }}"
+        style="width:100%;height:100%;object-fit:cover;object-position:center center;" alt="{{ uni.name }} campus">
     </div>
   </div>
 </div>
@@ -49,20 +104,28 @@
   <div id="tab-admissions" class="tab-content active" style="padding-bottom:40px;">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
       <div style="background:#052e16;border-radius:16px;padding:24px;color:#fff;">
-        <p style="font-size:10px;font-weight:700;color:#4ade80;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 14px;">⊙ Entry Requirements</p>
+        <p
+          style="font-size:10px;font-weight:700;color:#4ade80;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 14px;">
+          ⊙ Entry Requirements</p>
         <ul style="margin:0;padding-left:16px;display:flex;flex-direction:column;gap:10px;">
-          <li style="font-size:13px;color:#d1fae5;line-height:1.5;">Credit Passes (A1-C6 in WASSCE or A-D in SSSCE) or equivalent in three core subjects and three relevant elective subjects.</li>
+          <li style="font-size:13px;color:#d1fae5;line-height:1.5;">Credit Passes (A1-C6 in WASSCE or A-D in SSSCE) or
+            equivalent in three core subjects and three relevant elective subjects.</li>
           <li style="font-size:13px;color:#d1fae5;line-height:1.5;">An aggregate score of 24 or better.</li>
-          <li style="font-size:13px;color:#d1fae5;line-height:1.5;">Specific programs may require additional subject combinations. Check individual program cut-offs in the Programmes tab.</li>
+          <li style="font-size:13px;color:#d1fae5;line-height:1.5;">Specific programs may require additional subject
+            combinations. Check individual program cut-offs in the Programmes tab.</li>
         </ul>
       </div>
       <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:16px;padding:24px;">
-        <p style="font-size:10px;font-weight:700;color:#6b7280;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 14px;">📅 Important Dates</p>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:0.5px solid #f1f5f9;">
+        <p
+          style="font-size:10px;font-weight:700;color:#6b7280;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 14px;">
+          📅 Important Dates</p>
+        <div
+          style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:0.5px solid #f1f5f9;">
           <span style="font-size:13px;color:#374151;">Academic Year Starts</span>
           <span style="font-size:13px;font-weight:700;color:#111827;">September 2026</span>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:0.5px solid #f1f5f9;">
+        <div
+          style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:0.5px solid #f1f5f9;">
           <span style="font-size:13px;color:#374151;">Application Deadline</span>
           <span style="font-size:13px;font-weight:700;color:#111827;">June 2026</span>
         </div>
@@ -74,85 +137,230 @@
     </div>
   </div>
 
-  <!-- Programmes Tab -->
+  <!-- Programmes Tab (Grouped by College) -->
   <div id="tab-programmes" class="tab-content" style="padding-bottom:40px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <h3 style="font-size:18px;font-weight:700;color:#111827;margin:0;">Programmes Offered</h3>
-      <span style="font-size:12px;color:#6b7280;background:#f9fafb;padding:4px 12px;border-radius:100px;border:1px solid #e5e7eb;">{{ programs|length }} programmes · Lower aggregate is better</span>
+    <div
+      style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h3 style="font-size:20px;font-weight:800;color:#111827;margin:0;">Programmes Offered by College</h3>
+        <p style="font-size:13px;color:#6b7280;margin:4px 0 0;">Click any programme card to view complete entry
+          requirements and track prerequisites</p>
+      </div>
+      <span
+        style="font-size:12px;color:#052e16;background:#f0fdf4;padding:6px 16px;border-radius:100px;border:1px solid #bbf7d0;font-weight:700;">{{
+        programs|length }} Total Programmes</span>
     </div>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
-      {% for prog, cutoff in programs %}
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
-        <p style="font-size:14px;font-weight:500;color:#111827;margin:0;">{{ prog }}</p>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-          <span style="font-size:11px;color:#9ca3af;">Cut-off</span>
-          <div style="{% if cutoff <= 9 %}background:#dcfce7;color:#15803d;{% else %}background:#fef3c7;color:#d97706;{% endif %}padding:4px 14px;border-radius:8px;font-size:14px;font-weight:800;">{{ cutoff }}</div>
+
+    {% for col_name, prog_list in grouped_programs.items %}
+    <div style="margin-bottom:28px;">
+      <!-- College Header Banner -->
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#052e16;color:#fff;border-radius:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(5,46,22,0.12);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:15px;font-weight:800;color:#fff;">{{ col_name }}</span>
         </div>
+        <span
+          style="font-size:11px;font-weight:700;background:rgba(74,222,128,0.2);color:#4ade80;padding:4px 12px;border-radius:100px;border:1px solid rgba(74,222,128,0.3);">
+          {{ prog_list|length }} {% if prog_list|length == 1 %}Programme{% else %}Programmes{% endif %}
+        </span>
       </div>
-      {% endfor %}
-    </div>
-    <div style="padding:16px;background:#f0fdf4;border-radius:12px;border:1px solid #d1fae5;">
-      <p style="font-size:12px;color:#065f46;margin:0;">💡 Cut-off points are based on 2024/2025 admission data. <a href="/shs-eligibility/" style="color:#15803d;font-weight:600;">Check your eligibility →</a></p>
-    </div>
-  </div>
 
-  <!-- Campus Life Tab -->
-  <div id="tab-campus" class="tab-content" style="padding-bottom:40px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:16px;padding:24px;">
-        <p style="font-size:24px;margin:0 0 8px;">🏠</p>
-        <h4 style="font-size:15px;font-weight:700;color:#111827;margin:0 0 6px;">Accommodation</h4>
-        <p style="font-size:13px;color:#6b7280;margin:0;line-height:1.5;">On-campus halls and hostels available for students. Apply early as spaces are limited.</p>
-      </div>
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:16px;padding:24px;">
-        <p style="font-size:24px;margin:0 0 8px;">📚</p>
-        <h4 style="font-size:15px;font-weight:700;color:#111827;margin:0 0 6px;">Library & Research</h4>
-        <p style="font-size:13px;color:#6b7280;margin:0;line-height:1.5;">Well-equipped libraries and research centers available to all students across disciplines.</p>
-      </div>
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:16px;padding:24px;">
-        <p style="font-size:24px;margin:0 0 8px;">⚽</p>
-        <h4 style="font-size:15px;font-weight:700;color:#111827;margin:0 0 6px;">Sports & Recreation</h4>
-        <p style="font-size:13px;color:#6b7280;margin:0;line-height:1.5;">Sports facilities including football pitches, courts and gyms for student recreation.</p>
-      </div>
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:16px;padding:24px;">
-        <p style="font-size:24px;margin:0 0 8px;">🎓</p>
-        <h4 style="font-size:15px;font-weight:700;color:#111827;margin:0 0 6px;">Student Clubs</h4>
-        <p style="font-size:13px;color:#6b7280;margin:0;line-height:1.5;">Dozens of student clubs and associations covering academics, culture, arts and more.</p>
+      <!-- Program Cards Grid -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:12px;">
+        {% for p in prog_list %}
+        <div onclick="openProgramModal('{{ p.id }}')"
+          style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:space-between;gap:12px;"
+          onmouseover="this.style.borderColor='#16a34a';this.style.boxShadow='0 4px 14px rgba(22,163,74,0.12)';this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.borderColor='#e5e7eb';this.style.boxShadow='none';this.style.transform='translateY(0)'">
+          <div style="flex:1;">
+            <p style="font-size:14px;font-weight:700;color:#1f2937;margin:0 0 4px;line-height:1.35;">{{ p.name }}</p>
+            <p style="font-size:11px;color:#6b7280;margin:0;">
+              {{ p.campus }} · {{ p.duration_years }} Years
+            </p>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+            <div style="text-align:right;">
+              <span style="font-size:10px;color:#9ca3af;display:block;font-weight:600;">Cut-off</span>
+              <span class="cutoff-badge cutoff-green"
+                style="font-size:13px;padding:3px 10px;border-radius:6px;display:inline-block;">
+                {% if p.aggregate %}{{ p.aggregate }}{% else %}N/A{% endif %}
+              </span>
+            </div>
+            <span style="font-size:16px;color:#9ca3af;font-weight:700;">→</span>
+          </div>
+        </div>
+        {% endfor %}
       </div>
     </div>
-  </div>
+    {% endfor %}
 
-  <!-- Fees Tab -->
-  <div id="tab-fees" class="tab-content" style="padding-bottom:40px;">
-    <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:16px;padding:24px;margin-bottom:16px;">
-      <h4 style="font-size:15px;font-weight:700;color:#111827;margin:0 0 16px;">Estimated Annual Fees (2025/2026)</h4>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:0.5px solid #f1f5f9;">
-        <span style="font-size:13px;color:#374151;">Tuition (Science Programs)</span>
-        <span style="font-size:13px;font-weight:700;color:#111827;">GHS 3,500 – 6,000</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:0.5px solid #f1f5f9;">
-        <span style="font-size:13px;color:#374151;">Tuition (Arts Programs)</span>
-        <span style="font-size:13px;font-weight:700;color:#111827;">GHS 2,500 – 4,500</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;">
-        <span style="font-size:13px;color:#374151;">Accommodation (On-campus)</span>
-        <span style="font-size:13px;font-weight:700;color:#111827;">GHS 800 – 2,000</span>
-      </div>
-    </div>
-    <div style="background:#f0fdf4;border:1px solid #d1fae5;border-radius:12px;padding:16px;">
-      <p style="font-size:12px;color:#065f46;margin:0;">💡 Fees vary by program and are subject to change. Visit the official university website for exact figures.</p>
+    <div style="padding:16px;background:#f0fdf4;border-radius:12px;border:1px solid #d1fae5;margin-top:20px;">
+      <p style="font-size:12px;color:#065f46;margin:0;">Cut-off points are based on 2024/2025 admission benchmark data.
+        <a href="/shs-eligibility/" style="color:#15803d;font-weight:700;text-decoration:underline;">Check your
+          eligibility →</a>
+      </p>
     </div>
   </div>
 
 </div>
 
+<!-- Program Details Modal Dialog -->
+<div id="uniProgModal" onclick="closeProgramModal()"
+  style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px;">
+  <div
+    style="background:#fff;border-radius:20px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,0.25);border:1px solid #e5e7eb;"
+    onclick="event.stopPropagation()">
+
+    <!-- Modal Header -->
+    <div style="background:#052e16;padding:24px;border-radius:20px 20px 0 0;color:#fff;position:relative;">
+      <button onclick="closeProgramModal()"
+        style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;">✕</button>
+      <span id="modalCollegeBadge"
+        style="font-size:11px;font-weight:700;background:rgba(74,222,128,0.2);color:#4ade80;padding:4px 12px;border-radius:100px;border:1px solid rgba(74,222,128,0.3);display:inline-block;margin-bottom:8px;"></span>
+      <h2 id="modalProgName" style="font-size:22px;font-weight:800;color:#fff;margin:0 0 6px;line-height:1.25;"></h2>
+      <p id="modalUniSub" style="font-size:13px;color:#a7f3d0;margin:0;"></p>
+    </div>
+
+    <!-- Modal Content Body -->
+    <div style="padding:24px;">
+
+      <!-- Specifications Grid -->
+      <div
+        style="display:grid;grid-template-columns:repeat(4, 1fr);gap:10px;background:#f9fafb;padding:14px;border-radius:12px;border:1px solid #f3f4f6;margin-bottom:20px;text-align:center;">
+        <div>
+          <span
+            style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;display:block;">Campus</span>
+          <span id="modalCampus" style="font-size:13px;font-weight:700;color:#1f2937;"></span>
+        </div>
+        <div>
+          <span
+            style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;display:block;">Duration</span>
+          <span id="modalDuration" style="font-size:13px;font-weight:700;color:#1f2937;"></span>
+        </div>
+        <div>
+          <span
+            style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;display:block;">Cut-off</span>
+          <span id="modalCutoff" style="font-size:13px;font-weight:800;color:#15803d;"></span>
+        </div>
+        <div>
+          <span style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;display:block;">Year</span>
+          <span id="modalYear" style="font-size:13px;font-weight:700;color:#1f2937;"></span>
+        </div>
+      </div>
+
+      <!-- Offering Note -->
+      <div id="modalNoteBox"
+        style="display:none;background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#92400e;">
+        <strong>Special Note:</strong> <span id="modalNoteText"></span>
+      </div>
+
+      <!-- Core Subject Requirements -->
+      <div style="margin-bottom:20px;">
+        <p
+          style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 10px;">
+          Mandatory Core Subjects</p>
+        <div id="modalCoreList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      </div>
+
+      <!-- Subject Requirements by Learning Track -->
+      <div style="margin-bottom:24px;">
+        <p
+          style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 10px;">
+          Subject Requirements by Learning Track</p>
+        <div id="modalReqsList" style="display:flex;flex-direction:column;gap:12px;"></div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div
+        style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #f1f5f9;padding-top:16px;flex-wrap:wrap;gap:10px;">
+        <button onclick="closeProgramModal()"
+          style="background:#f3f4f6;color:#374151;border:none;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;">Close</button>
+        <a href="/shs-eligibility/"
+          style="background:#052e16;color:#4ade80;text-decoration:none;padding:10px 22px;border-radius:100px;font-size:13px;font-weight:700;">Check
+          Your WASSCE Eligibility →</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script>
-function switchTab(name) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  event.target.classList.add('active');
-}
+  const PROGRAM_MAP = JSON.parse('{{ program_map_json|escapejs }}');
+
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function openProgramModal(pId) {
+    const p = PROGRAM_MAP[pId];
+    if (!p) return;
+
+    document.getElementById('modalCollegeBadge').innerText = p.college;
+    document.getElementById('modalProgName').innerText = p.name;
+    document.getElementById('modalUniSub').innerText = '{{ uni.full }} · ' + p.campus;
+    document.getElementById('modalCampus').innerText = p.campus;
+    document.getElementById('modalDuration').innerText = p.duration_years + ' Years';
+    document.getElementById('modalCutoff').innerText = p.aggregate ? p.aggregate : 'N/A';
+    document.getElementById('modalYear').innerText = p.year;
+
+    if (p.note) {
+      document.getElementById('modalNoteText').innerText = p.note;
+      document.getElementById('modalNoteBox').style.display = 'block';
+    } else {
+      document.getElementById('modalNoteBox').style.display = 'none';
+    }
+
+    // Core subjects
+    const coreContainer = document.getElementById('modalCoreList');
+    if (p.core_subjects && p.core_subjects.length > 0) {
+      coreContainer.innerHTML = p.core_subjects.map(s =>
+        `<span style="font-size:12px;font-weight:600;background:#e0f2fe;color:#0369a1;padding:5px 12px;border-radius:6px;border:1px solid #bae6fd;">${s}</span>`
+      ).join('');
+    } else {
+      coreContainer.innerHTML = `<span style="font-size:12px;color:#6b7280;">English Language, Core Mathematics, Integrated Science / Social Studies</span>`;
+    }
+
+    // Requirements list
+    const reqsContainer = document.getElementById('modalReqsList');
+    if (p.requirements && p.requirements.length > 0) {
+      reqsContainer.innerHTML = p.requirements.map(req => {
+        const mBadges = req.mandatory.length > 0
+          ? req.mandatory.map(s => `<span style="font-size:11px;font-weight:600;background:#dcfce7;color:#15803d;padding:3px 9px;border-radius:6px;border:1px solid #bbf7d0;">${s}</span>`).join(' ')
+          : '<span style="font-size:11px;color:#9ca3af;">None specified</span>';
+
+        const eBadges = req.electives.length > 0
+          ? req.electives.map(s => `<span style="font-size:11px;font-weight:600;background:#eff6ff;color:#1d4ed8;padding:3px 9px;border-radius:6px;border:1px solid #bfdbfe;">${s}</span>`).join(' ')
+          : '<span style="font-size:11px;color:#9ca3af;">Any relevant electives</span>';
+
+        return `
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+        <span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:8px;">Track: ${req.learning_area}</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;margin-top:6px;">
+          <div>
+            <p style="font-weight:700;color:#374151;margin:0 0 4px;">Mandatory Electives Required:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">${mBadges}</div>
+          </div>
+          <div>
+            <p style="font-weight:700;color:#374151;margin:0 0 4px;">Recommended Electives:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">${eBadges}</div>
+          </div>
+        </div>
+      </div>`;
+      }).join('');
+    } else {
+      reqsContainer.innerHTML = `<p style="font-size:12px;color:#6b7280;font-style:italic;margin:0;">Standard WASSCE entry requirements apply across relevant elective combinations.</p>`;
+    }
+
+    const modal = document.getElementById('uniProgModal');
+    modal.style.display = 'flex';
+  }
+
+  function closeProgramModal() {
+    document.getElementById('uniProgModal').style.display = 'none';
+  }
 </script>
 
 {% endblock %}
