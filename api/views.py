@@ -772,3 +772,210 @@ def evaluate_eligibility(request):
         'results': results
     })
 
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def ocr_wassce_results(request):
+    """
+    Accepts an uploaded image or PDF WASSCE results slip/transcript,
+    uses Gemini Multimodal OCR to extract core & elective subjects and grades,
+    standardizes subject names to database choices, and returns structured JSON.
+    """
+    import base64
+    from django.conf import settings
+    from google.oauth2 import service_account
+    import google.auth.transport.requests
+    import urllib.request
+    import os
+
+    if 'file' not in request.FILES:
+        return JsonResponse({'error': 'No file uploaded'}, status=400)
+
+    uploaded_file = request.FILES['file']
+    filename = uploaded_file.name.lower()
+    content_type = uploaded_file.content_type or ''
+
+    # Determine MIME type
+    if filename.endswith('.pdf') or 'pdf' in content_type:
+        mime_type = 'application/pdf'
+    elif filename.endswith('.png'):
+        mime_type = 'image/png'
+    elif filename.endswith('.webp'):
+        mime_type = 'image/webp'
+    else:
+        mime_type = 'image/jpeg'
+
+    try:
+        file_bytes = uploaded_file.read()
+        b64_data = base64.b64encode(file_bytes).decode('utf-8')
+    except Exception as e:
+        return JsonResponse({'error': f'Failed to read file bytes: {e}'}, status=400)
+
+    key_path = os.path.join(settings.BASE_DIR, 'gcp-key.json')
+    if not os.path.exists(key_path):
+        return JsonResponse({'error': 'GCP service account key missing for AI OCR'}, status=500)
+
+    prompt_text = """You are an expert OCR parser for Ghanaian WASSCE / SSSCE result slips, transcripts, and certificates.
+Extract all high school subjects and their corresponding letter grades from the document image or PDF.
+
+Respond ONLY with a JSON object in this format:
+{
+  "core_subjects": {
+    "English Language": "A1",
+    "Core Mathematics": "B2",
+    "Integrated Science": "B3",
+    "Social Studies": "C4"
+  },
+  "elective_subjects": [
+    {"subject": "Elective Mathematics", "grade": "B2"},
+    {"subject": "Physics", "grade": "A1"},
+    {"subject": "Chemistry", "grade": "B3"},
+    {"subject": "Biology", "grade": "C4"}
+  ]
+}
+
+CRITICAL RULES:
+1. Valid WASSCE/SSSCE grades are A1, B2, B3, C4, C5, C6, D7, E8, F9 (or A, B, C, D, E, F).
+2. Standardize Core Subject names as "English Language", "Core Mathematics", "Integrated Science", "Social Studies".
+3. Standardize Elective Subject names to standard Ghanaian SHS subjects (e.g. "Elective Mathematics", "Physics", "Chemistry", "Biology", "Economics", "Geography", "History", "Government", "General Knowledge in Art", "Graphic Design", "Financial Accounting", "Costing", "Business Management", "Food and Nutrition", "Management in Living", "General Agriculture", "Crop Husbandry and Horticulture", "Animal Husbandry", "Elective ICT", "Literature in English", "French", "Ghanaian Language", etc.).
+4. Respond ONLY with valid JSON."""
+
+    payload = {
+        "contents": [
+            {
+                "role": "user",
+                "parts": [
+                    {"text": prompt_text},
+                    {
+                        "inlineData": {
+                            "mimeType": mime_type,
+                            "data": b64_data
+                        }
+                    }
+                ]
+            }
+        ],
+        "generationConfig": {
+            "responseMimeType": "application/json"
+        }
+    }
+
+    parsed = None
+    try:
+        scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+        creds = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
+        auth_req = google.auth.transport.requests.Request()
+        creds.refresh(auth_req)
+        token = creds.token
+        project_id = creds.project_id
+
+        for model_name in ["gemini-2.5-flash", "gemini-2.5-pro"]:
+            url = f"https://firebasevertexai.googleapis.com/v1beta/projects/{project_id}/locations/us-central1/publishers/google/models/{model_name}:generateContent"
+            try:
+                req_obj = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+                    method="POST"
+                )
+                with urllib.request.urlopen(req_obj, timeout=25) as response:
+                    res_data = json.loads(response.read().decode())
+                    candidates = res_data.get("candidates", [])
+                    if candidates:
+                        text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                        if text_content.startswith("```"):
+                            lines = text_content.splitlines()
+                            if lines[0].startswith("```"):
+                                lines = lines[1:]
+                            if lines and lines[-1].startswith("```"):
+                                lines = lines[:-1]
+                            text_content = "\n".join(lines).strip()
+                        parsed = json.loads(text_content)
+                        break
+            except Exception as e:
+                print(f"DEBUG: OCR Vertex AI call for {model_name} failed: {e}")
+                continue
+    except Exception as e:
+        print(f"DEBUG: OCR auth failed: {e}")
+
+    if not parsed:
+        return JsonResponse({'error': 'Could not extract WASSCE grades from the uploaded document. Please ensure the image/PDF is clear or select grades manually.'}, status=422)
+
+    # Standardize & Normalize grades to integer grade values (A1=1, B2=2, B3=3, C4=4, C5=5, C6=6, D7=7, E8=8, F9=9)
+    grade_map = {
+        'A1': 1, 'A': 1, '1': 1,
+        'B2': 2, '2': 2,
+        'B3': 3, 'B': 3, '3': 3,
+        'C4': 4, '4': 4,
+        'C5': 5, '5': 5,
+        'C6': 6, 'C': 6, '6': 6,
+        'D7': 7, 'D': 7, '7': 7,
+        'E8': 8, 'E': 8, '8': 8,
+        'F9': 9, 'F': 9, '9': 9,
+    }
+
+    # Abbreviation dictionary for WASSCE results slips
+    abbreviation_map = {
+        'mgt in living': 'Management in Living',
+        'mgt. in living': 'Management in Living',
+        'mgt in liv': 'Management in Living',
+        'mgmt in living': 'Management in Living',
+        'food & nut': 'Food and Nutrition',
+        'food & nutrition': 'Food and Nutrition',
+        'food and nut': 'Food and Nutrition',
+        'cloth & text': 'Clothing and Textiles',
+        'clothing & textiles': 'Clothing and Textiles',
+        'fin acct': 'Financial Accounting',
+        'financial acct': 'Financial Accounting',
+        'fin accounting': 'Financial Accounting',
+        'bus mgt': 'Business Management',
+        'bus. mgmt': 'Business Management',
+        'business mgmt': 'Business Management',
+        'bus econ': 'Business Economics',
+        'business econ': 'Business Economics',
+        'elect math': 'Elective Mathematics',
+        'elect. math': 'Elective Mathematics',
+        'elect maths': 'Elective Mathematics',
+        'add math': 'Additional Mathematics',
+        'add. maths': 'Additional Mathematics',
+        'lit in eng': 'Literature in English',
+        'lit. in english': 'Literature in English',
+        'gen agric': 'Agricultural Science',
+        'general agric': 'Agricultural Science',
+        'agric sci': 'Agricultural Science',
+        'agric science': 'Agricultural Science',
+        'gk in art': 'Art and Design Foundation',
+        'g.k.a': 'Art and Design Foundation',
+        'gka': 'Art and Design Foundation',
+        'crs': 'Christian Religious Studies',
+        'irs': 'Islamic Religious Studies',
+    }
+
+    raw_cores = parsed.get('core_subjects', {})
+    core_grades = {}
+    for k, v in raw_cores.items():
+        val = str(v).upper().strip()
+        core_grades[k] = grade_map.get(val, 1)
+
+    raw_electives = parsed.get('elective_subjects', [])
+    clean_electives = []
+    for item in raw_electives:
+        subj = item.get('subject', '').strip()
+        grd = str(item.get('grade', '')).upper().strip()
+        if subj:
+            lower_subj = subj.lower()
+            for abbr, full_name in abbreviation_map.items():
+                if abbr == lower_subj or abbr in lower_subj:
+                    subj = full_name
+                    break
+            clean_electives.append({
+                'subject': subj,
+                'grade': grade_map.get(grd, 1)
+            })
+
+    return JsonResponse({
+        'success': True,
+        'core_grades': core_grades,
+        'electives': clean_electives
+    })
+

@@ -9,4 +9,5 @@ urlpatterns = [
     path('wassce-check/', views.wassce_check, name='wassce_check'),
     path('universities/', views.universities_list, name='universities_list'),
     path('evaluate-eligibility/', views.evaluate_eligibility, name='evaluate_eligibility'),
+    path('ocr-wassce-results/', views.ocr_wassce_results, name='ocr_wassce_results'),
 ]

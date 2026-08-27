@@ -75,6 +75,42 @@
           <span style="font-size:12px;color:#bbf7d0;">See matching programs</span>
         </div>
       </div>
+
+      <!-- WASSCE Results Slip / PDF Transcript AI OCR Upload Dropzone -->
+      <div style="padding:16px 24px 0;">
+        <div
+          style="background:#f0fdf4;border:1.5px dashed #86efac;border-radius:14px;padding:16px 20px;text-align:center;position:relative;transition:all 0.2s;"
+          id="uploadDropzone" onmouseover="this.style.background='#e6f4ea';this.style.borderColor='#4ade80';"
+          onmouseout="this.style.background='#f0fdf4';this.style.borderColor='#86efac';">
+          <input type="file" id="resultsFileInput" accept="image/*,application/pdf"
+            style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:10;"
+            onchange="handleResultsFileUpload(event)">
+          <div id="uploadIdleState">
+            <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:4px;">
+              <div
+                style="width:32px;height:32px;background:#dcfce7;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                <svg style="width:18px;height:18px;fill:#15803d;" viewBox="0 0 24 24">
+                  <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z" />
+                </svg>
+              </div>
+              <span style="font-size:14px;font-weight:700;color:#15803d;">Upload WASSCE Results Slip (Image or
+                PDF)</span>
+            </div>
+            <p style="font-size:12px;color:#166534;margin:0;">Click or drag & drop your results slip / transcript file
+              to auto-extract subjects & grades with AI</p>
+          </div>
+          <div id="uploadProcessingState" style="display:none;">
+            <div
+              style="border:3px solid #16a34a;border-top-color:transparent;border-radius:50%;width:22px;height:22px;display:inline-block;animation:spin 1s linear infinite;"
+              class="animate-spin mb-1"></div>
+            <p style="font-size:13px;font-weight:700;color:#15803d;margin:4px 0 0;">Analyzing WASSCE Results Slip with
+              AI OCR...</p>
+            <p style="font-size:11px;color:#166534;margin:2px 0 0;">Extracting core & elective grades into the form...
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div class="desktop-table" style="padding:20px 24px 8px;">
         <p style="font-size:13px;font-weight:700;color:#374151;margin:0 0 2px;">Enter your WASSCE grades</p>
         <p style="font-size:12px;color:#9ca3af;margin:0;">Your Best Six aggregate updates as you select each grade</p>
@@ -105,12 +141,15 @@
                 <select id="g_english"
                   style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
                   <option value="">Select grade</option>
-                  <option value="1">A1 — Excellent</option>
-                  <option value="2">B2 — Very Good</option>
-                  <option value="3">B3 — Good</option>
-                  <option value="4">C4 — Credit</option>
-                  <option value="5">C5 — Credit</option>
-                  <option value="6">C6 — Credit</option>
+                  <option value="1">A1</option>
+                  <option value="2">B2</option>
+                  <option value="3">B3</option>
+                  <option value="4">C4</option>
+                  <option value="5">C5</option>
+                  <option value="6">C6</option>
+                  <option value="7">D7</option>
+                  <option value="8">E8</option>
+                  <option value="9">F9</option>
                 </select>
               </td>
             </tr>
@@ -123,19 +162,22 @@
                 <select id="g_math"
                   style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
                   <option value="">Select grade</option>
-                  <option value="1">A1 — Excellent</option>
-                  <option value="2">B2 — Very Good</option>
-                  <option value="3">B3 — Good</option>
-                  <option value="4">C4 — Credit</option>
-                  <option value="5">C5 — Credit</option>
-                  <option value="6">C6 — Credit</option>
+                  <option value="1">A1</option>
+                  <option value="2">B2</option>
+                  <option value="3">B3</option>
+                  <option value="4">C4</option>
+                  <option value="5">C5</option>
+                  <option value="6">C6</option>
+                  <option value="7">D7</option>
+                  <option value="8">E8</option>
+                  <option value="9">F9</option>
                 </select>
               </td>
             </tr>
             <tr id="science-row" style="border-top:0.5px solid #f1f5f9;display:none;">
               <td
                 style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;display:flex;align-items:center;gap:8px;">
-                Integrated Science <span style="font-size:11px;color:#9ca3af;">(optional)</span>
+                Integrated Science
                 <button type="button"
                   onclick="document.getElementById('science-row').style.display='none';document.getElementById('add-science-btn').style.display='flex';"
                   style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;padding:0;line-height:1;">×</button>
@@ -147,12 +189,15 @@
                 <select id="g_science"
                   style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
                   <option value="">Select grade</option>
-                  <option value="1">A1 — Excellent</option>
-                  <option value="2">B2 — Very Good</option>
-                  <option value="3">B3 — Good</option>
-                  <option value="4">C4 — Credit</option>
-                  <option value="5">C5 — Credit</option>
-                  <option value="6">C6 — Credit</option>
+                  <option value="1">A1</option>
+                  <option value="2">B2</option>
+                  <option value="3">B3</option>
+                  <option value="4">C4</option>
+                  <option value="5">C5</option>
+                  <option value="6">C6</option>
+                  <option value="7">D7</option>
+                  <option value="8">E8</option>
+                  <option value="9">F9</option>
                 </select>
               </td>
             </tr>
@@ -165,12 +210,15 @@
                 <select id="g_social"
                   style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
                   <option value="">Select grade</option>
-                  <option value="1">A1 — Excellent</option>
-                  <option value="2">B2 — Very Good</option>
-                  <option value="3">B3 — Good</option>
-                  <option value="4">C4 — Credit</option>
-                  <option value="5">C5 — Credit</option>
-                  <option value="6">C6 — Credit</option>
+                  <option value="1">A1</option>
+                  <option value="2">B2</option>
+                  <option value="3">B3</option>
+                  <option value="4">C4</option>
+                  <option value="5">C5</option>
+                  <option value="6">C6</option>
+                  <option value="7">D7</option>
+                  <option value="8">E8</option>
+                  <option value="9">F9</option>
                 </select>
               </td>
             </tr>
@@ -180,55 +228,13 @@
                   style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;width:100%;max-width:200px;"
                   onchange="this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';">
                   <option value="">Elective 1</option>
-                  <optgroup label="Science">
-                    <option>Biology</option>
-                    <option>Chemistry</option>
-                    <option>Physics</option>
-                    <option>Additional Mathematics</option>
-                    <option>Agricultural Science</option>
+                  {% for la_name, subs in grouped_electives.items %}
+                  <optgroup label="{{ la_name }}">
+                    {% for s in subs %}
+                    <option>{{ s.name }}</option>
+                    {% endfor %}
                   </optgroup>
-                  <optgroup label="General Arts">
-                    <option>Economics</option>
-                    <option>Geography</option>
-                    <option>Government</option>
-                    <option>History</option>
-                    <option>Literature in English</option>
-                    <option>Christian Religious Studies</option>
-                    <option>Islamic Religious Studies</option>
-                    <option>RME</option>
-                  </optgroup>
-                  <optgroup label="Business">
-                    <option>Business Management</option>
-                    <option>Accounting</option>
-                    <option>Business Economics</option>
-                  </optgroup>
-                  <optgroup label="Computing">
-                    <option>Computer Science</option>
-                    <option>ICT</option>
-                  </optgroup>
-                  <optgroup label="Applied Technology">
-                    <option>Design and Communication Technology</option>
-                    <option>Electrical and Electronic Technology</option>
-                    <option>Building Construction and Wood Technology</option>
-                    <option>Automobile and Metal Technology</option>
-                  </optgroup>
-                  <optgroup label="Visual and Performing Arts">
-                    <option>Art and Design Foundation</option>
-                    <option>Art and Design Studio</option>
-                    <option>Music</option>
-                    <option>Performing Arts</option>
-                  </optgroup>
-                  <optgroup label="Home Economics">
-                    <option>Food and Nutrition</option>
-                    <option>Clothing and Textiles</option>
-                    <option>Management in Living</option>
-                  </optgroup>
-                  <optgroup label="Languages">
-                    <option>French</option>
-                    <option>Spanish</option>
-                    <option>Arabic</option>
-                    <option>Ghanaian Language</option>
-                  </optgroup>
+                  {% endfor %}
                 </select>
               </td>
               <td style="padding:12px 12px;text-align:center;"><span
@@ -244,6 +250,9 @@
                   <option value="4">C4</option>
                   <option value="5">C5</option>
                   <option value="6">C6</option>
+                  <option value="7">D7</option>
+                  <option value="8">E8</option>
+                  <option value="9">F9</option>
                 </select>
               </td>
             </tr>
@@ -303,6 +312,9 @@
               <option value="4">C4</option>
               <option value="5">C5</option>
               <option value="6">C6</option>
+              <option value="7">D7</option>
+              <option value="8">E8</option>
+              <option value="9">F9</option>
             </select>
           </div>
           <div
@@ -320,6 +332,9 @@
               <option value="4">C4</option>
               <option value="5">C5</option>
               <option value="6">C6</option>
+              <option value="7">D7</option>
+              <option value="8">E8</option>
+              <option value="9">F9</option>
             </select>
           </div>
           <div
@@ -337,6 +352,9 @@
               <option value="4">C4</option>
               <option value="5">C5</option>
               <option value="6">C6</option>
+              <option value="7">D7</option>
+              <option value="8">E8</option>
+              <option value="9">F9</option>
             </select>
           </div>
           <div id="m_social_row"
@@ -355,6 +373,10 @@
               <option value="4">C4</option>
               <option value="5">C5</option>
               <option value="6">C6</option>
+              <option value="7">D7</option>
+              <option value="8">E8</option>
+              <option value="9">F9</option>
+            </select>
             </select>
           </div>
         </div>
@@ -371,55 +393,13 @@
               <select id="m_s_e1" onchange="document.getElementById('s_e1').value=this.value;"
                 style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
                 <option value="">Subject</option>
-                <optgroup label="Science">
-                  <option>Biology</option>
-                  <option>Chemistry</option>
-                  <option>Physics</option>
-                  <option>Additional Mathematics</option>
-                  <option>Agricultural Science</option>
+                {% for la_name, subs in grouped_electives.items %}
+                <optgroup label="{{ la_name }}">
+                  {% for s in subs %}
+                  <option>{{ s.name }}</option>
+                  {% endfor %}
                 </optgroup>
-                <optgroup label="General Arts">
-                  <option>Economics</option>
-                  <option>Geography</option>
-                  <option>Government</option>
-                  <option>History</option>
-                  <option>Literature in English</option>
-                  <option>Christian Religious Studies</option>
-                  <option>Islamic Religious Studies</option>
-                  <option>RME</option>
-                </optgroup>
-                <optgroup label="Business">
-                  <option>Business Management</option>
-                  <option>Accounting</option>
-                  <option>Business Economics</option>
-                </optgroup>
-                <optgroup label="Computing">
-                  <option>Computer Science</option>
-                  <option>ICT</option>
-                </optgroup>
-                <optgroup label="Applied Technology">
-                  <option>Design and Communication Technology</option>
-                  <option>Electrical and Electronic Technology</option>
-                  <option>Building Construction and Wood Technology</option>
-                  <option>Automobile and Metal Technology</option>
-                </optgroup>
-                <optgroup label="Visual and Performing Arts">
-                  <option>Art and Design Foundation</option>
-                  <option>Art and Design Studio</option>
-                  <option>Music</option>
-                  <option>Performing Arts</option>
-                </optgroup>
-                <optgroup label="Home Economics">
-                  <option>Food and Nutrition</option>
-                  <option>Clothing and Textiles</option>
-                  <option>Management in Living</option>
-                </optgroup>
-                <optgroup label="Languages">
-                  <option>French</option>
-                  <option>Spanish</option>
-                  <option>Arabic</option>
-                  <option>Ghanaian Language</option>
-                </optgroup>
+                {% endfor %}
               </select>
               <select id="m_g_e1" onchange="document.getElementById('g_e1').value=this.value;updateAggregate();"
                 style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;">
@@ -430,6 +410,9 @@
                 <option value="4">C4</option>
                 <option value="5">C5</option>
                 <option value="6">C6</option>
+                <option value="7">D7</option>
+                <option value="8">E8</option>
+                <option value="9">F9</option>
               </select>
             </div>
           </div>
@@ -443,55 +426,13 @@
                 onchange="document.getElementById('s_e2')?document.getElementById('s_e2').value=this.value:null;"
                 style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
                 <option value="">Subject</option>
-                <optgroup label="Science">
-                  <option>Biology</option>
-                  <option>Chemistry</option>
-                  <option>Physics</option>
-                  <option>Additional Mathematics</option>
-                  <option>Agricultural Science</option>
+                {% for la_name, subs in grouped_electives.items %}
+                <optgroup label="{{ la_name }}">
+                  {% for s in subs %}
+                  <option>{{ s.name }}</option>
+                  {% endfor %}
                 </optgroup>
-                <optgroup label="General Arts">
-                  <option>Economics</option>
-                  <option>Geography</option>
-                  <option>Government</option>
-                  <option>History</option>
-                  <option>Literature in English</option>
-                  <option>Christian Religious Studies</option>
-                  <option>Islamic Religious Studies</option>
-                  <option>RME</option>
-                </optgroup>
-                <optgroup label="Business">
-                  <option>Business Management</option>
-                  <option>Accounting</option>
-                  <option>Business Economics</option>
-                </optgroup>
-                <optgroup label="Computing">
-                  <option>Computer Science</option>
-                  <option>ICT</option>
-                </optgroup>
-                <optgroup label="Applied Technology">
-                  <option>Design and Communication Technology</option>
-                  <option>Electrical and Electronic Technology</option>
-                  <option>Building Construction and Wood Technology</option>
-                  <option>Automobile and Metal Technology</option>
-                </optgroup>
-                <optgroup label="Visual and Performing Arts">
-                  <option>Art and Design Foundation</option>
-                  <option>Art and Design Studio</option>
-                  <option>Music</option>
-                  <option>Performing Arts</option>
-                </optgroup>
-                <optgroup label="Home Economics">
-                  <option>Food and Nutrition</option>
-                  <option>Clothing and Textiles</option>
-                  <option>Management in Living</option>
-                </optgroup>
-                <optgroup label="Languages">
-                  <option>French</option>
-                  <option>Spanish</option>
-                  <option>Arabic</option>
-                  <option>Ghanaian Language</option>
-                </optgroup>
+                {% endfor %}
               </select>
               <select id="m_g_e2"
                 onchange="document.getElementById('g_e2')?document.getElementById('g_e2').value=this.value:null;updateAggregate();"
@@ -503,6 +444,9 @@
                 <option value="4">C4</option>
                 <option value="5">C5</option>
                 <option value="6">C6</option>
+                <option value="7">D7</option>
+                <option value="8">E8</option>
+                <option value="9">F9</option>
               </select>
             </div>
           </div>
@@ -516,55 +460,13 @@
                 onchange="document.getElementById('s_e3')?document.getElementById('s_e3').value=this.value:null;"
                 style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
                 <option value="">Subject</option>
-                <optgroup label="Science">
-                  <option>Biology</option>
-                  <option>Chemistry</option>
-                  <option>Physics</option>
-                  <option>Additional Mathematics</option>
-                  <option>Agricultural Science</option>
+                {% for la_name, subs in grouped_electives.items %}
+                <optgroup label="{{ la_name }}">
+                  {% for s in subs %}
+                  <option>{{ s.name }}</option>
+                  {% endfor %}
                 </optgroup>
-                <optgroup label="General Arts">
-                  <option>Economics</option>
-                  <option>Geography</option>
-                  <option>Government</option>
-                  <option>History</option>
-                  <option>Literature in English</option>
-                  <option>Christian Religious Studies</option>
-                  <option>Islamic Religious Studies</option>
-                  <option>RME</option>
-                </optgroup>
-                <optgroup label="Business">
-                  <option>Business Management</option>
-                  <option>Accounting</option>
-                  <option>Business Economics</option>
-                </optgroup>
-                <optgroup label="Computing">
-                  <option>Computer Science</option>
-                  <option>ICT</option>
-                </optgroup>
-                <optgroup label="Applied Technology">
-                  <option>Design and Communication Technology</option>
-                  <option>Electrical and Electronic Technology</option>
-                  <option>Building Construction and Wood Technology</option>
-                  <option>Automobile and Metal Technology</option>
-                </optgroup>
-                <optgroup label="Visual and Performing Arts">
-                  <option>Art and Design Foundation</option>
-                  <option>Art and Design Studio</option>
-                  <option>Music</option>
-                  <option>Performing Arts</option>
-                </optgroup>
-                <optgroup label="Home Economics">
-                  <option>Food and Nutrition</option>
-                  <option>Clothing and Textiles</option>
-                  <option>Management in Living</option>
-                </optgroup>
-                <optgroup label="Languages">
-                  <option>French</option>
-                  <option>Spanish</option>
-                  <option>Arabic</option>
-                  <option>Ghanaian Language</option>
-                </optgroup>
+                {% endfor %}
               </select>
               <select id="m_g_e3"
                 onchange="document.getElementById('g_e3')?document.getElementById('g_e3').value=this.value:null;updateAggregate();"
@@ -576,16 +478,28 @@
                 <option value="4">C4</option>
                 <option value="5">C5</option>
                 <option value="6">C6</option>
+                <option value="7">D7</option>
+                <option value="8">E8</option>
+                <option value="9">F9</option>
               </select>
             </div>
           </div>
         </div>
       </div>
       <div style="padding:16px 16px 20px;">
-        <button onclick="goToStep2()"
-          style="width:100%;padding:16px;background:#052e16;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
-          Check Eligibility
+        <button id="checkEligibilityBtn" onclick="goToStep2()"
+          style="width:100%;padding:16px;background:#052e16;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.2s;">
+          <span id="checkBtnText">Check Eligibility</span>
         </button>
+        <!-- Simple Progress Bar Container -->
+        <div id="eligibilityProgressContainer" style="display:none;margin-top:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <span id="progressStatusText" style="font-size:12px;font-weight:600;color:#166534;">Calculating grades and checking eligibility...</span>
+          </div>
+          <div style="width:100%;height:4px;background:#e5e7eb;border-radius:100px;overflow:hidden;">
+            <div id="progressBarFill" style="width:0%;height:100%;background:#16a34a;border-radius:100px;transition:width 0.3s ease;"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -608,7 +522,6 @@
         <div>
           <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide">Your Aggregate</p>
           <p id="aggregateLabel" class="text-xl font-bold text-gray-900"></p>
-          <p class="text-xs text-gray-400">Lower is better · Qualifying threshold is 24</p>
         </div>
       </div>
 
@@ -731,6 +644,23 @@
     'all': { border: '#4b5563', bg: '#f3f4f6', text: '#1f2937', label: 'General' },
   };
 
+  function resetCheckBtnState() {
+    const checkBtn = document.getElementById('checkEligibilityBtn');
+    const checkBtnText = document.getElementById('checkBtnText');
+    const progressContainer = document.getElementById('eligibilityProgressContainer');
+    if (checkBtn) {
+      checkBtn.disabled = false;
+      checkBtn.style.opacity = '1';
+      checkBtn.style.cursor = 'pointer';
+    }
+    if (checkBtnText) {
+      checkBtnText.textContent = 'Check Eligibility';
+    }
+    if (progressContainer) {
+      progressContainer.style.display = 'none';
+    }
+  }
+
   async function goToStep2() {
     const gEng = document.getElementById('g_english').value;
     const gMath = document.getElementById('g_math').value;
@@ -759,6 +689,32 @@
       return;
     }
 
+    const checkBtn = document.getElementById('checkEligibilityBtn');
+    const checkBtnText = document.getElementById('checkBtnText');
+    const progressContainer = document.getElementById('eligibilityProgressContainer');
+    const progressBarFill = document.getElementById('progressBarFill');
+
+    if (checkBtn) {
+      checkBtn.disabled = true;
+      checkBtn.style.opacity = '0.85';
+      checkBtn.style.cursor = 'not-allowed';
+    }
+    if (checkBtnText) {
+      checkBtnText.innerHTML = '<span style="border:2px solid #fff;border-top-color:transparent;border-radius:50%;width:14px;height:14px;display:inline-block;animation:spin 1s linear infinite;margin-right:8px;vertical-align:middle;"></span> Calculating grades & checking eligibility...';
+    }
+    if (progressContainer) progressContainer.style.display = 'block';
+
+    if (progressBarFill) progressBarFill.style.width = '30%';
+
+    let currentWidth = 30;
+    let progressInterval = setInterval(() => {
+      if (currentWidth < 90) {
+        currentWidth += Math.floor(Math.random() * 12) + 5;
+        if (currentWidth > 90) currentWidth = 90;
+        if (progressBarFill) progressBarFill.style.width = currentWidth + '%';
+      }
+    }, 150);
+
     const payload = {
       core_grades: {
         'English Language': parseInt(gEng),
@@ -777,10 +733,15 @@
       });
       const data = await resp.json();
 
+      clearInterval(progressInterval);
+
       if (data.error) {
         alert(data.error);
+        resetCheckBtnState();
         return;
       }
+
+      if (progressBarFill) progressBarFill.style.width = '100%';
 
       evaluatedData = data;
       aggregate = data.aggregate;
@@ -788,15 +749,21 @@
       document.getElementById('aggregateBadge').textContent = data.aggregate;
       document.getElementById('aggregateLabel').textContent = `Aggregate ${data.aggregate} · ${data.label}`;
 
-      document.getElementById('step1').classList.add('hidden');
-      document.getElementById('step2').classList.remove('hidden');
+      setTimeout(() => {
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
 
-      document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
-      step2Reached = true;
-      renderPrograms();
+        document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
+        step2Reached = true;
+        renderPrograms();
+        resetCheckBtnState();
+      }, 400);
+
     } catch (err) {
+      clearInterval(progressInterval);
       alert('Failed to calculate eligibility. Please check your connection.');
       console.error(err);
+      resetCheckBtnState();
     }
   }
 
@@ -1192,7 +1159,15 @@
 
 <script>
   var electiveCount = 2;
-  var eSubs = '<optgroup label="Science"><option>Biology</option><option>Chemistry</option><option>Physics</option><option>Additional Mathematics</option><option>Agricultural Science</option></optgroup><optgroup label="General Arts"><option>Economics</option><option>Geography</option><option>Government</option><option>History</option><option>Literature in English</option><option>Christian Religious Studies</option><option>Islamic Religious Studies</option><option>RME</option></optgroup><optgroup label="Business"><option>Business Management</option><option>Accounting</option><option>Business Economics</option></optgroup><optgroup label="Computing"><option>Computer Science</option><option>ICT</option></optgroup><optgroup label="Applied Technology"><option>Design and Communication Technology</option><option>Electrical and Electronic Technology</option><option>Building Construction and Wood Technology</option><option>Automobile and Metal Technology</option></optgroup><optgroup label="Visual and Performing Arts"><option>Art and Design Foundation</option><option>Art and Design Studio</option><option>Music</option><option>Performing Arts</option></optgroup><optgroup label="Home Economics"><option>Food and Nutrition</option><option>Clothing and Textiles</option><option>Management in Living</option></optgroup><optgroup label="Languages"><option>French</option><option>Spanish</option><option>Arabic</option><option>Ghanaian Language</option></optgroup>';
+  var eSubs = `
+    {% for la_name, subs in grouped_electives.items %}
+      <optgroup label="{{ la_name }}">
+        {% for s in subs %}
+          <option>{{ s.name }}</option>
+        {% endfor %}
+      </optgroup>
+    {% endfor %}
+  `;
   function addElective() {
     if (electiveCount > 5) return;
     var n = electiveCount;
@@ -1217,7 +1192,7 @@
     var s2 = document.createElement('select');
     s2.id = 'g_e' + n;
     s2.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;';
-    s2.innerHTML = '<option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option>';
+    s2.innerHTML = '<option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option><option value="7">D7</option><option value="8">E8</option><option value="9">F9</option>';
     td3.appendChild(s2);
     row.appendChild(td1);
     row.appendChild(td2);
@@ -1226,13 +1201,169 @@
     electiveCount++;
     if (electiveCount > 5) document.getElementById('addElectiveBtn').style.display = 'none';
   }
-  function removeElective(n) {
-    var row = document.getElementById('extra-e' + n);
-    if (row) row.remove();
-    electiveCount--;
-    document.getElementById('addElectiveBtn').style.display = 'flex';
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
   }
 
+  async function handleResultsFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const idleState = document.getElementById('uploadIdleState');
+    const processingState = document.getElementById('uploadProcessingState');
+    const dropzone = document.getElementById('uploadDropzone');
+
+    if (!idleState || !processingState) return;
+
+    idleState.style.display = 'none';
+    processingState.style.display = 'block';
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const headers = {};
+    const csrfToken = getCookie('csrftoken');
+    if (csrfToken) {
+      headers['X-CSRFToken'] = csrfToken;
+    }
+
+    try {
+      const resp = await fetch('/api/ocr-wassce-results/', {
+        method: 'POST',
+        headers: headers,
+        body: formData
+      });
+      const data = await resp.json();
+
+      if (!data.success) {
+        alert(data.error || 'Could not process the uploaded WASSCE slip. Please select grades manually.');
+        idleState.style.display = 'block';
+        processingState.style.display = 'none';
+        return;
+      }
+
+      // Auto-fill Core Subjects
+      if (data.core_grades) {
+        const cores = data.core_grades;
+        for (let key in cores) {
+          const val = cores[key];
+          const kLower = key.toLowerCase();
+          if (kLower.includes('english') || kLower.includes('eng')) {
+            ['g_english', 'm_g_english'].forEach(id => { const el = document.getElementById(id); if (el) el.value = val; });
+          } else if (kLower.includes('math')) {
+            ['g_math', 'm_g_math'].forEach(id => { const el = document.getElementById(id); if (el) el.value = val; });
+          } else if (kLower.includes('science')) {
+            const sRow = document.getElementById('science-row'); if (sRow) sRow.style.display = 'table-row';
+            ['g_science', 'm_g_science'].forEach(id => { const el = document.getElementById(id); if (el) el.value = val; });
+          } else if (kLower.includes('social')) {
+            ['g_social', 'm_g_social'].forEach(id => { const el = document.getElementById(id); if (el) el.value = val; });
+          }
+        }
+      }
+
+      // Auto-fill Elective Subjects
+      if (data.electives && data.electives.length > 0) {
+        const aliasMap = {
+          'mgt in living': 'management in living',
+          'mgt. in living': 'management in living',
+          'mgt in liv': 'management in living',
+          'mgmt in living': 'management in living',
+          'food & nut': 'food and nutrition',
+          'food and nut': 'food and nutrition',
+          'cloth & text': 'clothing and textiles',
+          'fin acct': 'accounting',
+          'financial acct': 'accounting',
+          'bus mgt': 'business management',
+          'bus. mgmt': 'business management',
+          'elect math': 'additional mathematics',
+          'elect. math': 'additional mathematics',
+          'add math': 'additional mathematics',
+          'lit in eng': 'literature in english',
+          'gen agric': 'agricultural science',
+          'agric sci': 'agricultural science',
+          'crs': 'christian religious studies',
+          'irs': 'islamic religious studies'
+        };
+
+        data.electives.forEach((item, idx) => {
+          const num = idx + 1;
+          if (num <= 4) {
+            if (!document.getElementById('s_e' + num) && typeof addElective === 'function') {
+              addElective();
+            }
+            const sIds = ['s_e' + num, 'm_s_e' + num];
+            const gIds = ['g_e' + num, 'm_g_e' + num];
+
+            let targetSubj = item.subject.toLowerCase().trim();
+            for (let aKey in aliasMap) {
+              if (targetSubj === aKey || targetSubj.includes(aKey)) {
+                targetSubj = aliasMap[aKey];
+                break;
+              }
+            }
+
+            sIds.forEach(id => {
+              const sel = document.getElementById(id);
+              if (sel) {
+                for (let opt of sel.options) {
+                  const oText = opt.text.toLowerCase().trim();
+                  if (oText === targetSubj || targetSubj.includes(oText) || oText.includes(targetSubj)) {
+                    sel.value = opt.text;
+                    break;
+                  }
+                }
+              }
+            });
+
+            gIds.forEach(id => {
+              const gSel = document.getElementById(id);
+              if (gSel) gSel.value = item.grade;
+            });
+          }
+        });
+      }
+
+      if (typeof updateAggregate === 'function') {
+        updateAggregate();
+      }
+
+      // Success feedback inside dropzone card
+      processingState.innerHTML = `
+        <div style="font-size:16px;font-weight:900;color:#15803d;margin-bottom:2px;">✓ WASSCE Results Slip Analyzed!</div>
+        <p style="font-size:13px;font-weight:700;color:#15803d;margin:0;">Grades extracted & Best 6 aggregate calculated!</p>
+        <p style="font-size:11px;color:#166534;margin:2px 0 0;">Review your populated grades below or click "Check Eligibility"</p>
+      `;
+
+      setTimeout(() => {
+        idleState.style.display = 'block';
+        processingState.style.display = 'none';
+        processingState.innerHTML = `
+          <div style="border:3px solid #16a34a;border-top-color:transparent;border-radius:50%;width:22px;height:22px;display:inline-block;animation:spin 1s linear infinite;" class="animate-spin mb-1"></div>
+          <p style="font-size:13px;font-weight:700;color:#15803d;margin:4px 0 0;">Analyzing WASSCE Results Slip with AI OCR...</p>
+          <p style="font-size:11px;color:#166534;margin:2px 0 0;">Extracting core & elective grades into the form...</p>
+        `;
+      }, 6000);
+
+    } catch (err) {
+      console.error("OCR Upload Error:", err);
+      alert('Error processing file upload. Please select grades manually.');
+      idleState.style.display = 'block';
+      processingState.style.display = 'none';
+    }
+  }
+
+  window.handleResultsFileUpload = handleResultsFileUpload;
 </script>
 
 <script>
