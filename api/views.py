@@ -811,9 +811,24 @@ def ocr_wassce_results(request):
     except Exception as e:
         return JsonResponse({'error': f'Failed to read file bytes: {e}'}, status=400)
 
+    gcp_json_str = os.getenv('GCP_KEY_JSON')
     key_path = os.path.join(settings.BASE_DIR, 'gcp-key.json')
-    if not os.path.exists(key_path):
-        return JsonResponse({'error': 'GCP service account key missing for AI OCR'}, status=500)
+
+    creds = None
+    if gcp_json_str:
+        try:
+            info = json.loads(gcp_json_str)
+            scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+            creds = service_account.Credentials.from_service_account_info(info, scopes=scopes)
+        except Exception as e:
+            print(f"DEBUG: Failed to parse GCP_KEY_JSON env var: {e}")
+
+    if not creds and os.path.exists(key_path):
+        try:
+            scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+            creds = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
+        except Exception as e:
+            print(f"DEBUG: Failed to load gcp-key.json file: {e}")
 
     prompt_text = """You are an expert OCR parser for Ghanaian WASSCE / SSSCE result slips, transcripts, and certificates.
 Extract all high school subjects and their corresponding letter grades from the document image or PDF.
@@ -861,21 +876,54 @@ CRITICAL RULES:
     }
 
     parsed = None
-    try:
-        scopes = ["https://www.googleapis.com/auth/cloud-platform"]
-        creds = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
-        auth_req = google.auth.transport.requests.Request()
-        creds.refresh(auth_req)
-        token = creds.token
-        project_id = creds.project_id
 
-        for model_name in ["gemini-2.5-flash", "gemini-2.5-pro"]:
-            url = f"https://firebasevertexai.googleapis.com/v1beta/projects/{project_id}/locations/us-central1/publishers/google/models/{model_name}:generateContent"
+    # 1. Try Vertex AI with GCP Credentials if available
+    if creds:
+        try:
+            auth_req = google.auth.transport.requests.Request()
+            creds.refresh(auth_req)
+            token = creds.token
+            project_id = creds.project_id
+
+            for model_name in ["gemini-2.5-flash", "gemini-2.5-pro"]:
+                url = f"https://firebasevertexai.googleapis.com/v1beta/projects/{project_id}/locations/us-central1/publishers/google/models/{model_name}:generateContent"
+                try:
+                    req_obj = urllib.request.Request(
+                        url,
+                        data=json.dumps(payload).encode("utf-8"),
+                        headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+                        method="POST"
+                    )
+                    with urllib.request.urlopen(req_obj, timeout=25) as response:
+                        res_data = json.loads(response.read().decode())
+                        candidates = res_data.get("candidates", [])
+                        if candidates:
+                            text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                            if text_content.startswith("```"):
+                                lines = text_content.splitlines()
+                                if lines[0].startswith("```"):
+                                    lines = lines[1:]
+                                if lines and lines[-1].startswith("```"):
+                                    lines = lines[:-1]
+                                text_content = "\n".join(lines).strip()
+                            parsed = json.loads(text_content)
+                            break
+                except Exception as e:
+                    print(f"DEBUG: OCR Vertex AI call for {model_name} failed: {e}")
+                    continue
+        except Exception as e:
+            print(f"DEBUG: OCR Vertex AI auth error: {e}")
+
+    # 2. Fallback to Gemini Developer API Key if Vertex AI failed or creds not available
+    if not parsed:
+        gemini_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDnUoGfv6RdAdUDkhFk9zWg3qy1TFzugaQ')
+        for model_name in ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
             try:
                 req_obj = urllib.request.Request(
                     url,
                     data=json.dumps(payload).encode("utf-8"),
-                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+                    headers={"Content-Type": "application/json"},
                     method="POST"
                 )
                 with urllib.request.urlopen(req_obj, timeout=25) as response:
@@ -893,10 +941,8 @@ CRITICAL RULES:
                         parsed = json.loads(text_content)
                         break
             except Exception as e:
-                print(f"DEBUG: OCR Vertex AI call for {model_name} failed: {e}")
+                print(f"DEBUG: OCR Gemini Developer API call for {model_name} failed: {e}")
                 continue
-    except Exception as e:
-        print(f"DEBUG: OCR auth failed: {e}")
 
     if not parsed:
         return JsonResponse({'error': 'Could not extract WASSCE grades from the uploaded document. Please ensure the image/PDF is clear or select grades manually.'}, status=422)
