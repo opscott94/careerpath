@@ -228,12 +228,8 @@
                   style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;width:100%;max-width:200px;"
                   onchange="this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';">
                   <option value="">Elective 1</option>
-                  {% for la_name, subs in grouped_electives.items %}
-                  <optgroup label="{{ la_name }}">
-                    {% for s in subs %}
-                    <option>{{ s.name }}</option>
-                    {% endfor %}
-                  </optgroup>
+                  {% for s in elective_subjects %}
+                  <option value="{{ s.name }}">{{ s.name }}</option>
                   {% endfor %}
                 </select>
               </td>
@@ -393,12 +389,8 @@
               <select id="m_s_e1" onchange="document.getElementById('s_e1').value=this.value;"
                 style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
                 <option value="">Subject</option>
-                {% for la_name, subs in grouped_electives.items %}
-                <optgroup label="{{ la_name }}">
-                  {% for s in subs %}
-                  <option>{{ s.name }}</option>
-                  {% endfor %}
-                </optgroup>
+                {% for s in elective_subjects %}
+                <option value="{{ s.name }}">{{ s.name }}</option>
                 {% endfor %}
               </select>
               <select id="m_g_e1" onchange="document.getElementById('g_e1').value=this.value;updateAggregate();"
@@ -426,12 +418,8 @@
                 onchange="document.getElementById('s_e2')?document.getElementById('s_e2').value=this.value:null;"
                 style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
                 <option value="">Subject</option>
-                {% for la_name, subs in grouped_electives.items %}
-                <optgroup label="{{ la_name }}">
-                  {% for s in subs %}
-                  <option>{{ s.name }}</option>
-                  {% endfor %}
-                </optgroup>
+                {% for s in elective_subjects %}
+                <option value="{{ s.name }}">{{ s.name }}</option>
                 {% endfor %}
               </select>
               <select id="m_g_e2"
@@ -460,12 +448,8 @@
                 onchange="document.getElementById('s_e3')?document.getElementById('s_e3').value=this.value:null;"
                 style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
                 <option value="">Subject</option>
-                {% for la_name, subs in grouped_electives.items %}
-                <optgroup label="{{ la_name }}">
-                  {% for s in subs %}
-                  <option>{{ s.name }}</option>
-                  {% endfor %}
-                </optgroup>
+                {% for s in elective_subjects %}
+                <option value="{{ s.name }}">{{ s.name }}</option>
                 {% endfor %}
               </select>
               <select id="m_g_e3"
@@ -1160,12 +1144,8 @@
 <script>
   var electiveCount = 2;
   var eSubs = `
-    {% for la_name, subs in grouped_electives.items %}
-      <optgroup label="{{ la_name }}">
-        {% for s in subs %}
-          <option>{{ s.name }}</option>
-        {% endfor %}
-      </optgroup>
+    {% for s in elective_subjects %}
+      <option value="{{ s.name }}">{{ s.name }}</option>
     {% endfor %}
   `;
   function addElective() {

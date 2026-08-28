@@ -44,21 +44,13 @@ def jhs_guide(request):
     return render(request, 'frontend/jhs_guide.html', {'GEMINI_API_KEY': gemini_key})
 
 def shs_eligibility(request):
-    from careers.models import Subject, LearningArea
+    from careers.models import Subject
     core_names = ['Mathematics', 'Core Mathematics', 'English Language', 'Social Studies', 'General Science', 'Integrated Science']
     
-    elective_subjects = Subject.objects.exclude(name__in=core_names).order_by('name').prefetch_related('learning_areas')
-    
-    learning_areas = LearningArea.objects.prefetch_related('subjects').all()
-    grouped_electives = {}
-    for la in learning_areas:
-        subs = la.subjects.exclude(name__in=core_names).order_by('name')
-        if subs.exists():
-            grouped_electives[la.name] = subs
+    elective_subjects = Subject.objects.exclude(name__in=core_names).order_by('name').distinct()
 
     return render(request, 'frontend/shs_eligibility.html', {
         'elective_subjects': elective_subjects,
-        'grouped_electives': grouped_electives,
     })
 
 def career_detail(request, career_id):
