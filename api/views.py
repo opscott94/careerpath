@@ -45,14 +45,24 @@ def ai_career_match(request):
     Step 1: Parse user query, clean conversational phrases, and query LLM / local domain map.
     Step 2: Programmatic database search using SQL filtering with high-priority direct scoring.
     """
-    data = json.loads(request.body)
+    try:
+        data = json.loads(request.body)
+    except Exception:
+        data = {}
+
     from django.db.models import Q
     from django.conf import settings
-    from google.oauth2 import service_account
-    import google.auth.transport.requests
     import urllib.request
     import os
     import re
+
+    try:
+        from google.oauth2 import service_account
+        import google.auth.transport.requests
+        has_google_auth = True
+    except ImportError:
+        has_google_auth = False
+        service_account = None
 
     raw_query = data.get('query', '').strip()
     if not raw_query:
@@ -75,7 +85,7 @@ def ai_career_match(request):
     key_path = os.path.join(settings.BASE_DIR, 'gcp-key.json')
 
     creds = None
-    if gcp_json_str:
+    if has_google_auth and gcp_json_str:
         try:
             info = json.loads(gcp_json_str)
             scopes = ["https://www.googleapis.com/auth/cloud-platform"]
@@ -83,7 +93,7 @@ def ai_career_match(request):
         except Exception as e:
             print(f"DEBUG: Failed to parse GCP_KEY_JSON env var: {e}")
 
-    if not creds and os.path.exists(key_path):
+    if has_google_auth and not creds and os.path.exists(key_path):
         try:
             scopes = ["https://www.googleapis.com/auth/cloud-platform"]
             creds = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
@@ -837,10 +847,16 @@ def ocr_wassce_results(request):
     """
     import base64
     from django.conf import settings
-    from google.oauth2 import service_account
-    import google.auth.transport.requests
     import urllib.request
     import os
+
+    try:
+        from google.oauth2 import service_account
+        import google.auth.transport.requests
+        has_google_auth = True
+    except ImportError:
+        has_google_auth = False
+        service_account = None
 
     if 'file' not in request.FILES:
         return JsonResponse({'error': 'No file uploaded'}, status=400)
@@ -869,7 +885,7 @@ def ocr_wassce_results(request):
     key_path = os.path.join(settings.BASE_DIR, 'gcp-key.json')
 
     creds = None
-    if gcp_json_str:
+    if has_google_auth and gcp_json_str:
         try:
             info = json.loads(gcp_json_str)
             scopes = ["https://www.googleapis.com/auth/cloud-platform"]
@@ -877,7 +893,7 @@ def ocr_wassce_results(request):
         except Exception as e:
             print(f"DEBUG: Failed to parse GCP_KEY_JSON env var: {e}")
 
-    if not creds and os.path.exists(key_path):
+    if has_google_auth and not creds and os.path.exists(key_path):
         try:
             scopes = ["https://www.googleapis.com/auth/cloud-platform"]
             creds = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
