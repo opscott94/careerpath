@@ -71,7 +71,24 @@ def ai_career_match(request):
         q_clean = re.sub(pat, "", q_clean, flags=re.IGNORECASE)
     q_clean = q_clean.strip() or raw_query.lower().strip()
 
+    gcp_json_str = os.getenv('GCP_KEY_JSON')
     key_path = os.path.join(settings.BASE_DIR, 'gcp-key.json')
+
+    creds = None
+    if gcp_json_str:
+        try:
+            info = json.loads(gcp_json_str)
+            scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+            creds = service_account.Credentials.from_service_account_info(info, scopes=scopes)
+        except Exception as e:
+            print(f"DEBUG: Failed to parse GCP_KEY_JSON env var: {e}")
+
+    if not creds and os.path.exists(key_path):
+        try:
+            scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+            creds = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
+        except Exception as e:
+            print(f"DEBUG: Failed to load gcp-key.json file: {e}")
 
     # Domain Knowledge Fallback Map for Ghanaian University Programs
     def get_domain_fallback(q_term):
@@ -159,10 +176,8 @@ def ai_career_match(request):
             }
         return None
 
-    # Step 1: Query Gemini LLM if key exists, with 5s fast timeout
-    parsed = None
-    if os.path.exists(key_path):
-        system_prompt = """You are a career counselor for Ghanaian students. Analyze the student's interest and respond ONLY with a JSON object in this format:
+    # Step 1: Query Gemini LLM with 3-Tier Multi-Authentication
+    system_prompt = """You are a career counselor for Ghanaian students. Analyze the student's interest and respond ONLY with a JSON object in this format:
 {
   "career_name": "determined canonical career title (e.g. Nurse, Medical Doctor, Software Developer, Lawyer, Pilot)",
   "career_description": "1 sentence describing the career and its main activities",
@@ -179,17 +194,19 @@ CRITICAL RULES:
 2. "primary_keywords" MUST ONLY contain direct degree program names (e.g. ["Nursing", "Midwifery"] for Nurse, ["Medicine"] for Doctor, ["Optometry"] for Optometrist).
 3. Respond ONLY with JSON."""
 
-        user_prompt = f"Student Stated Interest: \"{q_clean}\""
-        full_prompt = f"{system_prompt}\n\n{user_prompt}"
+    user_prompt = f"Student Stated Interest: \"{q_clean}\""
+    full_prompt = f"{system_prompt}\n\n{user_prompt}"
 
-        payload = {
-            "contents": [{"role": "user", "parts": [{"text": full_prompt}]}],
-            "generationConfig": {"responseMimeType": "application/json"}
-        }
+    payload = {
+        "contents": [{"role": "user", "parts": [{"text": full_prompt}]}],
+        "generationConfig": {"responseMimeType": "application/json"}
+    }
 
+    parsed = None
+
+    # 1. Try Vertex AI with GCP Credentials
+    if creds:
         try:
-            scopes = ["https://www.googleapis.com/auth/cloud-platform"]
-            creds = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
             auth_req = google.auth.transport.requests.Request()
             creds.refresh(auth_req)
             token = creds.token
@@ -208,7 +225,14 @@ CRITICAL RULES:
                         res_data = json.loads(response.read().decode())
                         candidates = res_data.get("candidates", [])
                         if candidates:
-                            text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                            text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                            if text_content.startswith("```"):
+                                lines = text_content.splitlines()
+                                if lines[0].startswith("```"):
+                                    lines = lines[1:]
+                                if lines and lines[-1].startswith("```"):
+                                    lines = lines[:-1]
+                                text_content = "\n".join(lines).strip()
                             parsed = json.loads(text_content)
                             break
                 except Exception as e:
@@ -216,6 +240,36 @@ CRITICAL RULES:
                     continue
         except Exception as e:
             print(f"DEBUG: Vertex AI auth failed: {e}")
+
+    # 2. Fallback to Gemini Developer API Key if Vertex AI failed or creds not available
+    if not parsed:
+        gemini_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDnUoGfv6RdAdUDkhFk9zWg3qy1TFzugaQ')
+        for model_name in ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
+            try:
+                req_obj = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST"
+                )
+                with urllib.request.urlopen(req_obj, timeout=6) as response:
+                    res_data = json.loads(response.read().decode())
+                    candidates = res_data.get("candidates", [])
+                    if candidates:
+                        text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                        if text_content.startswith("```"):
+                            lines = text_content.splitlines()
+                            if lines[0].startswith("```"):
+                                lines = lines[1:]
+                            if lines and lines[-1].startswith("```"):
+                                lines = lines[:-1]
+                            text_content = "\n".join(lines).strip()
+                        parsed = json.loads(text_content)
+                        break
+            except Exception as e:
+                print(f"DEBUG: Gemini Developer API call for {model_name} failed: {e}")
+                continue
 
     # Fallback to domain knowledge map or database search
     domain_map = get_domain_fallback(q_clean)
