@@ -139,7 +139,7 @@
             <span style="font-size:12px;font-weight:700;color:#111827;text-transform:uppercase;letter-spacing:0.04em;">
               SHS Elective Subject Requirements Guide
             </span>
-            <span style="font-size:11px;font-weight:600;background:#f3f4f6;color:#374151;padding:3px 10px;border-radius:100px;border:1px solid #e5e7eb;">
+            <span style="font-size:12px;font-weight:700;background:#dcfce7;color:#15803d;padding:4px 14px;border-radius:100px;border:1px solid #86efac;box-shadow:0 1px 3px rgba(21,128,61,0.12);display:inline-flex;align-items:center;gap:4px;">
               Track: ${aiData.elective_summary.tracks ? aiData.elective_summary.tracks.join(', ') : 'Science Track'}
             </span>
           </div>
@@ -155,7 +155,7 @@
               <div style="display:flex;flex-wrap:wrap;gap:6px;">
                 ${aiData.elective_summary.mandatory_electives && aiData.elective_summary.mandatory_electives.length > 0
                   ? aiData.elective_summary.mandatory_electives.map(s => `<span style="font-size:12px;font-weight:600;background:#dcfce7;color:#15803d;padding:4px 10px;border-radius:6px;border:1px solid #bbf7d0;">${s}</span>`).join('')
-                  : '<span style="font-size:12px;color:#6b7280;">Chemistry, Physics, Biology</span>'
+                  : '<span style="font-size:12px;color:#6b7280;font-style:italic;">Any electives from this track</span>'
                 }
               </div>
             </div>
@@ -167,7 +167,7 @@
               <div style="display:flex;flex-wrap:wrap;gap:6px;">
                 ${aiData.elective_summary.recommended_electives && aiData.elective_summary.recommended_electives.length > 0
                   ? aiData.elective_summary.recommended_electives.map(s => `<span style="font-size:12px;font-weight:600;background:#f3f4f6;color:#374151;padding:4px 10px;border-radius:6px;border:1px solid #e5e7eb;">${s}</span>`).join('')
-                  : '<span style="font-size:12px;color:#6b7280;">Elective Mathematics</span>'
+                  : '<span style="font-size:12px;color:#6b7280;font-style:italic;">Any relevant electives from the track</span>'
                 }
               </div>
             </div>

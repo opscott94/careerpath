@@ -184,6 +184,18 @@ def ai_career_match(request):
                     'Pharmacy': 'Direct pharmaceutical sciences degree.'
                 }
             }
+        elif any(k in q for k in ['account', 'accounting', 'accountant', 'finance', 'business', 'banking', 'auditor']):
+            return {
+                'career_name': 'Accountant / Financial Auditor',
+                'career_description': 'Accountants and Financial Auditors manage financial records, prepare balance sheets, perform audit verifications, and analyze business financial performance.',
+                'primary_keywords': ['Accounting', 'Business Administration', 'Finance'],
+                'secondary_keywords': ['Economics', 'Management', 'Business'],
+                'explanations': {
+                    'Accounting': 'Direct degree program preparing students for chartered accounting and financial management.',
+                    'Business Administration': 'Provides broad business, management, and financial education.',
+                    'Finance': 'Focuses on financial markets, corporate finance, and investment analysis.'
+                }
+            }
         return None
 
     # Step 1: Query Gemini LLM with 3-Tier Multi-Authentication
@@ -447,7 +459,7 @@ CRITICAL RULES:
                     'reason': g['reason'],
                 })
 
-            # Aggregate SHS Elective Requirements Summary across top matched programs
+            # Aggregate SHS Elective Requirements Summary across AI recommended programs
             mandatory_set = []
             recommended_set = []
             track_names = set()
@@ -468,24 +480,10 @@ CRITICAL RULES:
                         if es.name not in mandatory_set and es.name not in recommended_set:
                             recommended_set.append(es.name)
 
-            if not mandatory_set:
-                if 'nurse' in q_clean or 'nursing' in q_clean:
-                    mandatory_set = ['Chemistry', 'Physics', 'Biology']
-                    recommended_set = ['Elective Mathematics', 'Food & Nutrition']
-                    track_names.add('Science Track')
-                elif 'doctor' in q_clean or 'medicine' in q_clean:
-                    mandatory_set = ['Chemistry', 'Physics', 'Biology']
-                    recommended_set = ['Elective Mathematics']
-                    track_names.add('Science Track')
-                elif 'app' in q_clean or 'software' in q_clean or 'code' in q_clean:
-                    mandatory_set = ['Elective Mathematics', 'Physics']
-                    recommended_set = ['Chemistry', 'Applied Technology']
-                    track_names.add('Science Track')
-
             elective_summary = {
-                'tracks': list(track_names) if track_names else ['Science / Relevant Track'],
-                'mandatory_electives': mandatory_set[:4],
-                'recommended_electives': recommended_set[:4],
+                'tracks': list(track_names) if track_names else ['General Track'],
+                'mandatory_electives': mandatory_set[:5],
+                'recommended_electives': recommended_set[:5],
             }
 
             return JsonResponse({
@@ -660,36 +658,49 @@ def universities_list(request):
 @require_http_methods(["POST"])
 def evaluate_eligibility(request):
     """
-    Takes a student's core and elective subjects + WASSCE grades,
-    calculates their Best 6 aggregate, and evaluates program eligibility
-    across all 172 university degree programs in the database.
+    Takes a student's core and elective subjects + WASSCE grades (or is_awaiting flag),
+    calculates Best 6 aggregate (if graded) or evaluates subject track eligibility
+    (if awaiting results) across all university degree programs.
     """
     data = json.loads(request.body)
+    is_awaiting = data.get('is_awaiting', False)
     core_grades = data.get('core_grades', {})
     elective_inputs = data.get('electives', [])
 
-    eng = int(core_grades.get('English Language', 9))
-    math = int(core_grades.get('Core Mathematics', 9))
-    sci = int(core_grades.get('Integrated Science', 9))
-    soc = int(core_grades.get('Social Studies', 9))
+    if is_awaiting:
+        user_elective_names = [e.get('name', '').strip().lower() for e in elective_inputs if e.get('name')]
+        if len(user_elective_names) < 3:
+            return JsonResponse({'error': 'Please select at least 3 elective subjects for subject eligibility checking.'}, status=400)
+        
+        eng = 1
+        math = 1
+        best_3rd_core = 1
+        cores_passed = True
+        aggregate = None
+    else:
+        eng = int(core_grades.get('English Language', 9))
+        math = int(core_grades.get('Core Mathematics', 9))
+        sci = int(core_grades.get('Integrated Science', 9))
+        soc = int(core_grades.get('Social Studies', 9))
 
-    best_3rd_core = min(sci, soc)
-    core_sum = eng + math + best_3rd_core
+        best_3rd_core = min(sci, soc)
+        core_sum = eng + math + best_3rd_core
 
-    valid_electives = []
-    for e in elective_inputs:
-        name = e.get('name', '').strip()
-        grade = e.get('grade')
-        if name and grade and int(grade) <= 6:
-            valid_electives.append({'name': name, 'grade': int(grade)})
+        valid_electives = []
+        for e in elective_inputs:
+            name = e.get('name', '').strip()
+            grade = e.get('grade')
+            if name and grade and int(grade) <= 6:
+                valid_electives.append({'name': name, 'grade': int(grade)})
 
-    sorted_elec_grades = sorted([e['grade'] for e in valid_electives])
+        sorted_elec_grades = sorted([e['grade'] for e in valid_electives])
 
-    if len(sorted_elec_grades) < 3:
-        return JsonResponse({'error': 'At least 3 passing elective grades (A1 to C6) are required for aggregate calculation.'}, status=400)
+        if len(sorted_elec_grades) < 3:
+            return JsonResponse({'error': 'At least 3 passing elective grades (A1 to C6) are required for aggregate calculation.'}, status=400)
 
-    aggregate = core_sum + sum(sorted_elec_grades[:3])
-    user_elective_names = [e['name'].lower() for e in valid_electives]
+        aggregate = core_sum + sum(sorted_elec_grades[:3])
+        user_elective_names = [e['name'].lower() for e in valid_electives]
+        cores_passed = (eng <= 6 and math <= 6 and best_3rd_core <= 6)
 
     science_subs = {'biology', 'chemistry', 'physics', 'additional mathematics', 'agricultural science'}
     business_subs = {'business management', 'accounting', 'business economics'}
@@ -702,8 +713,6 @@ def evaluate_eligibility(request):
     has_computing = any(s in user_elective_names for s in computing_subs)
     has_arts = any(s in user_elective_names for s in arts_subs)
     has_tech = any(s in user_elective_names for s in tech_subs)
-
-    cores_passed = (eng <= 6 and math <= 6 and best_3rd_core <= 6)
 
     all_programs = Program.objects.select_related('university').prefetch_related(
         'core_subjects',
@@ -765,10 +774,14 @@ def evaluate_eligibility(request):
 
         if is_qualified:
             cutoff = p.aggregate
-            is_eligible = (cutoff is not None and aggregate <= cutoff)
-            is_borderline = (cutoff is not None and not is_eligible and aggregate <= cutoff + 3)
+            if is_awaiting:
+                is_eligible = True
+                is_borderline = False
+            else:
+                is_eligible = (cutoff is not None and aggregate <= cutoff)
+                is_borderline = (cutoff is not None and not is_eligible and aggregate <= cutoff + 3)
 
-            if not is_eligible and not is_borderline:
+            if not is_awaiting and not is_eligible and not is_borderline:
                 continue
 
             category = 'all'
@@ -817,7 +830,7 @@ def evaluate_eligibility(request):
                 'note': p.note or '',
                 'is_eligible': is_eligible,
                 'is_borderline': is_borderline,
-                'margin': (cutoff - aggregate) if cutoff else None,
+                'margin': (cutoff - aggregate) if (cutoff and aggregate) else None,
                 'category': category,
                 'core_subjects': core_subjects,
                 'requirements': requirements,
@@ -825,9 +838,10 @@ def evaluate_eligibility(request):
 
     results.sort(key=lambda x: (not x['is_eligible'], not x['is_borderline'], x['cutoff'] or 999))
 
-    label = 'Outstanding' if aggregate <= 8 else 'Excellent' if aggregate <= 12 else 'Very Good' if aggregate <= 18 else 'Good' if aggregate <= 24 else 'Fair'
+    label = 'Awaiting WASSCE Results' if is_awaiting else ('Outstanding' if aggregate <= 8 else 'Excellent' if aggregate <= 12 else 'Very Good' if aggregate <= 18 else 'Good' if aggregate <= 24 else 'Fair')
 
     return JsonResponse({
+        'is_awaiting': is_awaiting,
         'aggregate': aggregate,
         'label': label,
         'total_qualified_programs': len(results),

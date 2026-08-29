@@ -76,6 +76,14 @@
         </div>
       </div>
 
+      <!-- Awaiting WASSCE Results Checkbox -->
+      <div style="padding:14px 24px 0;">
+        <label for="awaitingToggle" style="display:flex;align-items:center;gap:10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 16px;cursor:pointer;">
+          <input type="checkbox" id="awaitingToggle" onchange="toggleAwaitingMode(this.checked)" style="width:18px;height:18px;accent-color:#15803d;cursor:pointer;">
+          <span style="font-size:13px;font-weight:700;color:#065f46;">I am Awaiting WASSCE Results (Select subjects without grades)</span>
+        </label>
+      </div>
+
       <!-- WASSCE Results Slip / PDF Transcript AI OCR Upload Dropzone -->
       <div style="padding:16px 24px 0;">
         <div
@@ -226,7 +234,7 @@
               <td style="padding:12px 16px;">
                 <select id="s_e1"
                   style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;width:100%;max-width:200px;"
-                  onchange="this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';">
+                  onchange="this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';updateElectiveOptions();">
                   <option value="">Elective 1</option>
                   {% for s in elective_subjects %}
                   <option value="{{ s.name }}">{{ s.name }}</option>
@@ -386,7 +394,7 @@
               style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:100px;border:1px solid #bbf7d0;display:inline-block;margin-bottom:8px;">Elective
               1</span>
             <div style="display:flex;gap:8px;">
-              <select id="m_s_e1" onchange="document.getElementById('s_e1').value=this.value;"
+              <select id="m_s_e1" onchange="document.getElementById('s_e1').value=this.value;updateElectiveOptions();"
                 style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
                 <option value="">Subject</option>
                 {% for s in elective_subjects %}
@@ -415,7 +423,7 @@
               2</span>
             <div style="display:flex;gap:8px;">
               <select id="m_s_e2"
-                onchange="document.getElementById('s_e2')?document.getElementById('s_e2').value=this.value:null;"
+                onchange="(document.getElementById('s_e2')?document.getElementById('s_e2').value=this.value:null);updateElectiveOptions();"
                 style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
                 <option value="">Subject</option>
                 {% for s in elective_subjects %}
@@ -445,7 +453,7 @@
               3</span>
             <div style="display:flex;gap:8px;">
               <select id="m_s_e3"
-                onchange="document.getElementById('s_e3')?document.getElementById('s_e3').value=this.value:null;"
+                onchange="(document.getElementById('s_e3')?document.getElementById('s_e3').value=this.value:null);updateElectiveOptions();"
                 style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
                 <option value="">Subject</option>
                 {% for s in elective_subjects %}
@@ -638,7 +646,7 @@
       checkBtn.style.cursor = 'pointer';
     }
     if (checkBtnText) {
-      checkBtnText.textContent = 'Check Eligibility';
+      checkBtnText.textContent = isAwaitingMode ? 'Check Qualified Programs (Awaiting Results)' : 'Check Eligibility';
     }
     if (progressContainer) {
       progressContainer.style.display = 'none';
@@ -646,31 +654,63 @@
   }
 
   async function goToStep2() {
-    const gEng = document.getElementById('g_english').value;
-    const gMath = document.getElementById('g_math').value;
-    const gSci = document.getElementById('g_science').value;
-    const gSoc = document.getElementById('g_social').value;
+    let payload = {};
 
-    if (!gEng || !gMath || (!gSci && !gSoc)) {
-      alert('Please select grades for English Language, Core Mathematics, and at least one of Integrated Science or Social Studies.');
-      return;
-    }
+    if (isAwaitingMode) {
+      const electives = [];
+      const sE1 = document.getElementById('s_e1')?.value;
+      if (sE1) electives.push({ name: sE1 });
 
-    // Collect electives
-    const electives = [];
-    const sE1 = document.getElementById('s_e1')?.value;
-    const gE1 = document.getElementById('g_e1')?.value;
-    if (sE1 && gE1) electives.push({ name: sE1, grade: parseInt(gE1) });
+      for (let i = 2; i <= 6; i++) {
+        const sEl = document.getElementById('s_e' + i)?.value;
+        if (sEl) electives.push({ name: sEl });
+      }
 
-    for (let i = 2; i <= 5; i++) {
-      const sEl = document.getElementById('s_e' + i)?.value;
-      const gEl = document.getElementById('g_e' + i)?.value;
-      if (sEl && gEl) electives.push({ name: sEl, grade: parseInt(gEl) });
-    }
+      if (electives.length < 3) {
+        alert('Please select at least 3 elective subjects to check your program subject qualification.');
+        return;
+      }
 
-    if (electives.length < 3) {
-      alert('Please select at least 3 elective subjects and their grades.');
-      return;
+      payload = {
+        is_awaiting: true,
+        electives: electives
+      };
+    } else {
+      const gEng = document.getElementById('g_english').value;
+      const gMath = document.getElementById('g_math').value;
+      const gSci = document.getElementById('g_science').value;
+      const gSoc = document.getElementById('g_social').value;
+
+      if (!gEng || !gMath || (!gSci && !gSoc)) {
+        alert('Please select grades for English Language, Core Mathematics, and at least one of Integrated Science or Social Studies.');
+        return;
+      }
+
+      const electives = [];
+      const sE1 = document.getElementById('s_e1')?.value;
+      const gE1 = document.getElementById('g_e1')?.value;
+      if (sE1 && gE1) electives.push({ name: sE1, grade: parseInt(gE1) });
+
+      for (let i = 2; i <= 6; i++) {
+        const sEl = document.getElementById('s_e' + i)?.value;
+        const gEl = document.getElementById('g_e' + i)?.value;
+        if (sEl && gEl) electives.push({ name: sEl, grade: parseInt(gEl) });
+      }
+
+      if (electives.length < 3) {
+        alert('Please select at least 3 elective subjects and their grades.');
+        return;
+      }
+
+      payload = {
+        core_grades: {
+          'English Language': parseInt(gEng),
+          'Core Mathematics': parseInt(gMath),
+          'Integrated Science': gSci ? parseInt(gSci) : 9,
+          'Social Studies': gSoc ? parseInt(gSoc) : 9
+        },
+        electives: electives
+      };
     }
 
     const checkBtn = document.getElementById('checkEligibilityBtn');
@@ -684,7 +724,9 @@
       checkBtn.style.cursor = 'not-allowed';
     }
     if (checkBtnText) {
-      checkBtnText.innerHTML = '<span style="border:2px solid #fff;border-top-color:transparent;border-radius:50%;width:14px;height:14px;display:inline-block;animation:spin 1s linear infinite;margin-right:8px;vertical-align:middle;"></span> Calculating grades & checking eligibility...';
+      checkBtnText.innerHTML = isAwaitingMode
+        ? '<span style="border:2px solid #fff;border-top-color:transparent;border-radius:50%;width:14px;height:14px;display:inline-block;animation:spin 1s linear infinite;margin-right:8px;vertical-align:middle;"></span> Evaluating subject entry criteria...'
+        : '<span style="border:2px solid #fff;border-top-color:transparent;border-radius:50%;width:14px;height:14px;display:inline-block;animation:spin 1s linear infinite;margin-right:8px;vertical-align:middle;"></span> Calculating grades & checking eligibility...';
     }
     if (progressContainer) progressContainer.style.display = 'block';
 
@@ -698,16 +740,6 @@
         if (progressBarFill) progressBarFill.style.width = currentWidth + '%';
       }
     }, 150);
-
-    const payload = {
-      core_grades: {
-        'English Language': parseInt(gEng),
-        'Core Mathematics': parseInt(gMath),
-        'Integrated Science': gSci ? parseInt(gSci) : 9,
-        'Social Studies': gSoc ? parseInt(gSoc) : 9
-      },
-      electives: electives
-    };
 
     try {
       const resp = await fetch('/api/evaluate-eligibility/', {
@@ -730,8 +762,13 @@
       evaluatedData = data;
       aggregate = data.aggregate;
 
-      document.getElementById('aggregateBadge').textContent = data.aggregate;
-      document.getElementById('aggregateLabel').textContent = `Aggregate ${data.aggregate} · ${data.label}`;
+      if (data.is_awaiting) {
+        document.getElementById('aggregateBadge').textContent = '⌛';
+        document.getElementById('aggregateLabel').textContent = `Awaiting WASSCE Results · ${data.total_qualified_programs} Subject Qualified Programs`;
+      } else {
+        document.getElementById('aggregateBadge').textContent = data.aggregate;
+        document.getElementById('aggregateLabel').textContent = `Aggregate ${data.aggregate} · ${data.label}`;
+      }
 
       setTimeout(() => {
         document.getElementById('step1').classList.add('hidden');
@@ -865,7 +902,15 @@
 
       let statusNote = (directEligibleCount >= 3)
         ? (data.career_description ? `<p style="margin:2px 0 0;font-size:11px;color:#166534;">${data.career_description}</p>` : '')
-        : `<p style="margin:2px 0 0;font-size:11px;color:#854f0b;">${directEligibleCount === 0 ? 'No direct degree title met your aggregate cutoff' : `Only ${directEligibleCount} direct program met your aggregate cutoff`}. We have added <strong>related eligible pathways</strong> in ${catColors[fallbackCategory]?.label || 'this discipline'} to help you reach your career goal!</p>`;
+        : `<p style="margin:2px 0 0;font-size:11px;color:#854f0b;">${
+            evaluatedData && evaluatedData.is_awaiting
+              ? (directEligibleCount === 0
+                  ? 'No direct degree title matches your selected WASSCE subjects'
+                  : `Only ${directEligibleCount} direct program matches your selected WASSCE subjects`)
+              : (directEligibleCount === 0
+                  ? 'No direct degree title met your aggregate cutoff'
+                  : `Only ${directEligibleCount} direct program met your aggregate cutoff`)
+          }. We have added <strong>related qualified pathways</strong> in ${catColors[fallbackCategory]?.label || 'this discipline'} to help you reach your career goal!</p>`;
 
       let statusBg = (directEligibleCount >= 3) ? '#dcfce7' : '#fffbeb';
       let statusBorder = (directEligibleCount >= 3) ? '#bbf7d0' : '#fcd34d';
@@ -939,10 +984,14 @@
       count++;
       const origIndex = evaluatedData.results.indexOf(prog);
       const styleObj = catColors[prog.category] || catColors['all'];
-
-      const statusBadge = prog.is_eligible
-        ? '<span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:3px 10px;border-radius:100px;border:1px solid #bbf7d0;">Eligible</span>'
-        : '<span style="font-size:11px;font-weight:700;background:#fef3c7;color:#d97706;padding:3px 10px;border-radius:100px;border:1px solid #fde68a;">Borderline</span>';
+      let statusBadge = '';
+      if (evaluatedData && evaluatedData.is_awaiting) {
+        statusBadge = '<span style="font-size:11px;font-weight:700;background:#e0f2fe;color:#0369a1;padding:3px 10px;border-radius:100px;border:1px solid #bae6fd;">Subject Qualified</span>';
+      } else {
+        statusBadge = prog.is_eligible
+          ? '<span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:3px 10px;border-radius:100px;border:1px solid #bbf7d0;">Eligible</span>'
+          : '<span style="font-size:11px;font-weight:700;background:#fef3c7;color:#d97706;padding:3px 10px;border-radius:100px;border:1px solid #fde68a;">Borderline</span>';
+      }
 
       let aiReasonSnippet = '';
       let aiBadge = '';
@@ -997,27 +1046,37 @@
       </div>`;
     });
 
-    if (!html) {
-      html = `<p class="text-center text-gray-400 py-8 text-sm">${aiInterestResults ? `No qualified programs matched the career interest "${aiInterestResults.career_name}". <button onclick="clearAIInterestFilter()" class="underline font-bold text-green-700">Clear AI Filter</button>` : 'No qualified programs match your filter or search criteria.'}</p>`;
+    if (count === 0) {
+      html = `
+      <div class="p-8 text-center bg-gray-50 rounded-xl border border-gray-200">
+        <p class="text-gray-600 font-bold mb-1">No programs found for this category or filter</p>
+        <p class="text-xs text-gray-400">Try selecting "All Categories" or searching for a different program name.</p>
+      </div>`;
     }
 
-    list.innerHTML = html;
+    document.getElementById('programList').innerHTML = html;
   }
 
   function showResults(index) {
-    if (!evaluatedData || !evaluatedData.results || !evaluatedData.results[index]) return;
     const prog = evaluatedData.results[index];
+    if (!prog) return;
 
     document.getElementById('step2').classList.add('hidden');
     document.getElementById('step3').classList.remove('hidden');
     document.getElementById('step3-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
 
     const styleObj = catColors[prog.category] || catColors['all'];
+    const uniLogos = {
+      KNUST: '/static/images/knust.png',
+      UG: '/static/images/ug.png',
+      UCC: '/static/images/ucc.png',
+      UDS: '/static/images/uds.png',
+      UENR: '/static/images/uenr.png'
+    };
     const logoUrl = uniLogos[(prog.university_short || '').toUpperCase()] || '/static/images/career.png';
 
-    const coreListHtml = (prog.core_subjects && prog.core_subjects.length > 0)
-      ? prog.core_subjects.map(c => `<span style="font-size:11px;font-weight:600;background:#e0f2fe;color:#0369a1;padding:4px 10px;border-radius:6px;border:1px solid #bae6fd;">${c.name}</span>`).join(' ')
-      : '<span style="font-size:12px;color:#6b7280;">English Language, Core Mathematics, Integrated Science / Social Studies</span>';
+    let coreListHtml = prog.core_subjects.map(s => `<span class="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-lg text-xs font-medium">${s.name}</span>`).join(' ');
+    if (!coreListHtml) coreListHtml = '<span class="text-xs text-gray-400">Standard Core WASSCE Subjects</span>';
 
     let reqsHtml = '';
     if (prog.requirements && prog.requirements.length > 0) {
@@ -1051,9 +1110,14 @@
       reqsHtml = `<p class="text-xs text-gray-500 italic">General entry requirements apply across standard WASSCE elective combinations.</p>`;
     }
 
-    const statusBadge = prog.is_eligible
-      ? '<span style="background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">Eligible for Admission</span>'
-      : '<span style="background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">Borderline</span>';
+    let detailStatusBadge = '';
+    if (evaluatedData && evaluatedData.is_awaiting) {
+      detailStatusBadge = '<span style="background:#e0f2fe;color:#0369a1;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">Subject Qualified (Awaiting Results)</span>';
+    } else {
+      detailStatusBadge = prog.is_eligible
+        ? '<span style="background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">Eligible for Admission</span>'
+        : '<span style="background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">Borderline</span>';
+    }
 
     document.getElementById('step3Content').innerHTML = `
     <!-- Header Program Details Card -->
@@ -1067,7 +1131,7 @@
             <div class="flex items-center gap-2 mb-1 flex-wrap">
               <span style="font-size:12px;font-weight:700;background:#052e16;color:#fff;padding:3px 10px;border-radius:100px;">${prog.university_short}</span>
               <span style="font-size:12px;font-weight:600;background:${styleObj.bg};color:${styleObj.text};padding:3px 10px;border-radius:6px;">${prog.college || prog.faculty || styleObj.label}</span>
-              ${statusBadge}
+              ${detailStatusBadge}
             </div>
             <h2 class="display text-2xl font-bold text-gray-900">${prog.program_name}</h2>
             <p class="text-gray-600 text-sm mt-0.5"><strong>${prog.university_name}</strong> · ${prog.university_location}</p>
@@ -1075,8 +1139,8 @@
         </div>
         <div class="flex items-center gap-3 self-start sm:self-auto">
           <div class="text-center">
-            <div class="w-14 h-14 bg-green-600 text-white font-black rounded-xl flex items-center justify-center text-xl shadow-md">${aggregate}</div>
-            <span class="text-xs text-gray-400 font-medium mt-1 block">Your Score</span>
+            <div class="w-14 h-14 ${evaluatedData && evaluatedData.is_awaiting ? 'bg-sky-600' : 'bg-green-600'} text-white font-black rounded-xl flex items-center justify-center text-xl shadow-md">${evaluatedData && evaluatedData.is_awaiting ? '⌛' : aggregate}</div>
+            <span class="text-xs text-gray-400 font-medium mt-1 block">${evaluatedData && evaluatedData.is_awaiting ? 'Awaiting' : 'Your Score'}</span>
           </div>
           <div class="text-center">
             <div class="w-14 h-14 bg-gray-100 text-gray-800 font-black rounded-xl flex items-center justify-center text-xl border border-gray-200">${prog.cutoff || 'N/A'}</div>
@@ -1142,6 +1206,113 @@
 </script>
 
 <script>
+  let isAwaitingMode = false;
+
+  function toggleAwaitingMode(enabled) {
+    isAwaitingMode = !!enabled;
+    const awaitingBadge = document.getElementById('awaitingBadge');
+    const awaitingBanner = document.getElementById('awaitingBanner');
+    const uploadArea = document.getElementById('uploadDropzone')?.parentElement;
+    const checkBtnText = document.getElementById('checkBtnText');
+    const progressStatusText = document.getElementById('progressStatusText');
+
+    if (isAwaitingMode) {
+      if (awaitingBadge) {
+        awaitingBadge.textContent = 'Awaiting Results Mode';
+        awaitingBadge.style.cssText = 'font-size:11px;font-weight:700;color:#0369a1;background:#e0f2fe;border:1px solid #bae6fd;padding:4px 12px;border-radius:100px;';
+      }
+      if (awaitingBanner) {
+        awaitingBanner.style.background = '#f0f9ff';
+        awaitingBanner.style.borderColor = '#bae6fd';
+      }
+      if (uploadArea) {
+        uploadArea.style.display = 'none';
+      }
+      if (checkBtnText) {
+        checkBtnText.textContent = 'Check Qualified Programs (Awaiting Results)';
+      }
+      if (progressStatusText) {
+        progressStatusText.textContent = 'Evaluating subject entry requirements for awaiting students...';
+      }
+
+      const gradeIds = [
+        'g_english', 'g_math', 'g_science', 'g_social',
+        'g_e1', 'g_e2', 'g_e3', 'g_e4', 'g_e5', 'g_e6',
+        'm_g_english', 'm_g_math', 'm_g_science', 'm_g_social',
+        'm_g_e1', 'm_g_e2', 'm_g_e3', 'm_g_e4', 'm_g_e5', 'm_g_e6'
+      ];
+      gradeIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.disabled = true;
+          el.style.opacity = '0.4';
+        }
+      });
+    } else {
+      if (awaitingBadge) {
+        awaitingBadge.textContent = 'Graded Mode';
+        awaitingBadge.style.cssText = 'font-size:11px;font-weight:700;color:#15803d;background:#dcfce7;border:1px solid #bbf7d0;padding:4px 12px;border-radius:100px;';
+      }
+      if (awaitingBanner) {
+        awaitingBanner.style.background = '#f8fafc';
+        awaitingBanner.style.borderColor = '#cbd5e1';
+      }
+      if (uploadArea) {
+        uploadArea.style.display = 'block';
+      }
+      if (checkBtnText) {
+        checkBtnText.textContent = 'Check Eligibility';
+      }
+      if (progressStatusText) {
+        progressStatusText.textContent = 'Calculating grades and checking eligibility...';
+      }
+
+      const gradeIds = [
+        'g_english', 'g_math', 'g_science', 'g_social',
+        'g_e1', 'g_e2', 'g_e3', 'g_e4', 'g_e5', 'g_e6',
+        'm_g_english', 'm_g_math', 'm_g_science', 'm_g_social',
+        'm_g_e1', 'm_g_e2', 'm_g_e3', 'm_g_e4', 'm_g_e5', 'm_g_e6'
+      ];
+      gradeIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.disabled = false;
+          el.style.opacity = '1';
+        }
+      });
+    }
+  }
+
+  function updateElectiveOptions() {
+    const selectedValues = new Set();
+    const selectIds = [
+      's_e1', 's_e2', 's_e3', 's_e4', 's_e5', 's_e6',
+      'm_s_e1', 'm_s_e2', 'm_s_e3', 'm_s_e4', 'm_s_e5', 'm_s_e6'
+    ];
+
+    selectIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.value) {
+        selectedValues.add(el.value);
+      }
+    });
+
+    selectIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      for (let opt of el.options) {
+        if (!opt.value) continue;
+        if (selectedValues.has(opt.value) && el.value !== opt.value) {
+          opt.disabled = true;
+          opt.style.color = '#9ca3af';
+        } else {
+          opt.disabled = false;
+          opt.style.color = '';
+        }
+      }
+    });
+  }
+
   var electiveCount = 2;
   var eSubs = `
     {% for s in elective_subjects %}
@@ -1149,7 +1320,7 @@
     {% endfor %}
   `;
   function addElective() {
-    if (electiveCount > 5) return;
+    if (electiveCount > 6) return;
     var n = electiveCount;
     var tbody = document.getElementById('extra-electives');
     if (!tbody) { console.error('no tbody'); return; }
@@ -1161,7 +1332,7 @@
     var s1 = document.createElement('select');
     s1.id = 's_e' + n;
     s1.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;width:100%;max-width:200px;';
-    s1.setAttribute('onchange', "this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';");
+    s1.setAttribute('onchange', "this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';updateElectiveOptions();");
     s1.innerHTML = '<option value="">Elective ' + n + '</option>' + eSubs;
     td1.appendChild(s1);
     var td2 = document.createElement('td');
@@ -1179,7 +1350,8 @@
     row.appendChild(td3);
     tbody.appendChild(row);
     electiveCount++;
-    if (electiveCount > 5) document.getElementById('addElectiveBtn').style.display = 'none';
+    if (electiveCount > 6) document.getElementById('addElectiveBtn').style.display = 'none';
+    updateElectiveOptions();
   }
   function getCookie(name) {
     let cookieValue = null;
@@ -1278,7 +1450,7 @@
 
         data.electives.forEach((item, idx) => {
           const num = idx + 1;
-          if (num <= 4) {
+          if (num <= 6) {
             if (!document.getElementById('s_e' + num) && typeof addElective === 'function') {
               addElective();
             }
@@ -1316,6 +1488,9 @@
 
       if (typeof updateAggregate === 'function') {
         updateAggregate();
+      }
+      if (typeof updateElectiveOptions === 'function') {
+        updateElectiveOptions();
       }
 
       // Success feedback inside dropzone card
