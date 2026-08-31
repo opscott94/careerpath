@@ -577,11 +577,13 @@ def run_seed():
         car_168.recommended_electives.set([sub_702, sub_723, sub_728])
 
         # --- 5. UNIVERSITIES ---
-        uni_66 = University.objects.create(name='Kwame Nkrumah University of Science and Technology', short_name='KNUST', location='Kumasi', website='https://www.knust.edu.gh')
-        uni_67 = University.objects.create(name='University of Ghana', short_name='UG', location='Legon, Accra', website='https://www.ug.edu.gh')
-        uni_68 = University.objects.create(name='University of Cape Coast', short_name='UCC', location='Cape Coast', website='https://www.ucc.edu.gh')
-        uni_69 = University.objects.create(name='University for Development Studies', short_name='UDS', location='Tamale', website='https://www.uds.edu.gh')
-        uni_70 = University.objects.create(name='University of Energy and Natural Resources', short_name='UENR', location='Sunyani', website='https://www.uenr.edu.gh')
+        knust_grading = {"1":1, "2":2, "3":3, "4":4, "5":4, "6":4, "7":7, "8":8, "9":9}
+        standard_grading = {"1":1, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9}
+        uni_66 = University.objects.create(name='Kwame Nkrumah University of Science and Technology', short_name='KNUST', location='Kumasi', website='https://www.knust.edu.gh', grading_scale=knust_grading)
+        uni_67 = University.objects.create(name='University of Ghana', short_name='UG', location='Legon, Accra', website='https://www.ug.edu.gh', grading_scale=standard_grading)
+        uni_68 = University.objects.create(name='University of Cape Coast', short_name='UCC', location='Cape Coast', website='https://www.ucc.edu.gh', grading_scale=standard_grading)
+        uni_69 = University.objects.create(name='University for Development Studies', short_name='UDS', location='Tamale', website='https://www.uds.edu.gh', grading_scale=standard_grading)
+        uni_70 = University.objects.create(name='University of Energy and Natural Resources', short_name='UENR', location='Sunyani', website='https://www.uenr.edu.gh', grading_scale=standard_grading)
 
         # --- 6. PROGRAMS ---
         prog_1592 = Program.objects.create(university=uni_66, name='BSc. Medical Imaging', college='College of Health Sciences', duration_years=4, aggregate=7, year=2026, campus='Main Campus', note='')

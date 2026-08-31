@@ -661,6 +661,9 @@ def evaluate_eligibility(request):
     Takes a student's core and elective subjects + WASSCE grades (or is_awaiting flag),
     calculates Best 6 aggregate (if graded) or evaluates subject track eligibility
     (if awaiting results) across all university degree programs.
+
+    Grading is university-specific: e.g. KNUST treats C4, C5, C6 all as 4 points.
+    Passing threshold is program-specific: most require C6 (6), some accept D7 (7).
     """
     data = json.loads(request.body)
     is_awaiting = data.get('is_awaiting', False)
@@ -672,35 +675,35 @@ def evaluate_eligibility(request):
         if len(user_elective_names) < 3:
             return JsonResponse({'error': 'Please select at least 3 elective subjects for subject eligibility checking.'}, status=400)
         
-        eng = 1
-        math = 1
-        best_3rd_core = 1
-        cores_passed = True
+        # Placeholder values for awaiting mode (no grades to evaluate)
+        raw_eng = 1
+        raw_math = 1
+        raw_sci = 1
+        raw_soc = 1
+        raw_electives = []
         aggregate = None
     else:
-        eng = int(core_grades.get('English Language', 9))
-        math = int(core_grades.get('Core Mathematics', 9))
-        sci = int(core_grades.get('Integrated Science', 9))
-        soc = int(core_grades.get('Social Studies', 9))
+        raw_eng = int(core_grades.get('English Language', 9))
+        raw_math = int(core_grades.get('Core Mathematics', 9))
+        raw_sci = int(core_grades.get('Integrated Science', 9))
+        raw_soc = int(core_grades.get('Social Studies', 9))
 
-        best_3rd_core = min(sci, soc)
-        core_sum = eng + math + best_3rd_core
-
-        valid_electives = []
+        # Collect ALL electives with their raw grades (filter per-program later)
+        raw_electives = []
         for e in elective_inputs:
             name = e.get('name', '').strip()
             grade = e.get('grade')
-            if name and grade and int(grade) <= 6:
-                valid_electives.append({'name': name, 'grade': int(grade)})
+            if name and grade:
+                raw_electives.append({'name': name, 'grade': int(grade)})
 
-        sorted_elec_grades = sorted([e['grade'] for e in valid_electives])
-
-        if len(sorted_elec_grades) < 3:
+        # Standard aggregate for display purposes (uses standard grading scale)
+        best_3rd_core = min(raw_sci, raw_soc)
+        standard_passing = [el for el in raw_electives if el['grade'] <= 6]
+        sorted_std_grades = sorted([el['grade'] for el in standard_passing])
+        if len(sorted_std_grades) < 3:
             return JsonResponse({'error': 'At least 3 passing elective grades (A1 to C6) are required for aggregate calculation.'}, status=400)
-
-        aggregate = core_sum + sum(sorted_elec_grades[:3])
-        user_elective_names = [e['name'].lower() for e in valid_electives]
-        cores_passed = (eng <= 6 and math <= 6 and best_3rd_core <= 6)
+        aggregate = raw_eng + raw_math + best_3rd_core + sum(sorted_std_grades[:3])
+        user_elective_names = [e['name'].lower() for e in raw_electives if e['grade'] <= 6]
 
     science_subs = {'biology', 'chemistry', 'physics', 'additional mathematics', 'agricultural science'}
     business_subs = {'business management', 'accounting', 'business economics'}
@@ -723,12 +726,23 @@ def evaluate_eligibility(request):
 
     results = []
     for p in all_programs:
-        p_name = p.name.strip()
-        base_pname = re.sub(r'\s*\([^)]*campus\)', '', p_name, flags=re.IGNORECASE).strip()
-        key = base_pname.lower()
+        uni = p.university
+        min_pass = p.min_passing_grade or 6
+
+        # Check core passing using this program's minimum passing grade
+        if not is_awaiting:
+            cores_passed = (raw_eng <= min_pass and raw_math <= min_pass and min(raw_sci, raw_soc) <= min_pass)
+        else:
+            cores_passed = True
 
         if not cores_passed:
             continue
+
+        # Build user_elective_names for this program's passing threshold
+        if not is_awaiting:
+            prog_elective_names = [e['name'].lower() for e in raw_electives if e['grade'] <= min_pass]
+        else:
+            prog_elective_names = user_elective_names
 
         requirements = p.requirements.all()
         is_qualified = False
@@ -741,11 +755,11 @@ def evaluate_eligibility(request):
                 m_subs = [s.name.strip().lower() for s in req.mandatory_subjects.all()]
                 e_subs = [s.name.strip().lower() for s in req.elective_subjects.all()]
 
-                if m_subs and not all(m in user_elective_names for m in m_subs):
+                if m_subs and not all(m in prog_elective_names for m in m_subs):
                     continue
 
                 if e_subs:
-                    if any(e in user_elective_names for e in e_subs):
+                    if any(e in prog_elective_names for e in e_subs):
                         is_qualified = True
                         break
                 elif la_name:
@@ -773,17 +787,6 @@ def evaluate_eligibility(request):
                     break
 
         if is_qualified:
-            cutoff = p.aggregate
-            if is_awaiting:
-                is_eligible = True
-                is_borderline = False
-            else:
-                is_eligible = (cutoff is not None and aggregate <= cutoff)
-                is_borderline = (cutoff is not None and not is_eligible and aggregate <= cutoff + 3)
-
-            if not is_awaiting and not is_eligible and not is_borderline:
-                continue
-
             category = 'all'
             lower_pname = p.name.lower()
             if any(k in lower_pname for k in ['medicine', 'surgery', 'pharmacy', 'nursing', 'midwifery', 'medical', 'dental', 'health', 'optometry', 'herbal', 'physiotherapy', 'dietetics']):
@@ -801,14 +804,50 @@ def evaluate_eligibility(request):
             elif any(k in lower_pname for k in ['biology', 'chemistry', 'physics', 'mathematics', 'biochemistry', 'science']):
                 category = 'science'
 
+            cutoff = p.aggregate
+            if is_awaiting:
+                is_eligible = True
+                is_borderline = False
+                prog_aggregate = None
+            else:
+                # Convert raw grades to this university's point scale
+                u_eng = uni.get_point(raw_eng)
+                u_math = uni.get_point(raw_math)
+                u_sci = uni.get_point(raw_sci)
+                u_soc = uni.get_point(raw_soc)
+
+                # Science, Health, Engineering & IT programs strictly require Integrated Science
+                requires_science_core = (category in ['science', 'health', 'engineering', 'computing']) or \
+                                        any(c.name.strip().lower() == 'integrated science' for c in p.core_subjects.all())
+                
+                if requires_science_core:
+                    if raw_sci > min_pass:
+                        continue  # Integrated Science pass is mandatory for science-based degree programs
+                    u_3rd_core = u_sci
+                else:
+                    u_3rd_core = min(u_sci, u_soc)
+
+                # Convert elective grades to university scale and pick best 3 passing
+                u_elec_grades = sorted([uni.get_point(el['grade']) for el in raw_electives if el['grade'] <= min_pass])
+                if len(u_elec_grades) < 3:
+                    continue
+
+                prog_aggregate = u_eng + u_math + u_3rd_core + sum(u_elec_grades[:3])
+
+                is_eligible = (cutoff is not None and prog_aggregate <= cutoff)
+                is_borderline = (cutoff is not None and not is_eligible and prog_aggregate <= cutoff + 3)
+
+            if not is_awaiting and not is_eligible and not is_borderline:
+                continue
+
             core_subjects = [{'id': s.id, 'name': s.name} for s in p.core_subjects.all()]
             
-            requirements = []
+            req_list = []
             for req in p.requirements.all():
                 la_name = req.learning_area.name if req.learning_area else "General Entry"
                 mandatory = [{'id': s.id, 'name': s.name} for s in req.mandatory_subjects.all()]
                 electives = [{'id': s.id, 'name': s.name} for s in req.elective_subjects.all()]
-                requirements.append({
+                req_list.append({
                     'id': req.id,
                     'learning_area': la_name,
                     'mandatory_subjects': mandatory,
@@ -830,10 +869,10 @@ def evaluate_eligibility(request):
                 'note': p.note or '',
                 'is_eligible': is_eligible,
                 'is_borderline': is_borderline,
-                'margin': (cutoff - aggregate) if (cutoff and aggregate) else None,
+                'margin': (cutoff - prog_aggregate) if (cutoff and prog_aggregate) else None,
                 'category': category,
                 'core_subjects': core_subjects,
-                'requirements': requirements,
+                'requirements': req_list,
             })
 
     results.sort(key=lambda x: (not x['is_eligible'], not x['is_borderline'], x['cutoff'] or 999))

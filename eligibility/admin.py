@@ -14,12 +14,14 @@ class ProgramRequirementInline(admin.StackedInline):
 @admin.register(University)
 class UniversityAdmin(admin.ModelAdmin):
     list_display = ['short_name', 'name', 'location']
+    fields = ['name', 'short_name', 'location', 'website', 'grading_scale']
     inlines = [ProgramInline]
 
 @admin.register(Program)
 class ProgramAdmin(admin.ModelAdmin):
-    list_display = ['name', 'university', 'campus', 'college', 'aggregate', 'year']
-    list_filter = ['university', 'campus', 'college']
+    list_display = ['name', 'university', 'campus', 'college', 'aggregate', 'min_passing_grade', 'year']
+    list_filter = ['university', 'campus', 'college', 'min_passing_grade']
+    list_editable = ['min_passing_grade']
     search_fields = ['name', 'campus', 'note']
     filter_horizontal = ['core_subjects']
     inlines = [ProgramRequirementInline]
