@@ -1047,11 +1047,21 @@
     });
 
     if (count === 0) {
-      html = `
-      <div class="p-8 text-center bg-gray-50 rounded-xl border border-gray-200">
-        <p class="text-gray-600 font-bold mb-1">No programs found for this category or filter</p>
-        <p class="text-xs text-gray-400">Try selecting "All Categories" or searching for a different program name.</p>
-      </div>`;
+      if (!evaluatedData.results || evaluatedData.results.length === 0) {
+        html = `
+        <div class="p-8 text-center bg-gray-50 rounded-2xl border border-gray-200">
+          <div style="width:48px;height:48px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:#dc2626;font-size:20px;font-weight:bold;">✕</div>
+          <p class="text-gray-900 font-bold text-base mb-1.5">No Qualified Programmes Found</p>
+          <p class="text-xs text-gray-500 max-w-md mx-auto mb-4 leading-relaxed">Based on your entered WASSCE grades, you did not meet the minimum entry requirements (most public university degree programmes require credit passes A1–C6 in 3 core subjects and 3 relevant electives).</p>
+          <button onclick="document.getElementById('step2').classList.add('hidden');document.getElementById('step1').classList.remove('hidden');" class="text-xs font-bold text-green-800 bg-green-100 hover:bg-green-200 px-4 py-2.5 rounded-xl transition cursor-pointer">← Edit Subjects & Grades</button>
+        </div>`;
+      } else {
+        html = `
+        <div class="p-8 text-center bg-gray-50 rounded-xl border border-gray-200">
+          <p class="text-gray-600 font-bold mb-1">No programs found for this category or filter</p>
+          <p class="text-xs text-gray-400">Try selecting "All Categories" or searching for a different program name.</p>
+        </div>`;
+      }
     }
 
     document.getElementById('programList').innerHTML = html;
@@ -1195,11 +1205,45 @@
       </div>
     </div>
 
+    <!-- Career Outlook Card -->
+    <div class="card p-6 mb-6">
+      <h3 class="font-bold text-gray-800 text-base mb-3 flex items-center gap-2">
+        Career Outlook & Industry Pathways
+      </h3>
+      <div id="shsCareerOutlookContent" style="background:linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);border:1px solid #bbf7d0;border-radius:12px;padding:16px;font-size:13px;color:#1f2937;line-height:1.7;">
+        <div style="display:flex;align-items:center;gap:8px;color:#6b7280;">
+          <div style="width:16px;height:16px;border:2px solid #86efac;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+          <span style="font-size:12px;">Generating career outlook...</span>
+        </div>
+      </div>
+    </div>
+
     <button onclick="document.getElementById('step3').classList.add('hidden'); document.getElementById('step2').classList.remove('hidden');"
       class="w-full mt-2 py-3.5 border-2 border-green-700 bg-white text-green-800 font-bold rounded-xl hover:bg-green-50 transition text-sm">
       ← Back to Qualified Programs
     </button>
     `;
+
+    // Fetch AI Career Outlook
+    const outlookEl = document.getElementById('shsCareerOutlookContent');
+    if (outlookEl) {
+      fetch('/api/career-outlook/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify({ program_name: prog.program_name })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.career_outlook) {
+          outlookEl.innerHTML = data.career_outlook;
+        } else {
+          outlookEl.innerHTML = '<span style="color:#6b7280;font-style:italic;">Career outlook unavailable.</span>';
+        }
+      })
+      .catch(() => {
+        outlookEl.innerHTML = '<span style="color:#6b7280;font-style:italic;">Career outlook unavailable.</span>';
+      });
+    }
 
     document.getElementById('step3').scrollIntoView({ behavior: 'smooth' });
   }
@@ -1436,16 +1480,47 @@
           'cloth & text': 'clothing and textiles',
           'fin acct': 'accounting',
           'financial acct': 'accounting',
+          'financial accounting': 'accounting',
           'bus mgt': 'business management',
           'bus. mgmt': 'business management',
+          'business mgmt': 'business management',
           'elect math': 'additional mathematics',
           'elect. math': 'additional mathematics',
+          'elective math': 'additional mathematics',
+          'elective mathematics': 'additional mathematics',
           'add math': 'additional mathematics',
+          'additional math': 'additional mathematics',
+          'further math': 'additional mathematics',
           'lit in eng': 'literature in english',
+          'lit. in english': 'literature in english',
           'gen agric': 'agricultural science',
+          'general agric': 'agricultural science',
+          'general agriculture': 'agricultural science',
           'agric sci': 'agricultural science',
+          'gen know in art': 'art and design foundation',
+          'gen. know. in art': 'art and design foundation',
+          'gen know in arts': 'art and design foundation',
+          'gen. know. in arts': 'art and design foundation',
+          'general knowledge in art': 'art and design foundation',
+          'general knowledge in arts': 'art and design foundation',
+          'gen knowledge in art': 'art and design foundation',
+          'gen know art': 'art and design foundation',
+          'general know in art': 'art and design foundation',
+          'gk in art': 'art and design foundation',
+          'g.k.a': 'art and design foundation',
+          'gka': 'art and design foundation',
+          'graphic design': 'art and design studio',
+          'picture making': 'art and design studio',
+          'sculpture': 'art and design studio',
+          'ceramics': 'art and design studio',
+          'leatherwork': 'art and design studio',
           'crs': 'christian religious studies',
-          'irs': 'islamic religious studies'
+          'c.r.s': 'christian religious studies',
+          'irs': 'islamic religious studies',
+          'i.r.s': 'islamic religious studies',
+          'rme': 'rme',
+          'tech draw': 'design and communication technology',
+          'technical drawing': 'design and communication technology'
         };
 
         data.electives.forEach((item, idx) => {

@@ -577,6 +577,123 @@ def program_details(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
+def career_outlook(request):
+    """
+    AI-generated career outlook for a specific university degree program.
+    Returns a 2-3 sentence Ghana-specific career description covering job roles,
+    key employers, and relevant industries.
+    """
+    from django.conf import settings
+    import urllib.request
+    import os
+
+    try:
+        from google.oauth2 import service_account
+        import google.auth.transport.requests
+        has_google_auth = True
+    except ImportError:
+        has_google_auth = False
+        service_account = None
+
+    data = json.loads(request.body)
+    program_name = data.get('program_name', '').strip()
+    if not program_name:
+        return JsonResponse({'error': 'No program_name provided'}, status=400)
+
+    # Build AI prompt
+    system_prompt = f"""You are a career counselor for Ghanaian university students. Given the degree program name below, write exactly 2-3 sentences describing:
+1. The specific professional roles a graduate can pursue.
+2. Key employers or institutions in Ghana (and internationally where relevant) that hire these graduates.
+3. The industry sectors this degree serves.
+
+CRITICAL RULES:
+- Be specific to Ghana where possible (mention real Ghanaian institutions like GSA, FDA, GHS, GRA, Bank of Ghana, Cocoa Processing Company, Volta River Authority, Ghana Education Service, etc. where relevant).
+- Do NOT use bullet points or numbered lists. Write in flowing paragraph form.
+- Do NOT start with "Graduating with a..." — start directly with the career outlook content.
+- Keep it concise: exactly 2-3 sentences, no more.
+- Do NOT use emojis.
+
+Degree Program: {program_name}"""
+
+    payload = {
+        "contents": [{"role": "user", "parts": [{"text": system_prompt}]}],
+        "generationConfig": {"temperature": 0.7}
+    }
+
+    result_text = None
+
+    # 1. Try GCP credentials (Vertex AI)
+    gcp_json_str = os.getenv('GCP_KEY_JSON')
+    key_path = os.path.join(settings.BASE_DIR, 'gcp-key.json')
+    creds = None
+
+    if has_google_auth and gcp_json_str:
+        try:
+            info = json.loads(gcp_json_str)
+            scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+            creds = service_account.Credentials.from_service_account_info(info, scopes=scopes)
+        except Exception:
+            pass
+
+    if has_google_auth and not creds and os.path.exists(key_path):
+        try:
+            scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+            creds = service_account.Credentials.from_service_account_file(key_path, scopes=scopes)
+        except Exception:
+            pass
+
+    if creds:
+        try:
+            auth_req = google.auth.transport.requests.Request()
+            creds.refresh(auth_req)
+            token = creds.token
+            project_id = creds.project_id
+            url = f"https://firebasevertexai.googleapis.com/v1beta/projects/{project_id}/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent"
+            req_obj = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req_obj, timeout=8) as response:
+                res_data = json.loads(response.read().decode())
+                candidates = res_data.get("candidates", [])
+                if candidates:
+                    result_text = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+        except Exception as e:
+            print(f"DEBUG: career_outlook Vertex AI failed: {e}")
+
+    # 2. Fallback to Gemini Developer API
+    if not result_text:
+        gemini_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDnUoGfv6RdAdUDkhFk9zWg3qy1TFzugaQ')
+        for model_name in ["gemini-2.0-flash", "gemini-1.5-flash"]:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
+            try:
+                req_obj = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST"
+                )
+                with urllib.request.urlopen(req_obj, timeout=8) as response:
+                    res_data = json.loads(response.read().decode())
+                    candidates = res_data.get("candidates", [])
+                    if candidates:
+                        result_text = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                        if result_text:
+                            break
+            except Exception as e:
+                print(f"DEBUG: career_outlook Gemini API {model_name} failed: {e}")
+                continue
+
+    # 3. Fallback to generic template
+    if not result_text:
+        result_text = f"Graduates of {program_name} are well-positioned for professional roles across both public and private sectors in Ghana and internationally. Career opportunities span government agencies, corporate organizations, research institutions, and NGOs that align with this field of study."
+
+    return JsonResponse({'career_outlook': result_text})
+
+@csrf_exempt
+@require_http_methods(["POST"])
 def subject_recommendation(request):
     data = json.loads(request.body)
     career_id = data.get('career_id')
@@ -698,12 +815,14 @@ def evaluate_eligibility(request):
 
         # Standard aggregate for display purposes (uses standard grading scale)
         best_3rd_core = min(raw_sci, raw_soc)
-        standard_passing = [el for el in raw_electives if el['grade'] <= 6]
-        sorted_std_grades = sorted([el['grade'] for el in standard_passing])
-        if len(sorted_std_grades) < 3:
-            return JsonResponse({'error': 'At least 3 passing elective grades (A1 to C6) are required for aggregate calculation.'}, status=400)
-        aggregate = raw_eng + raw_math + best_3rd_core + sum(sorted_std_grades[:3])
-        user_elective_names = [e['name'].lower() for e in raw_electives if e['grade'] <= 6]
+        sorted_all_grades = sorted([el['grade'] for el in raw_electives])
+        if len(sorted_all_grades) >= 3:
+            aggregate = raw_eng + raw_math + best_3rd_core + sum(sorted_all_grades[:3])
+        elif len(sorted_all_grades) > 0:
+            aggregate = raw_eng + raw_math + best_3rd_core + sum(sorted_all_grades)
+        else:
+            aggregate = raw_eng + raw_math + best_3rd_core
+        user_elective_names = [e['name'].lower() for e in raw_electives]
 
     science_subs = {'biology', 'chemistry', 'physics', 'additional mathematics', 'agricultural science'}
     business_subs = {'business management', 'accounting', 'business economics'}
@@ -975,7 +1094,7 @@ Respond ONLY with a JSON object in this format:
 CRITICAL RULES:
 1. Valid WASSCE/SSSCE grades are A1, B2, B3, C4, C5, C6, D7, E8, F9 (or A, B, C, D, E, F).
 2. Standardize Core Subject names as "English Language", "Core Mathematics", "Integrated Science", "Social Studies".
-3. Standardize Elective Subject names to standard Ghanaian SHS subjects (e.g. "Elective Mathematics", "Physics", "Chemistry", "Biology", "Economics", "Geography", "History", "Government", "General Knowledge in Art", "Graphic Design", "Financial Accounting", "Costing", "Business Management", "Food and Nutrition", "Management in Living", "General Agriculture", "Crop Husbandry and Horticulture", "Animal Husbandry", "Elective ICT", "Literature in English", "French", "Ghanaian Language", etc.).
+3. Standardize Elective Subject names to standard Ghanaian SHS subjects (e.g. "Additional Mathematics" / "Elective Mathematics", "Physics", "Chemistry", "Biology", "Economics", "Geography", "History", "Government", "Art and Design Foundation" / "General Knowledge in Art", "Art and Design Studio" / "Graphic Design", "Accounting", "Business Management", "Food and Nutrition", "Management in Living", "Clothing and Textiles", "Agricultural Science", "Computer Science", "Literature in English", "Christian Religious Studies", "Islamic Religious Studies", "French", "Ghanaian Language", "Design and Communication Technology", etc.).
 4. Respond ONLY with valid JSON."""
 
     payload = {
@@ -1035,12 +1154,12 @@ CRITICAL RULES:
                     print(f"DEBUG: OCR Vertex AI call for {model_name} failed: {e}")
                     continue
         except Exception as e:
-            print(f"DEBUG: OCR Vertex AI auth error: {e}")
+            print(f"DEBUG: OCR Vertex AI auth failed: {e}")
 
     # 2. Fallback to Gemini Developer API Key if Vertex AI failed or creds not available
     if not parsed:
         gemini_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDnUoGfv6RdAdUDkhFk9zWg3qy1TFzugaQ')
-        for model_name in ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]:
+        for model_name in ["gemini-2.0-flash", "gemini-1.5-flash"]:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
             try:
                 req_obj = urllib.request.Request(
@@ -1094,30 +1213,63 @@ CRITICAL RULES:
         'food and nut': 'Food and Nutrition',
         'cloth & text': 'Clothing and Textiles',
         'clothing & textiles': 'Clothing and Textiles',
-        'fin acct': 'Financial Accounting',
-        'financial acct': 'Financial Accounting',
-        'fin accounting': 'Financial Accounting',
+        'fin acct': 'Accounting',
+        'financial acct': 'Accounting',
+        'fin accounting': 'Accounting',
+        'financial accounting': 'Accounting',
         'bus mgt': 'Business Management',
         'bus. mgmt': 'Business Management',
         'business mgmt': 'Business Management',
         'bus econ': 'Business Economics',
         'business econ': 'Business Economics',
-        'elect math': 'Elective Mathematics',
-        'elect. math': 'Elective Mathematics',
-        'elect maths': 'Elective Mathematics',
+        'elect math': 'Additional Mathematics',
+        'elect. math': 'Additional Mathematics',
+        'elect maths': 'Additional Mathematics',
+        'elective math': 'Additional Mathematics',
+        'elective mathematics': 'Additional Mathematics',
         'add math': 'Additional Mathematics',
         'add. maths': 'Additional Mathematics',
+        'additional math': 'Additional Mathematics',
+        'additional maths': 'Additional Mathematics',
+        'further math': 'Additional Mathematics',
         'lit in eng': 'Literature in English',
         'lit. in english': 'Literature in English',
         'gen agric': 'Agricultural Science',
         'general agric': 'Agricultural Science',
+        'general agriculture': 'Agricultural Science',
         'agric sci': 'Agricultural Science',
         'agric science': 'Agricultural Science',
+        'gen know in art': 'Art and Design Foundation',
+        'gen. know. in art': 'Art and Design Foundation',
+        'gen know in arts': 'Art and Design Foundation',
+        'gen. know. in arts': 'Art and Design Foundation',
+        'general knowledge in art': 'Art and Design Foundation',
+        'general knowledge in arts': 'Art and Design Foundation',
+        'gen knowledge in art': 'Art and Design Foundation',
+        'gen know art': 'Art and Design Foundation',
+        'general know in art': 'Art and Design Foundation',
         'gk in art': 'Art and Design Foundation',
         'g.k.a': 'Art and Design Foundation',
         'gka': 'Art and Design Foundation',
+        'graphic design': 'Art and Design Studio',
+        'picture making': 'Art and Design Studio',
+        'sculpture': 'Art and Design Studio',
+        'ceramics': 'Art and Design Studio',
+        'leatherwork': 'Art and Design Studio',
         'crs': 'Christian Religious Studies',
+        'c.r.s': 'Christian Religious Studies',
         'irs': 'Islamic Religious Studies',
+        'i.r.s': 'Islamic Religious Studies',
+        'rme': 'RME',
+        'r.m.e': 'RME',
+        'tech draw': 'Design and Communication Technology',
+        'technical drawing': 'Design and Communication Technology',
+        'applied electricity': 'Electrical and Electronic Technology',
+        'electronics': 'Electrical and Electronic Technology',
+        'building construction': 'Building Construction and Wood Technology',
+        'woodwork': 'Building Construction and Wood Technology',
+        'metalwork': 'Automobile and Metal Technology',
+        'auto mechanics': 'Automobile and Metal Technology',
     }
 
     raw_cores = parsed.get('core_subjects', {})
