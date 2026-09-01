@@ -266,6 +266,18 @@
         <div id="modalReqsList" style="display:flex;flex-direction:column;gap:12px;"></div>
       </div>
 
+      <!-- Career Outlook Section -->
+      <div id="modalCareerOutlook" style="margin-bottom:24px;">
+        <p style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 10px;">Career Outlook</p>
+        <div id="modalCareerOutlookContent" style="background:linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);border:1px solid #bbf7d0;border-radius:12px;padding:16px;font-size:13px;color:#1f2937;line-height:1.7;">
+          <div style="display:flex;align-items:center;gap:8px;color:#6b7280;">
+            <div style="width:16px;height:16px;border:2px solid #86efac;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+            <span style="font-size:12px;">Generating career outlook...</span>
+          </div>
+        </div>
+      </div>
+      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
       <!-- Action Buttons -->
       <div
         style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #f1f5f9;padding-top:16px;flex-wrap:wrap;gap:10px;">
@@ -352,6 +364,31 @@
 
     const modal = document.getElementById('uniProgModal');
     modal.style.display = 'flex';
+
+    // Fetch AI career outlook
+    const outlookEl = document.getElementById('modalCareerOutlookContent');
+    outlookEl.innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:#6b7280;"><div style="width:16px;height:16px;border:2px solid #86efac;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></div><span style="font-size:12px;">Generating career outlook...</span></div>';
+    fetch('/api/career-outlook/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrf() },
+      body: JSON.stringify({ program_name: p.name })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.career_outlook) {
+        outlookEl.innerHTML = data.career_outlook;
+      } else {
+        outlookEl.innerHTML = '<span style="color:#6b7280;font-style:italic;">Career outlook unavailable.</span>';
+      }
+    })
+    .catch(() => {
+      outlookEl.innerHTML = '<span style="color:#6b7280;font-style:italic;">Career outlook unavailable.</span>';
+    });
+  }
+
+  function getCsrf() {
+    let v = document.cookie.match('(^|;) ?csrftoken=([^;]*)(;|$)');
+    return v ? v[2] : null;
   }
 
   function closeProgramModal() {
