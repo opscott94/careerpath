@@ -13,8 +13,21 @@ class ProgramRequirementInline(admin.StackedInline):
 
 @admin.register(University)
 class UniversityAdmin(admin.ModelAdmin):
-    list_display = ['short_name', 'name', 'location']
-    fields = ['name', 'short_name', 'location', 'website', 'grading_scale']
+    list_display = ['short_name', 'name', 'location', 'academic_year_start', 'application_deadline']
+    search_fields = ['name', 'short_name', 'location']
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('name', 'short_name', 'location', 'website', 'about', 'image', 'thumbnail')
+        }),
+        ('Admissions & Important Dates (Appears on Detail Page)', {
+            'fields': ('academic_year_start', 'application_deadline', 'entry_requirements'),
+            'description': 'Dates and entry requirements configured here will dynamically appear on the university detail page.'
+        }),
+        ('Grading Scale Configuration', {
+            'fields': ('grading_scale',),
+            'classes': ('collapse',)
+        }),
+    )
     inlines = [ProgramInline]
 
 @admin.register(Program)

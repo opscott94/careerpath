@@ -11,6 +11,25 @@ class University(models.Model):
     short_name = models.CharField(max_length=20)
     location = models.CharField(max_length=100)
     website = models.URLField(blank=True)
+    about = models.TextField(blank=True, help_text='Overview description of the university')
+    image = models.URLField(blank=True, help_text='Hero background image URL')
+    thumbnail = models.URLField(blank=True, help_text='Campus thumbnail image URL')
+    academic_year_start = models.CharField(
+        max_length=100,
+        default='September 2026',
+        blank=True,
+        help_text='e.g., September 2026'
+    )
+    application_deadline = models.CharField(
+        max_length=100,
+        default='June 2026',
+        blank=True,
+        help_text='e.g., June 2026'
+    )
+    entry_requirements = models.TextField(
+        blank=True,
+        help_text='General entry requirements (one per line or paragraph). Leave blank to use default WASSCE requirements.'
+    )
     grading_scale = models.JSONField(
         default=dict,
         blank=True,

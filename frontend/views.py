@@ -83,13 +83,27 @@ def university_detail(request, uni_key):
     from eligibility.models import University, Program
     from django.db.models import Q
 
-    uni_obj = University.objects.filter(
-        Q(short_name__iexact=uni_name) | Q(short_name__iexact=uni_key)
-    ).first()
-
     if uni_obj:
+        if uni_obj.name:
+            uni['full'] = uni_obj.name
+        if uni_obj.location:
+            uni['location'] = uni_obj.location
+        if uni_obj.website:
+            uni['website'] = uni_obj.website
+        if uni_obj.about:
+            uni['about'] = uni_obj.about
+        if uni_obj.image:
+            uni['image'] = uni_obj.image
+        if uni_obj.thumbnail:
+            uni['thumb'] = uni_obj.thumbnail
+        uni['academic_year_start'] = uni_obj.academic_year_start or 'September 2026'
+        uni['application_deadline'] = uni_obj.application_deadline or 'June 2026'
+        if uni_obj.entry_requirements and uni_obj.entry_requirements.strip():
+            uni['entry_requirements_list'] = [line.strip() for line in uni_obj.entry_requirements.splitlines() if line.strip()]
         programs_qs = Program.objects.filter(university=uni_obj)
     else:
+        uni['academic_year_start'] = 'September 2026'
+        uni['application_deadline'] = 'June 2026'
         programs_qs = Program.objects.filter(
             Q(university__short_name__iexact=uni_name) | Q(university__short_name__iexact=uni_key)
         )
