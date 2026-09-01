@@ -1,0 +1,502 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | CareerPath Ghana Admin{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  :root {
+    --primary: #052e16 !important;
+    --secondary: #166534 !important;
+    --accent: #15803d !important;
+    --primary-fg: #ffffff !important;
+    
+    --body-fg: #0f172a !important;
+    --body-bg: #f8fafc !important;
+    --body-quiet-color: #475569 !important;
+    --body-loud-color: #0f172a !important;
+    
+    --header-color: #ffffff !important;
+    --header-bg: #052e16 !important;
+    --header-branding-color: #ffffff !important;
+    --header-link-color: #4ade80 !important;
+    
+    --breadcrumbs-fg: #475569 !important;
+    --breadcrumbs-link-fg: #052e16 !important;
+    --breadcrumbs-bg: #ffffff !important;
+    
+    --link-fg: #15803d !important;
+    --link-hover-color: #052e16 !important;
+    --link-selected-fg: #166534 !important;
+    
+    --hairline-color: #e2e8f0 !important;
+    --border-color: #cbd5e1 !important;
+    
+    --button-fg: #ffffff !important;
+    --button-bg: #052e16 !important;
+    --button-hover-bg: #14532d !important;
+    
+    --default-button-bg: #052e16 !important;
+    --default-button-hover-bg: #14532d !important;
+    
+    --selected-bg: #f0fdf4 !important;
+    --selected-row: #f0fdf4 !important;
+    
+    --message-success-bg: #ecfdf5 !important;
+    --message-warning-bg: #fffbeb !important;
+    --message-error-bg: #fef2f2 !important;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    position: relative !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Subtle Watermark on page canvas */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('{% static "images/career_path_ai_.png" %}');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 420px auto;
+    opacity: 0.02;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #container {
+    position: relative;
+    z-index: 1;
+    background: transparent !important;
+  }
+
+  /* Top Navigation Bar */
+  #header {
+    background: #052e16 !important;
+    padding: 14px 32px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  #branding {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  #branding h1 {
+    font-weight: 800 !important;
+    font-size: 1.25rem !important;
+    margin: 0 !important;
+  }
+
+  #branding h1 a {
+    color: #ffffff !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  #user-tools {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #cbd5e1 !important;
+  }
+
+  #user-tools a {
+    color: #ffffff !important;
+    text-decoration: none !important;
+    padding: 6px 14px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    transition: all 0.2s ease !important;
+  }
+
+  #user-tools a:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #4ade80 !important;
+  }
+
+  /* Breadcrumbs */
+  div.breadcrumbs {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 12px 32px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+  }
+
+  div.breadcrumbs a {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+  }
+
+  div.breadcrumbs a:hover {
+    color: #16a34a !important;
+    text-decoration: underline !important;
+  }
+
+  /* Main Content Area */
+  #content {
+    padding: 32px !important;
+  }
+
+  /* Clean Solid White Cards */
+  .module {
+    background: #ffffff !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    margin-bottom: 24px !important;
+    overflow: hidden !important;
+  }
+
+  .module h2, .module caption, .inline-group h2 {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em !important;
+    text-transform: none !important;
+    padding: 16px 22px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .module table {
+    border: none !important;
+  }
+
+  /* Clean High-Contrast Tables */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    background: #ffffff !important;
+  }
+
+  thead th {
+    background: #f8fafc !important;
+    color: #334155 !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 13px 20px !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+  }
+
+  thead th a {
+    color: #334155 !important;
+    text-decoration: none !important;
+  }
+
+  thead th.sorted {
+    background: #f1f5f9 !important;
+  }
+
+  thead th.sorted a {
+    color: #0f172a !important;
+  }
+
+  tbody tr, tbody tr.row1, tbody tr.row2 {
+    background: #ffffff !important;
+    transition: background-color 0.15s ease !important;
+  }
+
+  tbody tr:hover, tbody tr.row1:hover, tbody tr.row2:hover {
+    background: #f8fafc !important;
+  }
+
+  tbody td, tbody th {
+    padding: 14px 20px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    font-size: 14px !important;
+    color: #0f172a !important;
+  }
+
+  tbody th a {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+  }
+
+  tbody th a:hover {
+    color: #16a34a !important;
+    text-decoration: underline !important;
+  }
+
+  tbody tr.selected, tbody tr.selected:hover {
+    background: #f0fdf4 !important;
+  }
+
+  tbody tr.selected td, tbody tr.selected th {
+    background: #f0fdf4 !important;
+  }
+
+  /* Buttons & Action Controls */
+  .button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: #052e16 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 22px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  .button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover, a.button:hover {
+    background: #14532d !important;
+    box-shadow: 0 4px 12px rgba(5, 46, 22, 0.2) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .button.default, input[type=submit].default, .submit-row input.default {
+    background: #052e16 !important;
+    color: #ffffff !important;
+  }
+
+  .button.default:hover, input[type=submit].default:hover, .submit-row input.default:hover {
+    background: #14532d !important;
+  }
+
+  .button.closelink, a.closelink {
+    background: #f1f5f9 !important;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  .button.closelink:hover, a.closelink:hover {
+    background: #e2e8f0 !important;
+    color: #0f172a !important;
+  }
+
+  .deletelink, a.deletelink {
+    background: #dc2626 !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 9px 18px !important;
+    font-weight: 700 !important;
+  }
+
+  .deletelink:hover, a.deletelink:hover {
+    background: #b91c1c !important;
+  }
+
+  /* Search Bar */
+  #changelist-search input[type="text"] {
+    border: 1px solid #94a3b8 !important;
+    border-radius: 8px !important;
+    padding: 9px 16px !important;
+    font-size: 14px !important;
+    min-width: 320px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    outline: none !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+  }
+
+  #changelist-search input[type="text"]:focus {
+    border-color: #16a34a !important;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15) !important;
+  }
+
+  /* Filter Sidebar */
+  #changelist-filter {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+    margin-left: 24px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  }
+
+  #changelist-filter h2 {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    padding: 14px 18px !important;
+  }
+
+  #changelist-filter h3 {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    margin: 16px 18px 8px !important;
+  }
+
+  #changelist-filter ul {
+    padding: 0 18px 14px !important;
+  }
+
+  #changelist-filter li a {
+    color: #475569 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+  }
+
+  #changelist-filter li.selected a {
+    color: #16a34a !important;
+    font-weight: 800 !important;
+  }
+
+  /* Forms & Fieldsets */
+  fieldset {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+    padding: 24px 28px !important;
+    margin-bottom: 24px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+  }
+
+  fieldset h2 {
+    background: transparent !important;
+    color: #0f172a !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    padding: 0 0 14px 0 !important;
+    margin: 0 0 18px 0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .form-row {
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding: 14px 0 !important;
+  }
+
+  .form-row label {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+  }
+
+  input[type="text"], input[type="password"], input[type="email"], input[type="url"],
+  input[type="number"], input[type="tel"], textarea, select {
+    border: 1px solid #94a3b8 !important;
+    border-radius: 8px !important;
+    padding: 9px 14px !important;
+    font-size: 14px !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    transition: all 0.2s ease !important;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: #16a34a !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15) !important;
+  }
+
+  .help, p.help {
+    font-size: 12px !important;
+    color: #475569 !important;
+    margin-top: 5px !important;
+  }
+
+  /* Submit row footer */
+  .submit-row {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+    padding: 16px 24px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    margin-top: 28px !important;
+  }
+
+  /* Messages & Alerts */
+  ul.messagelist li {
+    border-radius: 8px !important;
+    padding: 14px 20px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    margin-bottom: 16px !important;
+    border: 1px solid transparent !important;
+  }
+
+  ul.messagelist li.success {
+    background: #ecfdf5 !important;
+    color: #065f46 !important;
+    border-color: #a7f3d0 !important;
+  }
+
+  ul.messagelist li.warning {
+    background: #fffbeb !important;
+    color: #92400e !important;
+    border-color: #fde68a !important;
+  }
+
+  ul.messagelist li.error {
+    background: #fef2f2 !important;
+    color: #991b1b !important;
+    border-color: #fecaca !important;
+  }
+
+  /* Object Tools (+ Add buttons at top) */
+  .object-tools a {
+    border-radius: 8px !important;
+    background: #052e16 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    padding: 9px 18px !important;
+    font-size: 13px !important;
+    transition: all 0.2s !important;
+  }
+
+  .object-tools a:hover {
+    background: #14532d !important;
+    transform: translateY(-1px) !important;
+  }
+</style>
+{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <a href="{% url 'admin:index' %}" style="display:inline-flex;align-items:center;gap:12px;text-decoration:none;">
+    <img src="{% static 'images/favicon.png' %}" alt="CareerPath" style="height:32px;width:auto;object-fit:contain;">
+    <span style="font-weight:800;font-size:1.2rem;letter-spacing:-0.01em;">
+      <span style="color:#4ade80;">Career</span><span style="color:#60a5fa;">Path</span>
+      <span style="font-size:11px;font-weight:700;color:#86efac;background:rgba(255,255,255,0.12);padding:3px 8px;border-radius:6px;margin-left:8px;text-transform:uppercase;letter-spacing:0.06em;">Admin</span>
+    </span>
+  </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<div style="float:right;padding-top:14px;padding-right:20px;">
+  <a href="/" target="_blank" style="color:#86efac;text-decoration:none;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+    View Website ↗
+  </a>
+</div>
+{% endblock %}

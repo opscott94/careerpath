@@ -1,0 +1,335 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_list %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  .admin-page-header {
+    margin-bottom: 32px;
+  }
+
+  .admin-page-title {
+    font-size: 1.75rem !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    margin: 0 0 6px 0 !important;
+    letter-spacing: -0.02em;
+  }
+
+  .admin-page-sub {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+  }
+
+  .admin-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 28px;
+    margin-bottom: 36px;
+  }
+
+  .admin-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+  }
+
+  .admin-card-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .admin-card-header h2 {
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    letter-spacing: -0.01em;
+    background: none !important;
+    padding: 0 !important;
+    border: none !important;
+    text-transform: none !important;
+  }
+
+  .admin-card-header a {
+    color: #0f172a !important;
+    text-decoration: none !important;
+  }
+
+  .admin-card-header a:hover {
+    color: #16a34a !important;
+  }
+
+  .admin-count-pill {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+
+  .admin-items-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .admin-item-row {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid #f1f5f9;
+    background: #ffffff;
+    transition: background-color 0.15s ease;
+  }
+
+  .admin-item-row:last-child {
+    border-bottom: none;
+  }
+
+  .admin-item-row:hover {
+    background: #f8fafc;
+  }
+
+  .admin-item-name {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #0f172a;
+    text-decoration: none !important;
+  }
+
+  .admin-item-name:hover {
+    color: #16a34a !important;
+  }
+
+  .admin-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .action-btn-add {
+    background: #f0fdf4 !important;
+    color: #166534 !important;
+    border: 1px solid #bbf7d0 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .action-btn-add:hover {
+    background: #16a34a !important;
+    color: #ffffff !important;
+    border-color: #16a34a !important;
+  }
+
+  .action-btn-manage {
+    background: #f8fafc !important;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .action-btn-manage:hover {
+    background: #e2e8f0 !important;
+    color: #0f172a !important;
+  }
+
+  /* Recent Activity Card */
+  .admin-activity-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 24px 28px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  }
+
+  .admin-activity-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .admin-activity-header h2 {
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
+    text-transform: none !important;
+  }
+
+  .admin-activity-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .admin-activity-row {
+    padding: 13px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13.5px;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .admin-activity-row:last-child {
+    border-bottom: none;
+  }
+
+  .admin-activity-row a {
+    color: #0f172a;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .admin-activity-row a:hover {
+    color: #16a34a;
+    text-decoration: underline;
+  }
+
+  .status-badge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 9px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .badge-add { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .badge-change { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+  .badge-delete { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" style="max-width: 1320px; margin: 0 auto;">
+
+  <!-- Clean Page Header -->
+  <div class="admin-page-header">
+    <h1 class="admin-page-title">Administration Portal</h1>
+    <p class="admin-page-sub">Select an academic or system model below to add or edit records.</p>
+  </div>
+
+  <!-- Main Grid of App Modules -->
+  <div class="admin-dashboard-grid">
+    {% if app_list %}
+      {% for app in app_list %}
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2>
+              <a href="{{ app.app_url }}">{{ app.name }}</a>
+            </h2>
+            <span class="admin-count-pill">
+              {{ app.models|length }} {% if app.models|length == 1 %}Model{% else %}Models{% endif %}
+            </span>
+          </div>
+
+          <div class="admin-items-list">
+            {% for model in app.models %}
+              <div class="admin-item-row">
+                <div>
+                  {% if model.admin_url %}
+                    <a href="{{ model.admin_url }}" class="admin-item-name">
+                      {{ model.name }}
+                    </a>
+                  {% else %}
+                    <span class="admin-item-name" style="color: #64748b;">{{ model.name }}</span>
+                  {% endif %}
+                </div>
+
+                <div class="admin-item-actions">
+                  {% if model.add_url %}
+                    <a href="{{ model.add_url }}" class="action-btn-add" title="Add {{ model.name }}">
+                      + Add
+                    </a>
+                  {% endif %}
+                  {% if model.admin_url %}
+                    {% if model.view_only %}
+                      <a href="{{ model.admin_url }}" class="action-btn-manage">View</a>
+                    {% else %}
+                      <a href="{{ model.admin_url }}" class="action-btn-manage">Manage</a>
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p style="padding: 24px; font-size: 14px; color: #64748b;">{% translate "You don’t have permission to view or edit anything." %}</p>
+    {% endif %}
+  </div>
+
+  <!-- Recent System Activity -->
+  <div class="admin-activity-card">
+    <div class="admin-activity-header">
+      <h2>Recent System Activity</h2>
+      <span style="font-size: 12px; font-weight: 500; color: #64748b;">Last Actions</span>
+    </div>
+
+    {% load log %}
+    {% get_admin_log 8 as admin_log for_user user %}
+    {% if not admin_log %}
+      <p style="font-size: 14px; color: #64748b; margin: 0;">{% translate "None available" %}</p>
+    {% else %}
+      <div class="admin-activity-list">
+        {% for entry in admin_log %}
+          <div class="admin-activity-row">
+            {% if entry.is_addition %}
+              <span class="status-badge badge-add">Added</span>
+            {% elif entry.is_change %}
+              <span class="status-badge badge-change">Edited</span>
+            {% elif entry.is_deletion %}
+              <span class="status-badge badge-delete">Deleted</span>
+            {% endif %}
+
+            <div style="flex: 1; min-width: 0;">
+              <span style="color: #64748b; font-size: 13px;">{{ entry.content_type }}:</span>
+              {% if entry.is_deletion or not entry.get_admin_url %}
+                <span style="font-weight: 600; color: #0f172a;">{{ entry.object_repr }}</span>
+              {% else %}
+                <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+              {% endif %}
+            </div>
+
+            <span style="font-size: 12px; color: #64748b; flex-shrink: 0;">
+              {{ entry.action_time|date:"M d, H:i" }}
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

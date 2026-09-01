@@ -1,0 +1,332 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}Sign In | CareerPath Ghana Admin{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
+{% block header %}{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block usertools %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+{% block content_title %}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  html, body.login {
+    height: 100% !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #f8fafc !important;
+  }
+
+  body.login {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px !important;
+    box-sizing: border-box !important;
+  }
+
+  body.login::before {
+    display: none !important;
+  }
+
+  /* Completely suppress all default Django chrome, titles, and headers */
+  body.login #header,
+  body.login #branding,
+  body.login #user-tools,
+  body.login div.breadcrumbs,
+  body.login #toggle-nav-sidebar,
+  body.login #nav-sidebar,
+  body.login .toggle-nav-sidebar,
+  body.login .sticky,
+  body.login h1,
+  body.login #content-title,
+  body.login .content-title {
+    display: none !important;
+  }
+
+  /* Center container */
+  body.login #container {
+    width: 100% !important;
+    max-width: 860px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    float: none !important;
+  }
+
+  body.login #main,
+  body.login .main,
+  body.login .main.shifted,
+  body.login .content,
+  body.login #content,
+  body.login #content-main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    float: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* The Split Card */
+  .login-split-card {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    max-width: 860px !important;
+    min-height: 480px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid #e2e8f0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Left Side: Brand Panel */
+  .login-brand-panel {
+    flex: 1 1 50% !important;
+    width: 50% !important;
+    background: linear-gradient(135deg, #052e16 0%, #166534 100%) !important;
+    padding: 48px 40px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+
+  .brand-logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .brand-title {
+    font-size: 1.9rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    line-height: 1.2 !important;
+    margin: 0 0 12px 0 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .brand-title span {
+    color: #4ade80;
+  }
+
+  .brand-desc {
+    font-size: 0.92rem !important;
+    color: #bbf7d0 !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+  }
+
+  /* Right Side: Form Panel */
+  .login-form-panel {
+    flex: 1 1 50% !important;
+    width: 50% !important;
+    background: #ffffff !important;
+    padding: 48px 44px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+
+  .form-title {
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    margin: 0 0 6px 0 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .form-sub {
+    font-size: 0.9rem !important;
+    color: #64748b !important;
+    margin: 0 0 26px 0 !important;
+  }
+
+  .login-field {
+    margin-bottom: 18px !important;
+  }
+
+  .login-field label {
+    display: block !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-bottom: 6px !important;
+  }
+
+  .login-input {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 11px 14px !important;
+    font-size: 14px !important;
+    color: #0f172a !important;
+    background: #ffffff !important;
+    transition: all 0.2s ease !important;
+    outline: none !important;
+  }
+
+  .login-input:focus {
+    border-color: #16a34a !important;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15) !important;
+  }
+
+  .login-submit-btn {
+    width: 100% !important;
+    background: #052e16 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    margin-top: 6px !important;
+    box-sizing: border-box !important;
+  }
+
+  .login-submit-btn:hover {
+    background: #14532d !important;
+  }
+
+  .login-error-alert {
+    background: #fef2f2 !important;
+    border: 1px solid #fecaca !important;
+    color: #991b1b !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    margin-bottom: 18px !important;
+    line-height: 1.5 !important;
+  }
+
+  .login-back-link {
+    margin-top: 22px !important;
+    text-align: center !important;
+  }
+
+  .login-back-link a {
+    color: #16a34a !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+  }
+
+  .login-back-link a:hover {
+    color: #052e16 !important;
+    text-decoration: underline !important;
+  }
+
+  @media (max-width: 768px) {
+    .login-split-card {
+      flex-direction: column !important;
+      min-height: auto !important;
+    }
+    .login-brand-panel, .login-form-panel {
+      width: 100% !important;
+      flex: 1 1 auto !important;
+      padding: 36px 28px !important;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-split-card">
+
+  <!-- Left: Brand Panel -->
+  <div class="login-brand-panel">
+    <div>
+      <div class="brand-logo-wrap">
+        <img src="{% static 'images/favicon.png' %}" alt="CareerPath" style="height: 36px; width: auto; object-fit: contain;">
+        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #86efac; background: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 6px;">
+          Admin Portal
+        </span>
+      </div>
+
+      <h1 class="brand-title">Career<span>Path</span><br>Ghana</h1>
+      <p class="brand-desc">
+        Centralized portal for managing national university programs, cut-off points, and subject criteria.
+      </p>
+    </div>
+  </div>
+
+  <!-- Right: Sign In Form -->
+  <div class="login-form-panel">
+    <div>
+      <h2 class="form-title">Sign In</h2>
+      <p class="form-sub">Enter your administrator credentials below.</p>
+
+      {% if form.errors and not form.non_field_errors %}
+        <div class="login-error-alert">
+          Please enter a correct username and password.
+        </div>
+      {% endif %}
+
+      {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+          <div class="login-error-alert">
+            {{ error }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <form action="{{ app_path }}" method="post" id="login-form">
+        {% csrf_token %}
+
+        <div class="login-field">
+          <label for="id_username">Username</label>
+          <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username" class="login-input" placeholder="Your username">
+        </div>
+
+        <div class="login-field">
+          <label for="id_password">Password</label>
+          <input type="password" name="password" autocomplete="current-password" required id="id_password" class="login-input" placeholder="Your password">
+          <input type="hidden" name="next" value="{{ next }}">
+        </div>
+
+        <button type="submit" class="login-submit-btn">
+          Sign In
+        </button>
+      </form>
+
+      <div class="login-back-link">
+        <a href="/">← Return to Public Website</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
