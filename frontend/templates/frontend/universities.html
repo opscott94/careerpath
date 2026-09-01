@@ -1,47 +1,119 @@
 {% extends 'frontend/base.html' %}
 {% block title %}Universities — CareerPath Ghana{% endblock %}
 {% block content %}
-<div style="max-width:1320px;margin:0 auto;padding:32px 32px 0;">
-  <p style="font-size:13px;color:#6b7280;margin:0;">
-    <a href="/" style="color:#6b7280;text-decoration:none;">Home</a> &nbsp;›&nbsp;
-    <span style="color:#111827;font-weight:600;">Universities</span>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+  <p class="text-xs sm:text-sm text-gray-500 m-0">
+    <a href="/" class="text-gray-500 hover:text-green-700 transition no-underline">Home</a> &nbsp;›&nbsp;
+    <span class="text-gray-900 font-semibold">Universities</span>
   </p>
 </div>
 
-<div style="max-width:1320px;margin:0 auto;padding:24px 32px 80px;">
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    {% for uni in unis %}
-    <div onclick="window.location='/university/{{ uni.key }}/'"
-      style="cursor:pointer;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.12);transition:transform 0.2s;position:relative;height:340px;"
-      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-16">
+  <div class="mb-6 sm:mb-8">
+    <p class="text-xs font-bold text-green-700 tracking-wider uppercase mb-1.5">
+      Institution Directory
+    </p>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">Ghana's Top Universities</h1>
+    <p class="text-xs sm:text-sm text-gray-500 m-0 max-w-2xl leading-relaxed">
+      Browse public universities, explore colleges, and check verified admission cut-offs and entry requirements.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+    <!-- KNUST -->
+    <div
+      style="background:linear-gradient(145deg,#052e16,#166534);border-radius:20px;padding:24px;position:relative;overflow:hidden;cursor:pointer;transition:transform 0.3s;contain:paint;"
+      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'"
+      onclick="window.location='/university/knust/'">
       <div
-        style="position:absolute;inset:0;background-image:url('{{ uni.thumb }}');background-size:cover;background-position:center;">
-      </div>
+        style="font-size:10px;font-weight:700;color:#4ade80;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">
+        Kumasi</div>
       <div
-        style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.3) 45%,rgba(0,0,0,0.05) 65%);">
+        style="position:absolute;inset:0;background-image:url('/static/images/knust.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.2;border-radius:20px;">
       </div>
-      <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;">
-        <p
-          style="color:#fff;font-size:19px;font-weight:800;margin:0 0 14px;line-height:1.25;text-shadow:0 2px 6px rgba(0,0,0,0.4);">
-          {{ uni.full }}</p>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
-            <path d="M12 3L2 8l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
-          </svg>
-          <span style="font-size:13px;font-weight:500;color:#f3f4f6;">{{ uni.program_count }} Programmes</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
-            <path d="M12 21s-7-6.5-7-11a7 7 0 0114 0c0 4.5-7 11-7 11z" />
-            <circle cx="12" cy="10" r="2.5" />
-          </svg>
-          <span style="font-size:13px;color:#e5e7eb;">{{ uni.location }}</span>
-        </div>
+      <div style="font-size:2rem;font-weight:900;color:#fff;margin-bottom:4px;">KNUST</div>
+      <div style="font-size:11px;color:#86efac;margin-bottom:12px;">Kwame Nkrumah Univ.</div>
+      <div style="font-size:11px;color:#4ade80;font-weight:600;">{{ program_counts.KNUST }} programs</div>
+      <div style="margin-top:12px;height:2px;background:rgba(74,222,128,0.3);border-radius:2px;">
+        <div style="height:100%;width:80%;background:#4ade80;border-radius:2px;"></div>
       </div>
     </div>
-    {% endfor %}
+
+    <!-- UG -->
+    <div
+      style="background:linear-gradient(145deg,#0c1445,#1e40af);border-radius:20px;padding:24px;cursor:pointer;transition:transform 0.3s;position:relative;overflow:hidden;contain:paint;"
+      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'"
+      onclick="window.location='/university/ug/'">
+      <div
+        style="font-size:10px;font-weight:700;color:#60a5fa;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">
+        Legon, Accra</div>
+      <div
+        style="position:absolute;inset:0;background-image:url('/static/images/ug.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.2;border-radius:20px;">
+      </div>
+      <div style="font-size:2rem;font-weight:900;color:#fff;margin-bottom:4px;">UG</div>
+      <div style="font-size:11px;color:#bfdbfe;margin-bottom:12px;">University of Ghana</div>
+      <div style="font-size:11px;color:#60a5fa;font-weight:600;">{{ program_counts.UG }} programs</div>
+      <div style="margin-top:12px;height:2px;background:rgba(96,165,250,0.3);border-radius:2px;">
+        <div style="height:100%;width:65%;background:#60a5fa;border-radius:2px;"></div>
+      </div>
+    </div>
+
+    <!-- UCC -->
+    <div
+      style="background:linear-gradient(145deg,#450a0a,#b91c1c);border-radius:20px;padding:24px;cursor:pointer;transition:transform 0.3s;position:relative;overflow:hidden;contain:paint;"
+      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'"
+      onclick="window.location='/university/ucc/'">
+      <div
+        style="font-size:10px;font-weight:700;color:#fca5a5;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">
+        Cape Coast</div>
+      <div
+        style="position:absolute;inset:0;background-image:url('/static/images/ucc.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.2;border-radius:20px;">
+      </div>
+      <div style="font-size:2rem;font-weight:900;color:#fff;margin-bottom:4px;">UCC</div>
+      <div style="font-size:11px;color:#fecaca;margin-bottom:12px;">Univ. of Cape Coast</div>
+      <div style="font-size:11px;color:#fca5a5;font-weight:600;">{{ program_counts.UCC }} programs</div>
+      <div style="margin-top:12px;height:2px;background:rgba(252,165,165,0.3);border-radius:2px;">
+        <div style="height:100%;width:65%;background:#fca5a5;border-radius:2px;"></div>
+      </div>
+    </div>
+
+    <!-- UDS -->
+    <div
+      style="background:linear-gradient(145deg,#2e1065,#6d28d9);border-radius:20px;padding:24px;cursor:pointer;transition:transform 0.3s;position:relative;overflow:hidden;contain:paint;"
+      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'"
+      onclick="window.location='/university/uds/'">
+      <div
+        style="font-size:10px;font-weight:700;color:#c4b5fd;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">
+        Tamale</div>
+      <div
+        style="position:absolute;inset:0;background-image:url('/static/images/uds.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.2;border-radius:20px;">
+      </div>
+      <div style="font-size:2rem;font-weight:900;color:#fff;margin-bottom:4px;">UDS</div>
+      <div style="font-size:11px;color:#ddd6fe;margin-bottom:12px;">Univ. for Dev. Studies</div>
+      <div style="font-size:11px;color:#c4b5fd;font-weight:600;">{{ program_counts.UDS }} programs</div>
+      <div style="margin-top:12px;height:2px;background:rgba(196,181,253,0.3);border-radius:2px;">
+        <div style="height:100%;width:35%;background:#c4b5fd;border-radius:2px;"></div>
+      </div>
+    </div>
+
+    <!-- UENR -->
+    <div
+      style="background:linear-gradient(145deg,#431407,#c2410c);border-radius:20px;padding:24px;cursor:pointer;transition:transform 0.3s;position:relative;overflow:hidden;contain:paint;"
+      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'"
+      onclick="window.location='/university/uenr/'">
+      <div
+        style="font-size:10px;font-weight:700;color:#fdba74;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">
+        Sunyani</div>
+      <div
+        style="position:absolute;inset:0;background-image:url('/static/images/uenr.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.2;border-radius:20px;">
+      </div>
+      <div style="font-size:2rem;font-weight:900;color:#fff;margin-bottom:4px;">UENR</div>
+      <div style="font-size:11px;color:#fed7aa;margin-bottom:12px;">Univ. of Energy</div>
+      <div style="font-size:11px;color:#fdba74;font-weight:600;">{{ program_counts.UENR }} programs</div>
+      <div style="margin-top:12px;height:2px;background:rgba(253,186,116,0.3);border-radius:2px;">
+        <div style="height:100%;width:45%;background:#fdba74;border-radius:2px;"></div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

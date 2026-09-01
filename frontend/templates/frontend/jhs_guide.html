@@ -12,32 +12,32 @@
     <p class="text-gray-500">Tell us your dream career and we'll map it to the right SHS subjects</p>
   </div>
 
-  <div class="bg-white rounded-2xl shadow-sm p-8 mb-6">
+  <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6 md:p-8 mb-6">
     <label class="block font-semibold mb-3 text-gray-700">What do you want to be? <span
         class="text-gray-400 font-normal">(type naturally)</span></label>
-    <div class="flex gap-3">
+    <div class="flex flex-col sm:flex-row gap-3">
       <input id="careerInput" type="text" placeholder="e.g. I want to be a doctor, software developer, lawyer..."
-        class="flex-1 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-gray-800"
+        class="flex-1 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-gray-800 text-sm sm:text-base"
         onkeydown="if(event.key==='Enter') searchCareer()">
       <button onclick="searchCareer()"
-        class="bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary transition">
+        class="bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary transition text-sm sm:text-base">
         Search
       </button>
     </div>
     <div class="flex flex-wrap gap-2 mt-4">
-      <span class="text-sm text-gray-400">Try:</span>
+      <span class="text-xs sm:text-sm text-gray-400 self-center">Try:</span>
       <button onclick="document.getElementById('careerInput').value='I want to be a doctor'; searchCareer()"
-        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">doctor</button>
+        class="text-xs sm:text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">doctor</button>
       <button onclick="document.getElementById('careerInput').value='I want to be an engineer'; searchCareer()"
-        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">engineer</button>
+        class="text-xs sm:text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">engineer</button>
       <button onclick="document.getElementById('careerInput').value='I want to be a lawyer'; searchCareer()"
-        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">lawyer</button>
+        class="text-xs sm:text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">lawyer</button>
       <button onclick="document.getElementById('careerInput').value='I want to be a nurse'; searchCareer()"
-        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">nurse</button>
+        class="text-xs sm:text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">nurse</button>
       <button onclick="document.getElementById('careerInput').value='I want to be an accountant'; searchCareer()"
-        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">accountant</button>
+        class="text-xs sm:text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">accountant</button>
       <button onclick="document.getElementById('careerInput').value='I want to be a journalist'; searchCareer()"
-        class="text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">journalist</button>
+        class="text-xs sm:text-sm bg-green-50 text-primary px-3 py-1 rounded-full hover:bg-green-100 transition">journalist</button>
     </div>
   </div>
 
@@ -117,17 +117,17 @@
   function renderAiResults(aiData) {
     let html = `
     <div style="border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;margin-bottom:16px;">
-      <div style="background:#052e16;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:52px;height:52px;background:rgba(74,222,128,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;"></div>
+      <div style="background:#052e16;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:44px;height:44px;background:rgba(74,222,128,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎯</div>
           <div>
-            <p style="font-size:20px;font-weight:700;color:#fff;margin:0;">${aiData.career_name}</p>
-            <p style="font-size:12px;color:#86efac;margin:4px 0 0;">AI-Recommended Career Path</p>
+            <p style="font-size:18px;font-weight:700;color:#fff;margin:0;line-height:1.2;">${aiData.career_name}</p>
+            <p style="font-size:11px;color:#86efac;margin:2px 0 0;">AI-Recommended Career Path</p>
           </div>
         </div>
-        <span style="font-size:11px;font-weight:700;background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);padding:4px 12px;border-radius:100px;">AI Match</span>
+        <span style="font-size:11px;font-weight:700;background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);padding:3px 10px;border-radius:100px;">AI Match</span>
       </div>
-      <div style="padding:20px 24px;">
+      <div style="padding:16px 20px;">
         <div style="background:#f0fdf4;border-left:3px solid #16a34a;border-radius:0 8px 8px 0;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#374151;line-height:1.6;">
           ${aiData.career_description}
         </div>

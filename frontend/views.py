@@ -18,22 +18,17 @@ def landing(request):
     })
 
 def universities(request):
-    unis = [
-        {'key': 'knust', 'name': 'KNUST', 'full': 'Kwame Nkrumah University of Science and Technology', 'location': 'Kumasi, Ashanti', 'thumb': 'https://pub-5bcc3edf34304d04b59dc91e1ad9d2fd.r2.dev/schoolfinder.tortoisepath.com/uploads/2024/07/13063314/KNUST-Campus-Kumasi-Ghana-SchoolFinder-TortoisePathcom.jpeg', 'color': '#052e16'},
-        {'key': 'ug', 'name': 'University of Ghana', 'full': 'University of Ghana', 'location': 'Legon, Accra', 'thumb': 'https://images.unsplash.com/photo-1762340034235-881592eaa7a3?q=80&w=1672&auto=format&fit=crop', 'color': '#0c1445'},
-        {'key': 'ucc', 'name': 'University of Cape Coast', 'full': 'University of Cape Coast', 'location': 'Cape Coast, Central', 'thumb': 'https://geshub.org/wp-content/uploads/2023/01/University-of-Cape-Coast-720x375.png', 'color': '#7f1d1d'},
-        {'key': 'uds', 'name': 'University for Dev. Studies', 'full': 'University for Development Studies', 'location': 'Tamale, Northern', 'thumb': 'https://uds.edu.gh/logmein/uploads/posts/dc197f2771bc06880a1ee8bbe9570882.jpg', 'color': '#4c1d95'},
-        {'key': 'uenr', 'name': 'University of Energy and Natural Resources', 'full': 'University of Energy and Natural Resources', 'location': 'Sunyani, Bono', 'thumb': 'https://i0.wp.com/galexgh.com/wp-content/uploads/2021/09/EoD7M0VW8AAHCIr.jpg', 'color': '#7c2d12'},
-        {'key': 'uhas', 'name': 'UHAS', 'full': 'University of Health and Allied Sciences', 'location': 'Ho, Volta', 'thumb': 'https://uhas.edu.gh/uhas/sites/default/files/inline-images/values_n_philosophy.jpg', 'color': '#7f1d1d'},
-        {'key': 'upsa', 'name': 'UPSA', 'full': 'University of Professional Studies, Accra', 'location': 'Legon, Accra', 'thumb': 'https://metrotvonline.com/wp-content/uploads/2023/04/UPSA.jpg', 'color': '#1e3a8a'},
-    ]
-    key_to_code = {'knust':'KNUST','ug':'UG','ucc':'UCC','uds':'UDS','uenr':'UENR','uhas':'UHAS','upsa':'UPSA'}
-    for u in unis:
-        code = key_to_code[u['key']]
-        u['program_count'] = Program.objects.filter(
-            Q(university__short_name__iexact=code) | Q(university__name__icontains=code)
+    unis = ['KNUST', 'UG', 'UCC', 'UDS', 'UENR']
+    program_counts = {}
+    for uni in unis:
+        program_counts[uni] = Program.objects.filter(
+            Q(university__short_name__iexact=uni) | Q(university__name__icontains=uni)
         ).count()
-    return render(request, 'frontend/universities.html', {'unis': unis})
+    total_programs = Program.objects.count()
+    return render(request, 'frontend/universities.html', {
+        'program_counts': program_counts,
+        'total_programs': total_programs
+    })
 
 def jhs_guide(request):
     import os

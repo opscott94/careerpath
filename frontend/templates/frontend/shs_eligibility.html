@@ -187,15 +187,16 @@
                 style="padding:12px 16px;font-size:14px;font-weight:500;color:#111827;display:flex;align-items:center;gap:8px;">
                 Integrated Science
                 <button type="button"
-                  onclick="document.getElementById('science-row').style.display='none';document.getElementById('add-science-btn').style.display='flex';"
-                  style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;padding:0;line-height:1;">×</button>
+                  onclick="toggleScience(false)"
+                  style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;padding:0;line-height:1;" title="Remove Integrated Science">×</button>
               </td>
               <td style="padding:12px 12px;text-align:center;"><span
                   style="font-size:11px;font-weight:600;background:#eff6ff;color:#1e40af;padding:3px 10px;border-radius:100px;">Core</span>
               </td>
               <td style="padding:12px 16px;text-align:right;">
                 <select id="g_science"
-                  style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
+                  style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;"
+                  onchange="document.getElementById('m_g_science').value=this.value;updateAggregate();">
                   <option value="">Select grade</option>
                   <option value="1">A1</option>
                   <option value="2">B2</option>
@@ -216,7 +217,8 @@
               </td>
               <td style="padding:12px 16px;text-align:right;">
                 <select id="g_social"
-                  style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
+                  style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;"
+                  onchange="document.getElementById('m_g_social').value=this.value;updateAggregate();">
                   <option value="">Select grade</option>
                   <option value="1">A1</option>
                   <option value="2">B2</option>
@@ -234,7 +236,7 @@
               <td style="padding:12px 16px;">
                 <select id="s_e1"
                   style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;width:100%;max-width:200px;"
-                  onchange="this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';updateElectiveOptions();">
+                  onchange="syncSubject(1, this.value);updateElectiveOptions();">
                   <option value="">Elective 1</option>
                   {% for s in elective_subjects %}
                   <option value="{{ s.name }}">{{ s.name }}</option>
@@ -246,7 +248,70 @@
               </td>
               <td style="padding:12px 16px;text-align:right;">
                 <select id="g_e1"
-                  style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
+                  style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;"
+                  onchange="syncGrade(1, this.value);updateAggregate();">
+                  <option value="">Select grade</option>
+                  <option value="1">A1</option>
+                  <option value="2">B2</option>
+                  <option value="3">B3</option>
+                  <option value="4">C4</option>
+                  <option value="5">C5</option>
+                  <option value="6">C6</option>
+                  <option value="7">D7</option>
+                  <option value="8">E8</option>
+                  <option value="9">F9</option>
+                </select>
+              </td>
+            </tr>
+            <tr style="border-top:0.5px solid #f1f5f9;">
+              <td style="padding:12px 16px;">
+                <select id="s_e2"
+                  style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;width:100%;max-width:200px;"
+                  onchange="syncSubject(2, this.value);updateElectiveOptions();">
+                  <option value="">Elective 2</option>
+                  {% for s in elective_subjects %}
+                  <option value="{{ s.name }}">{{ s.name }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td style="padding:12px 12px;text-align:center;"><span
+                  style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;border:1px solid #bbf7d0;">Elective</span>
+              </td>
+              <td style="padding:12px 16px;text-align:right;">
+                <select id="g_e2"
+                  style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;"
+                  onchange="syncGrade(2, this.value);updateAggregate();">
+                  <option value="">Select grade</option>
+                  <option value="1">A1</option>
+                  <option value="2">B2</option>
+                  <option value="3">B3</option>
+                  <option value="4">C4</option>
+                  <option value="5">C5</option>
+                  <option value="6">C6</option>
+                  <option value="7">D7</option>
+                  <option value="8">E8</option>
+                  <option value="9">F9</option>
+                </select>
+              </td>
+            </tr>
+            <tr style="border-top:0.5px solid #f1f5f9;">
+              <td style="padding:12px 16px;">
+                <select id="s_e3"
+                  style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;width:100%;max-width:200px;"
+                  onchange="syncSubject(3, this.value);updateElectiveOptions();">
+                  <option value="">Elective 3</option>
+                  {% for s in elective_subjects %}
+                  <option value="{{ s.name }}">{{ s.name }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td style="padding:12px 12px;text-align:center;"><span
+                  style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;border:1px solid #bbf7d0;">Elective</span>
+              </td>
+              <td style="padding:12px 16px;text-align:right;">
+                <select id="g_e3"
+                  style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;"
+                  onchange="syncGrade(3, this.value);updateAggregate();">
                   <option value="">Select grade</option>
                   <option value="1">A1</option>
                   <option value="2">B2</option>
@@ -269,7 +334,7 @@
             + Add elective
           </button>
           <button type="button" id="add-science-btn"
-            onclick="document.getElementById('science-row').style.display='';document.getElementById('add-science-btn').style.display='none';"
+            onclick="toggleScience(true)"
             style="display:flex;align-items:center;gap:6px;background:none;border:0.5px solid #e5e7eb;border-radius:8px;padding:7px 14px;font-size:13px;color:#6b7280;cursor:pointer;">
             + Add Integrated Science
           </button>
@@ -296,19 +361,19 @@
           }
         }
       </style>
-      <div class="mobile-cards" style="padding:0 16px 8px;">
+      <div class="mobile-cards" style="padding:0 8px 8px;">
         <p
           style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;">
           Core Subjects</p>
         <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
           <div
-            style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
-            <div>
-              <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">English Language</p><span
-                style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span>
+            style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div style="min-width:0;">
+              <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">English Language</p>
+              <span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span>
             </div>
             <select id="m_g_english" onchange="document.getElementById('g_english').value=this.value;updateAggregate();"
-              style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;">
+              style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;width:88px;flex-shrink:0;text-align:center;font-weight:700;">
               <option value="">Grade</option>
               <option value="1">A1</option>
               <option value="2">B2</option>
@@ -322,13 +387,13 @@
             </select>
           </div>
           <div
-            style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
-            <div>
-              <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">Core Mathematics</p><span
-                style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span>
+            style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div style="min-width:0;">
+              <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Core Mathematics</p>
+              <span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span>
             </div>
             <select id="m_g_math" onchange="document.getElementById('g_math').value=this.value;updateAggregate();"
-              style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;">
+              style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;width:88px;flex-shrink:0;text-align:center;font-weight:700;">
               <option value="">Grade</option>
               <option value="1">A1</option>
               <option value="2">B2</option>
@@ -341,14 +406,18 @@
               <option value="9">F9</option>
             </select>
           </div>
-          <div
-            style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
-            <div>
-              <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">Integrated Science</p><span
-                style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span>
+          <div id="m_science_row"
+            style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:none;align-items:center;justify-content:space-between;gap:8px;">
+            <div style="min-width:0;display:flex;align-items:center;gap:6px;">
+              <div>
+                <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">Integrated Science</p>
+                <span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span>
+              </div>
+              <button type="button" onclick="toggleScience(false)"
+                style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;padding:0 4px;line-height:1;" title="Remove Integrated Science">×</button>
             </div>
             <select id="m_g_science" onchange="document.getElementById('g_science').value=this.value;updateAggregate();"
-              style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;">
+              style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;width:88px;flex-shrink:0;text-align:center;font-weight:700;">
               <option value="">Grade</option>
               <option value="1">A1</option>
               <option value="2">B2</option>
@@ -362,14 +431,13 @@
             </select>
           </div>
           <div id="m_social_row"
-            style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
-            <div>
-              <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">Social Studies <span
-                  style="font-size:10px;color:#9ca3af;">(optional)</span></p><span
-                style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span>
+            style="background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #1e40af;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div style="min-width:0;">
+              <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 3px;">Social Studies</p>
+              <span style="font-size:10px;font-weight:600;background:#eff6ff;color:#1e40af;padding:2px 8px;border-radius:100px;">Core</span>
             </div>
             <select id="m_g_social" onchange="document.getElementById('g_social').value=this.value;updateAggregate();"
-              style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;min-width:100px;">
+              style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;width:88px;flex-shrink:0;text-align:center;font-weight:700;">
               <option value="">Grade</option>
               <option value="1">A1</option>
               <option value="2">B2</option>
@@ -380,7 +448,6 @@
               <option value="7">D7</option>
               <option value="8">E8</option>
               <option value="9">F9</option>
-            </select>
             </select>
           </div>
         </div>
@@ -393,16 +460,16 @@
             <span
               style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:100px;border:1px solid #bbf7d0;display:inline-block;margin-bottom:8px;">Elective
               1</span>
-            <div style="display:flex;gap:8px;">
-              <select id="m_s_e1" onchange="document.getElementById('s_e1').value=this.value;updateElectiveOptions();"
-                style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
-                <option value="">Subject</option>
+            <div style="display:grid;grid-template-columns:1fr 88px;gap:8px;align-items:center;width:100%;">
+              <select id="m_s_e1" onchange="syncSubject(1, this.value);updateElectiveOptions();"
+                style="width:100%;min-width:0;font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;">
+                <option value="">Select Subject</option>
                 {% for s in elective_subjects %}
                 <option value="{{ s.name }}">{{ s.name }}</option>
                 {% endfor %}
               </select>
-              <select id="m_g_e1" onchange="document.getElementById('g_e1').value=this.value;updateAggregate();"
-                style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;">
+              <select id="m_g_e1" onchange="syncGrade(1, this.value);updateAggregate();"
+                style="width:100%;min-width:0;font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;text-align:center;font-weight:700;">
                 <option value="">Grade</option>
                 <option value="1">A1</option>
                 <option value="2">B2</option>
@@ -421,18 +488,18 @@
             <span
               style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:100px;border:1px solid #bbf7d0;display:inline-block;margin-bottom:8px;">Elective
               2</span>
-            <div style="display:flex;gap:8px;">
+            <div style="display:grid;grid-template-columns:1fr 88px;gap:8px;align-items:center;width:100%;">
               <select id="m_s_e2"
-                onchange="(document.getElementById('s_e2')?document.getElementById('s_e2').value=this.value:null);updateElectiveOptions();"
-                style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
-                <option value="">Subject</option>
+                onchange="syncSubject(2, this.value);updateElectiveOptions();"
+                style="width:100%;min-width:0;font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;">
+                <option value="">Select Subject</option>
                 {% for s in elective_subjects %}
                 <option value="{{ s.name }}">{{ s.name }}</option>
                 {% endfor %}
               </select>
               <select id="m_g_e2"
-                onchange="document.getElementById('g_e2')?document.getElementById('g_e2').value=this.value:null;updateAggregate();"
-                style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;">
+                onchange="syncGrade(2, this.value);updateAggregate();"
+                style="width:100%;min-width:0;font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;text-align:center;font-weight:700;">
                 <option value="">Grade</option>
                 <option value="1">A1</option>
                 <option value="2">B2</option>
@@ -451,18 +518,18 @@
             <span
               style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:100px;border:1px solid #bbf7d0;display:inline-block;margin-bottom:8px;">Elective
               3</span>
-            <div style="display:flex;gap:8px;">
+            <div style="display:grid;grid-template-columns:1fr 88px;gap:8px;align-items:center;width:100%;">
               <select id="m_s_e3"
-                onchange="(document.getElementById('s_e3')?document.getElementById('s_e3').value=this.value:null);updateElectiveOptions();"
-                style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:2;">
-                <option value="">Subject</option>
+                onchange="syncSubject(3, this.value);updateElectiveOptions();"
+                style="width:100%;min-width:0;font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;">
+                <option value="">Select Subject</option>
                 {% for s in elective_subjects %}
                 <option value="{{ s.name }}">{{ s.name }}</option>
                 {% endfor %}
               </select>
               <select id="m_g_e3"
-                onchange="document.getElementById('g_e3')?document.getElementById('g_e3').value=this.value:null;updateAggregate();"
-                style="font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;flex:1;">
+                onchange="syncGrade(3, this.value);updateAggregate();"
+                style="width:100%;min-width:0;font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;text-align:center;font-weight:700;">
                 <option value="">Grade</option>
                 <option value="1">A1</option>
                 <option value="2">B2</option>
@@ -476,6 +543,17 @@
               </select>
             </div>
           </div>
+        </div>
+        <div id="m_extra_electives" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+          <button type="button" id="m_addElectiveBtn" onclick="addElective()"
+            style="display:flex;align-items:center;gap:6px;background:#fff;border:0.5px solid #d1d5db;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;">
+            + Add elective
+          </button>
+          <button type="button" id="m_add_science_btn" onclick="toggleScience(true)"
+            style="display:flex;align-items:center;gap:6px;background:#fff;border:0.5px solid #d1d5db;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;">
+            + Add Integrated Science
+          </button>
         </div>
       </div>
       <div style="padding:16px 16px 20px;">
@@ -506,19 +584,19 @@
         style="flex:1;background-image:url('https://images.pexels.com/photos/34313903/pexels-photo-34313903.jpeg');background-size:cover;background-position:center;opacity:0.08;">
       </div>
     </div>
-    <div class="card p-8">
-      <div class="flex items-center gap-4 mb-6">
+    <div class="card p-4 sm:p-6 md:p-8">
+      <div class="flex items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
         <div id="aggregateBadge"
-          class="w-16 h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black flex-shrink-0">
+          class="w-12 h-12 sm:w-16 sm:h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-black flex-shrink-0">
         </div>
         <div>
           <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide">Your Aggregate</p>
-          <p id="aggregateLabel" class="text-xl font-bold text-gray-900"></p>
+          <p id="aggregateLabel" class="text-lg sm:text-xl font-bold text-gray-900"></p>
         </div>
       </div>
 
-      <h2 class="display text-2xl font-bold text-gray-900 mb-1">Which program do you want to study?</h2>
-      <p class="text-gray-500 text-sm mb-5">Select one program and we'll check all 5 universities for you</p>
+      <h2 class="display text-xl sm:text-2xl font-bold text-gray-900 mb-1">Which program do you want to study?</h2>
+      <p class="text-gray-500 text-xs sm:text-sm mb-5">Select one program and we'll check all 5 universities for you</p>
 
       <!-- AI Career Interest Helper Banner -->
       <div
@@ -526,16 +604,17 @@
         <div style="display:flex;align-items:center;gap:10px;">
           <div
             style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">
+            💡
           </div>
           <div>
-            <h3 style="font-size:14px;font-weight:700;margin:0 0 2px;color:#fff;">Not sure which program fits your
+            <h3 style="font-size:13px;font-weight:700;margin:0 0 2px;color:#fff;">Not sure which program fits your
               career interest?</h3>
-            <p style="font-size:12px;color:#a7f3d0;margin:0;">Type your dream job or passion (e.g. "Pilot", "Eye
+            <p style="font-size:11px;color:#a7f3d0;margin:0;">Type your dream job or passion (e.g. "Pilot", "Eye
               Doctor", "Build apps")</p>
           </div>
         </div>
         <button type="button" onclick="toggleAICareerHelper()"
-          style="background:#10b981;color:#052e16;font-size:12px;font-weight:700;border:none;padding:8px 16px;border-radius:100px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s;"
+          style="background:#10b981;color:#052e16;font-size:11px;font-weight:700;border:none;padding:7px 14px;border-radius:100px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s;"
           onmouseover="this.style.background='#34d399'" onmouseout="this.style.background='#10b981'">
           <span>Find Programs by Interest</span>
         </button>
@@ -543,26 +622,26 @@
 
       <!-- AI Career & Program Finder Box (Expandable) -->
       <div id="aiCareerHelperBox"
-        style="display:none;background:#f0fdf4;border:1.5px solid #a7f3d0;border-radius:14px;padding:16px;margin-bottom:20px;">
+        style="display:none;background:#f0fdf4;border:1.5px solid #a7f3d0;border-radius:14px;padding:14px;margin-bottom:20px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <span style="font-size:13px;font-weight:700;color:#065f46;display:flex;align-items:center;gap:6px;">
+          <span style="font-size:12px;font-weight:700;color:#065f46;display:flex;align-items:center;gap:6px;">
             AI Career & Program Matcher
           </span>
           <button onclick="toggleAICareerHelper()"
-            style="background:none;border:none;color:#047857;cursor:pointer;font-size:12px;font-weight:600;">✕
+            style="background:none;border:none;color:#047857;cursor:pointer;font-size:11px;font-weight:600;">✕
             Close</button>
         </div>
-        <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <div class="flex flex-col sm:flex-row gap-2 mb-2">
           <input id="aiInterestInput" type="text"
             placeholder="Describe your interest e.g. I want to build mobile apps, pilot, eye doctor, finance manager..."
-            style="flex:1;border:1px solid #6ee7b7;border-radius:10px;padding:10px 14px;font-size:13px;background:#fff;outline:none;"
+            class="flex-1 border border-emerald-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm bg-white outline-none"
             onkeypress="if(event.key==='Enter') searchProgramsByInterest()">
           <button id="aiInterestBtn" onclick="searchProgramsByInterest()"
-            style="background:#052e16;color:#fff;font-size:13px;font-weight:700;padding:10px 18px;border:none;border-radius:10px;cursor:pointer;">
+            class="bg-[#052e16] hover:bg-emerald-950 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl transition">
             Match
           </button>
         </div>
-        <div id="aiInterestStatus" style="font-size:12px;color:#047857;margin-top:6px;display:none;"></div>
+        <div id="aiInterestStatus" style="font-size:11px;color:#047857;margin-top:6px;display:none;"></div>
       </div>
 
       <!-- Filters: University & Search -->
@@ -1357,44 +1436,112 @@
     });
   }
 
-  var electiveCount = 2;
+  function syncSubject(num, val) {
+    const d = document.getElementById('s_e' + num);
+    const m = document.getElementById('m_s_e' + num);
+    if (d && d.value !== val) d.value = val;
+    if (m && m.value !== val) m.value = val;
+  }
+
+  function syncGrade(num, val) {
+    const d = document.getElementById('g_e' + num);
+    const m = document.getElementById('m_g_e' + num);
+    if (d && d.value !== val) d.value = val;
+    if (m && m.value !== val) m.value = val;
+  }
+
+  function toggleScience(show) {
+    const dRow = document.getElementById('science-row');
+    const mRow = document.getElementById('m_science_row');
+    const dBtn = document.getElementById('add-science-btn');
+    const mBtn = document.getElementById('m_add_science_btn');
+
+    if (dRow) dRow.style.display = show ? '' : 'none';
+    if (mRow) mRow.style.display = show ? 'flex' : 'none';
+    if (dBtn) dBtn.style.display = show ? 'none' : 'flex';
+    if (mBtn) mBtn.style.display = show ? 'none' : 'flex';
+
+    if (!show) {
+      const gSci = document.getElementById('g_science');
+      const mSci = document.getElementById('m_g_science');
+      if (gSci) gSci.value = '';
+      if (mSci) mSci.value = '';
+      updateAggregate();
+    }
+  }
+
+  var electiveCount = 4;
   var eSubs = `
     {% for s in elective_subjects %}
       <option value="{{ s.name }}">{{ s.name }}</option>
     {% endfor %}
   `;
+
   function addElective() {
     if (electiveCount > 6) return;
     var n = electiveCount;
+
+    // 1. Add to Desktop Table
     var tbody = document.getElementById('extra-electives');
-    if (!tbody) { console.error('no tbody'); return; }
-    var row = document.createElement('tr');
-    row.id = 'extra-e' + n;
-    row.style.borderTop = '0.5px solid #f1f5f9';
-    var td1 = document.createElement('td');
-    td1.style.padding = '12px 16px';
-    var s1 = document.createElement('select');
-    s1.id = 's_e' + n;
-    s1.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;width:100%;max-width:200px;';
-    s1.setAttribute('onchange', "this.style.fontWeight=this.value?'700':'500';this.style.color=this.value?'#052e16':'#065f46';updateElectiveOptions();");
-    s1.innerHTML = '<option value="">Elective ' + n + '</option>' + eSubs;
-    td1.appendChild(s1);
-    var td2 = document.createElement('td');
-    td2.style.cssText = 'padding:12px 12px;text-align:center;';
-    td2.innerHTML = '<span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;border:1px solid #bbf7d0;">Elective</span>';
-    var td3 = document.createElement('td');
-    td3.style.cssText = 'padding:12px 16px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:8px;';
-    var s2 = document.createElement('select');
-    s2.id = 'g_e' + n;
-    s2.style.cssText = 'border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;';
-    s2.innerHTML = '<option value="">Select grade</option><option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option><option value="5">C5</option><option value="6">C6</option><option value="7">D7</option><option value="8">E8</option><option value="9">F9</option>';
-    td3.appendChild(s2);
-    row.appendChild(td1);
-    row.appendChild(td2);
-    row.appendChild(td3);
-    tbody.appendChild(row);
+    if (tbody) {
+      var row = document.createElement('tr');
+      row.id = 'extra-e' + n;
+      row.style.borderTop = '0.5px solid #f1f5f9';
+      row.innerHTML = `
+        <td style="padding:12px 16px;">
+          <select id="s_e${n}" onchange="syncSubject(${n}, this.value);updateElectiveOptions();"
+            style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;font-weight:500;cursor:pointer;width:100%;max-width:200px;">
+            <option value="">Elective ${n}</option>
+            ${eSubs}
+          </select>
+        </td>
+        <td style="padding:12px 12px;text-align:center;">
+          <span style="font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;border:1px solid #bbf7d0;">Elective</span>
+        </td>
+        <td style="padding:12px 16px;text-align:right;">
+          <select id="g_e${n}" onchange="syncGrade(${n}, this.value);updateAggregate();"
+            style="border:1px solid #d1fae5;border-radius:8px;padding:6px 10px;font-size:13px;background:#f0fdf4;color:#065f46;min-width:130px;">
+            <option value="">Select grade</option>
+            <option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option>
+            <option value="5">C5</option><option value="6">C6</option><option value="7">D7</option><option value="8">E8</option><option value="9">F9</option>
+          </select>
+        </td>
+      `;
+      tbody.appendChild(row);
+    }
+
+    // 2. Add to Mobile Cards
+    var mContainer = document.getElementById('m_extra_electives');
+    if (mContainer) {
+      var mCard = document.createElement('div');
+      mCard.id = 'm_extra-e' + n;
+      mCard.style.cssText = 'background:#fff;border:0.5px solid #e5e7eb;border-left:3px solid #15803d;border-radius:10px;padding:12px 14px;';
+      mCard.innerHTML = `
+        <span style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:100px;border:1px solid #bbf7d0;display:inline-block;margin-bottom:8px;">Elective ${n}</span>
+        <div style="display:grid;grid-template-columns:1fr 88px;gap:8px;align-items:center;width:100%;">
+          <select id="m_s_e${n}" onchange="syncSubject(${n}, this.value);updateElectiveOptions();"
+            style="width:100%;min-width:0;font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;">
+            <option value="">Select Subject</option>
+            ${eSubs}
+          </select>
+          <select id="m_g_e${n}" onchange="syncGrade(${n}, this.value);updateAggregate();"
+            style="width:100%;min-width:0;font-size:12px;border:1px solid #d1fae5;border-radius:8px;padding:6px 8px;background:#f0fdf4;color:#065f46;text-align:center;font-weight:700;">
+            <option value="">Grade</option>
+            <option value="1">A1</option><option value="2">B2</option><option value="3">B3</option><option value="4">C4</option>
+            <option value="5">C5</option><option value="6">C6</option><option value="7">D7</option><option value="8">E8</option><option value="9">F9</option>
+          </select>
+        </div>
+      `;
+      mContainer.appendChild(mCard);
+    }
+
     electiveCount++;
-    if (electiveCount > 6) document.getElementById('addElectiveBtn').style.display = 'none';
+    if (electiveCount > 6) {
+      const dBtn = document.getElementById('addElectiveBtn');
+      const mBtn = document.getElementById('m_addElectiveBtn');
+      if (dBtn) dBtn.style.display = 'none';
+      if (mBtn) mBtn.style.display = 'none';
+    }
     updateElectiveOptions();
   }
   function getCookie(name) {

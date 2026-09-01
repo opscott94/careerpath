@@ -54,135 +54,120 @@
 </style>
 
 <!-- Hero -->
-<div
-  style="position:relative;min-height:660px;background-image:url('{{ uni.image }}');background-size:cover;background-position:center 70%;background-repeat:no-repeat;">
-  <div
-    style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.75) 100%);">
-  </div>
+<div class="relative min-h-[400px] sm:min-h-[500px] md:min-h-[580px] bg-cover bg-center"
+  style="background-image:url('{{ uni.image }}');">
+  <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20"></div>
 
-  <a href="/"
-    style="position:absolute;top:24px;left:24px;font-size:12px;color:#fff;text-decoration:none;background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:100px;backdrop-filter:blur(4px);">←
-    Back</a>
+  <a href="/universities/"
+    class="absolute top-4 left-4 sm:top-6 sm:left-6 text-xs text-white bg-white/20 hover:bg-white/30 backdrop-blur-md px-3.5 py-1.5 rounded-full transition inline-flex items-center gap-1.5 font-medium z-10 text-decoration-none">
+    ← Back
+  </a>
 
-  <div style="position:absolute;bottom:32px;left:32px;">
-    <p
-      style="font-size:11px;font-weight:700;color:#86efac;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 6px;">
-      {{ uni.location }}</p>
-    <h1 style="font-size:2.8rem;font-weight:900;color:#fff;margin:0 0 8px;line-height:1.1;">{{ uni.full }}</h1>
-    <div style="display:flex;gap:10px;margin-top:10px;">
+  <div class="absolute bottom-6 left-4 right-4 sm:bottom-8 sm:left-8 sm:right-8 max-w-4xl">
+    <p class="text-[11px] font-bold text-green-400 uppercase tracking-widest mb-1.5">{{ uni.location }}</p>
+    <h1 class="text-2xl sm:text-4xl md:text-5xl font-black text-white leading-tight mb-3">{{ uni.full }}</h1>
+    <div class="flex gap-2.5 mt-2 flex-wrap">
       <a href="{{ uni.website }}" target="_blank"
-        style="font-size:12px;font-weight:600;color:#fff;background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:100px;text-decoration:none;">Visit
-        Official Website</a>
+        class="text-xs font-semibold text-white bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition inline-flex items-center gap-2 text-decoration-none">
+        Visit Official Website ↗
+      </a>
     </div>
   </div>
-
 </div>
 
 <!-- About + Image -->
-<div style="padding:40px 48px 0;">
-  <div style="display:grid;grid-template-columns:1fr 300px;gap:32px;margin-bottom:32px;align-items:start;">
+<div class="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 pt-8 sm:pt-10">
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 sm:gap-8 items-start mb-8">
     <div>
-      <h2 style="font-size:22px;font-weight:700;color:#111827;margin:0 0 12px;">About the <span
-          style="color:#15803d;">University</span></h2>
-      <p style="font-size:15px;color:#4b5563;line-height:1.8;margin:0;text-align:left;">{{ uni.about }}</p>
+      <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3">About the <span class="text-green-700">University</span></h2>
+      <p class="text-sm sm:text-base text-gray-600 leading-relaxed text-left">{{ uni.about }}</p>
     </div>
-    <div style="border-radius:16px;overflow:hidden;height:220px;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
+    <div class="rounded-2xl overflow-hidden h-52 sm:h-60 lg:h-64 shadow-md border border-gray-100 w-full">
       <img src="{{ uni.thumb|default:uni.image }}"
-        style="width:100%;height:100%;object-fit:cover;object-position:center center;" alt="{{ uni.name }} campus">
+        class="w-full h-full object-cover object-center" alt="{{ uni.name }} campus">
     </div>
   </div>
 </div>
-<div style="padding:0 48px 40px;">
 
+<div class="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 pb-12">
   <!-- Tabs -->
-  <div style="border-bottom:1px solid #e5e7eb;margin-bottom:32px;display:flex;justify-content:flex-start;gap:0;">
+  <div class="border-b border-gray-200 mb-8 flex justify-start gap-4 sm:gap-8 overflow-x-auto">
     <button class="tab-btn active" onclick="switchTab('admissions')">Admissions</button>
     <button class="tab-btn" onclick="switchTab('programmes')">Programmes</button>
   </div>
 
   <!-- Admissions Tab -->
-  <div id="tab-admissions" class="tab-content active" style="padding-bottom:40px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-      <div style="background:#052e16;border-radius:16px;padding:24px;color:#fff;">
-        <p
-          style="font-size:10px;font-weight:700;color:#4ade80;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 14px;">
-          ⊙ Entry Requirements</p>
-        <ul style="margin:0;padding-left:16px;display:flex;flex-direction:column;gap:10px;">
-          <li style="font-size:13px;color:#d1fae5;line-height:1.5;">Credit Passes (A1-C6 in WASSCE or A-D in SSSCE) or
-            equivalent in three core subjects and three relevant elective subjects.</li>
-          <li style="font-size:13px;color:#d1fae5;line-height:1.5;">An aggregate score of 24 or better.</li>
-          <li style="font-size:13px;color:#d1fae5;line-height:1.5;">Specific programs may require additional subject
-            combinations. Check individual program cut-offs in the Programmes tab.</li>
+  <div id="tab-admissions" class="tab-content active pb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div class="bg-[#052e16] rounded-2xl p-5 sm:p-6 text-white shadow-sm">
+        <p class="text-[11px] font-bold text-green-400 tracking-wider uppercase mb-3 flex items-center gap-1.5">
+          <span>⊙</span> Entry Requirements
+        </p>
+        <ul class="space-y-2.5 pl-4 list-disc text-xs sm:text-sm text-green-100 leading-relaxed">
+          <li>Credit Passes (A1-C6 in WASSCE or A-D in SSSCE) or equivalent in three core subjects and three relevant elective subjects.</li>
+          <li>An aggregate score of 24 or better.</li>
+          <li>Specific programs may require additional subject combinations. Check individual program cut-offs in the Programmes tab.</li>
         </ul>
       </div>
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:16px;padding:24px;">
-        <p
-          style="font-size:10px;font-weight:700;color:#6b7280;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 14px;">
-          📅 Important Dates</p>
-        <div
-          style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:0.5px solid #f1f5f9;">
-          <span style="font-size:13px;color:#374151;">Academic Year Starts</span>
-          <span style="font-size:13px;font-weight:700;color:#111827;">September 2026</span>
-        </div>
-        <div
-          style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:0.5px solid #f1f5f9;">
-          <span style="font-size:13px;color:#374151;">Application Deadline</span>
-          <span style="font-size:13px;font-weight:700;color:#111827;">June 2026</span>
+      <div class="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+        <p class="text-[11px] font-bold text-gray-500 tracking-wider uppercase mb-3 flex items-center gap-1.5">
+          <span>📅</span> Important Dates
+        </p>
+        <div class="divide-y divide-gray-100 text-xs sm:text-sm">
+          <div class="flex justify-between items-center py-3">
+            <span class="text-gray-600">Academic Year Starts</span>
+            <span class="font-bold text-gray-900">September 2026</span>
+          </div>
+          <div class="flex justify-between items-center py-3">
+            <span class="text-gray-600">Application Deadline</span>
+            <span class="font-bold text-gray-900">June 2026</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Programmes Tab (Grouped by College) -->
-  <div id="tab-programmes" class="tab-content" style="padding-bottom:40px;">
-    <div
-      style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+  <div id="tab-programmes" class="tab-content pb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
       <div>
-        <h3 style="font-size:20px;font-weight:800;color:#111827;margin:0;">Programmes Offered by College</h3>
-        <p style="font-size:13px;color:#6b7280;margin:4px 0 0;">Click any programme card to view complete entry
-          requirements and track prerequisites</p>
+        <h3 class="text-lg sm:text-xl font-bold text-gray-900">Programmes Offered by College</h3>
+        <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Click any programme card to view complete entry requirements and track prerequisites</p>
       </div>
-      <span
-        style="font-size:12px;color:#052e16;background:#f0fdf4;padding:6px 16px;border-radius:100px;border:1px solid #bbf7d0;font-weight:700;">{{
-        total_programs }} Total Programmes</span>
+      <span class="text-xs text-green-900 bg-green-50 px-3.5 py-1.5 rounded-full border border-green-200 font-bold self-start sm:self-auto">
+        {{ total_programs }} Total Programmes
+      </span>
     </div>
 
     {% for col_name, prog_list in grouped_programs.items %}
-    <div style="margin-bottom:28px;">
+    <div class="mb-7">
       <!-- College Header Banner -->
-      <div
-        style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#052e16;color:#fff;border-radius:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(5,46,22,0.12);">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-size:15px;font-weight:800;color:#fff;">{{ col_name }}</span>
-        </div>
-        <span
-          style="font-size:11px;font-weight:700;background:rgba(74,222,128,0.2);color:#4ade80;padding:4px 12px;border-radius:100px;border:1px solid rgba(74,222,128,0.3);">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 sm:p-4 bg-[#052e16] text-white rounded-xl mb-3 shadow-sm">
+        <span class="text-sm sm:text-base font-bold text-white">{{ col_name }}</span>
+        <span class="text-[11px] font-semibold bg-green-500/20 text-green-300 px-3 py-1 rounded-full border border-green-500/30 self-start sm:self-auto">
           {{ prog_list|length }} {% if prog_list|length == 1 %}Programme{% else %}Programmes{% endif %}
         </span>
       </div>
 
       <!-- Program Cards Grid -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:12px;">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {% for p in prog_list %}
         <div onclick="openProgramModal('{{ p.id }}')"
-          style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:space-between;gap:12px;"
-          onmouseover="this.style.borderColor='#16a34a';this.style.boxShadow='0 4px 14px rgba(22,163,74,0.12)';this.style.transform='translateY(-2px)'"
-          onmouseout="this.style.borderColor='#e5e7eb';this.style.boxShadow='none';this.style.transform='translateY(0)'">
-          <div style="flex:1;">
-            <p style="font-size:14px;font-weight:700;color:#1f2937;margin:0 0 4px;line-height:1.35;">{{ p.name }}</p>
-            <p style="font-size:11px;color:#6b7280;margin:0;">
+          class="bg-white border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-green-600 hover:shadow-md transition-all flex items-center justify-between gap-3 group">
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-bold text-gray-900 group-hover:text-green-800 leading-snug mb-1 truncate">{{ p.name }}</p>
+            <p class="text-xs text-gray-500 truncate">
               {{ p.campus }} · {{ p.duration_years }} Years
             </p>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-            <div style="text-align:right;">
-              <span style="font-size:10px;color:#9ca3af;display:block;font-weight:600;">Cut-off</span>
-              <span class="cutoff-badge cutoff-green"
-                style="font-size:13px;padding:3px 10px;border-radius:6px;display:inline-block;">
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <div class="text-right">
+              <span class="text-[10px] text-gray-400 block font-semibold">Cut-off</span>
+              <span class="cutoff-badge cutoff-green text-xs px-2 py-0.5 rounded-md inline-block">
                 {% if p.aggregate %}{{ p.aggregate }}{% else %}N/A{% endif %}
               </span>
             </div>
-            <span style="font-size:16px;color:#9ca3af;font-weight:700;">→</span>
+            <span class="text-sm text-gray-400 group-hover:text-green-600 font-bold">→</span>
           </div>
         </div>
         {% endfor %}
@@ -190,11 +175,9 @@
     </div>
     {% endfor %}
 
-    <div style="padding:16px;background:#f0fdf4;border-radius:12px;border:1px solid #d1fae5;margin-top:20px;">
-      <p style="font-size:12px;color:#065f46;margin:0;">Cut-off points are based on 2024/2025 admission benchmark data.
-        <a href="/shs-eligibility/" style="color:#15803d;font-weight:700;text-decoration:underline;">Check your
-          eligibility →</a>
-      </p>
+    <div class="p-4 bg-green-50 rounded-xl border border-green-200 mt-6 text-xs sm:text-sm text-green-900">
+      Cut-off points are based on 2024/2025 admission benchmark data.
+      <a href="/shs-eligibility/" class="text-green-700 font-bold underline ml-1">Check your eligibility →</a>
     </div>
   </div>
 
@@ -204,89 +187,82 @@
 <div id="uniProgModal" onclick="closeProgramModal()"
   style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px;">
   <div
-    style="background:#fff;border-radius:20px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,0.25);border:1px solid #e5e7eb;"
+    class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200"
     onclick="event.stopPropagation()">
 
     <!-- Modal Header -->
-    <div style="background:#052e16;padding:24px;border-radius:20px 20px 0 0;color:#fff;position:relative;">
+    <div class="bg-[#052e16] p-5 sm:p-6 rounded-t-2xl text-white relative">
       <button onclick="closeProgramModal()"
-        style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;">✕</button>
+        class="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition">✕</button>
       <span id="modalCollegeBadge"
-        style="font-size:11px;font-weight:700;background:rgba(74,222,128,0.2);color:#4ade80;padding:4px 12px;border-radius:100px;border:1px solid rgba(74,222,128,0.3);display:inline-block;margin-bottom:8px;"></span>
-      <h2 id="modalProgName" style="font-size:22px;font-weight:800;color:#fff;margin:0 0 6px;line-height:1.25;"></h2>
-      <p id="modalUniSub" style="font-size:13px;color:#a7f3d0;margin:0;"></p>
+        class="text-[11px] font-bold bg-green-400/20 text-green-300 px-3 py-1 rounded-full border border-green-400/30 inline-block mb-2"></span>
+      <h2 id="modalProgName" class="text-lg sm:text-2xl font-black text-white leading-snug mb-1"></h2>
+      <p id="modalUniSub" class="text-xs sm:text-sm text-emerald-200"></p>
     </div>
 
     <!-- Modal Content Body -->
-    <div style="padding:24px;">
+    <div class="p-5 sm:p-6">
 
       <!-- Specifications Grid -->
-      <div
-        style="display:grid;grid-template-columns:repeat(4, 1fr);gap:10px;background:#f9fafb;padding:14px;border-radius:12px;border:1px solid #f3f4f6;margin-bottom:20px;text-align:center;">
-        <div>
-          <span
-            style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;display:block;">Campus</span>
-          <span id="modalCampus" style="font-size:13px;font-weight:700;color:#1f2937;"></span>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 bg-gray-50 p-3.5 rounded-xl border border-gray-100 mb-5 text-center text-xs">
+        <div class="p-1">
+          <span class="text-[10px] text-gray-400 font-bold uppercase block">Campus</span>
+          <span id="modalCampus" class="text-xs sm:text-sm font-bold text-gray-800"></span>
         </div>
-        <div>
-          <span
-            style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;display:block;">Duration</span>
-          <span id="modalDuration" style="font-size:13px;font-weight:700;color:#1f2937;"></span>
+        <div class="p-1">
+          <span class="text-[10px] text-gray-400 font-bold uppercase block">Duration</span>
+          <span id="modalDuration" class="text-xs sm:text-sm font-bold text-gray-800"></span>
         </div>
-        <div>
-          <span
-            style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;display:block;">Cut-off</span>
-          <span id="modalCutoff" style="font-size:13px;font-weight:800;color:#15803d;"></span>
+        <div class="p-1">
+          <span class="text-[10px] text-gray-400 font-bold uppercase block">Cut-off</span>
+          <span id="modalCutoff" class="text-xs sm:text-sm font-black text-green-700"></span>
         </div>
-        <div>
-          <span style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;display:block;">Year</span>
-          <span id="modalYear" style="font-size:13px;font-weight:700;color:#1f2937;"></span>
+        <div class="p-1">
+          <span class="text-[10px] text-gray-400 font-bold uppercase block">Year</span>
+          <span id="modalYear" class="text-xs sm:text-sm font-bold text-gray-800"></span>
         </div>
       </div>
 
       <!-- Offering Note -->
       <div id="modalNoteBox"
-        style="display:none;background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#92400e;">
+        class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3.5 mb-5 text-xs text-amber-900">
         <strong>Special Note:</strong> <span id="modalNoteText"></span>
       </div>
 
       <!-- Core Subject Requirements -->
-      <div style="margin-bottom:20px;">
-        <p
-          style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 10px;">
+      <div class="mb-5">
+        <p class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
           Mandatory Core Subjects</p>
-        <div id="modalCoreList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        <div id="modalCoreList" class="flex flex-wrap gap-2"></div>
       </div>
 
       <!-- Subject Requirements by Learning Track -->
-      <div style="margin-bottom:24px;">
-        <p
-          style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 10px;">
+      <div class="mb-6">
+        <p class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
           Subject Requirements by Learning Track</p>
-        <div id="modalReqsList" style="display:flex;flex-direction:column;gap:12px;"></div>
+        <div id="modalReqsList" class="flex flex-col gap-3"></div>
       </div>
 
       <!-- Career Outlook Section -->
-      <div id="modalCareerOutlook" style="margin-bottom:24px;">
-        <p style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 10px;">Career Outlook</p>
-        <div id="modalCareerOutlookContent" style="background:linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);border:1px solid #bbf7d0;border-radius:12px;padding:16px;font-size:13px;color:#1f2937;line-height:1.7;">
-          <div style="display:flex;align-items:center;gap:8px;color:#6b7280;">
-            <div style="width:16px;height:16px;border:2px solid #86efac;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
-            <span style="font-size:12px;">Generating career outlook...</span>
+      <div id="modalCareerOutlook" class="mb-6">
+        <p class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Career Outlook</p>
+        <div id="modalCareerOutlookContent" class="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 text-xs sm:text-sm text-gray-800 leading-relaxed">
+          <div class="flex items-center gap-2 text-gray-500">
+            <div class="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+            <span class="text-xs">Generating career outlook...</span>
           </div>
         </div>
       </div>
-      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
       <!-- Action Buttons -->
-      <div
-        style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #f1f5f9;padding-top:16px;flex-wrap:wrap;gap:10px;">
+      <div class="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center border-t border-gray-100 pt-4 gap-3">
         <button onclick="closeProgramModal()"
-          style="background:#f3f4f6;color:#374151;border:none;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;">Close</button>
+          class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2.5 rounded-full text-xs font-semibold transition text-center">Close</button>
         <a href="/shs-eligibility/"
-          style="background:#052e16;color:#4ade80;text-decoration:none;padding:10px 22px;border-radius:100px;font-size:13px;font-weight:700;">Check
+          class="bg-[#052e16] hover:bg-green-900 text-green-400 px-5 py-2.5 rounded-full text-xs font-bold transition text-center text-decoration-none">Check
           Your WASSCE Eligibility →</a>
       </div>
+    </div>
 
     </div>
   </div>
