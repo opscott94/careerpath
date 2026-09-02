@@ -42,7 +42,7 @@ class SubjectLearningArea(models.Model):
 
 class Career(models.Model):
     name = models.CharField(max_length=150)
-    icon = models.CharField(max_length=50, default='🎯')
+    icon = models.CharField(max_length=50, default='default', blank=True)
     description = models.TextField(blank=True)
     keywords = models.TextField(help_text='Comma-separated keywords for NLP matching')
     learning_area = models.ForeignKey(LearningArea, on_delete=models.SET_NULL, null=True)

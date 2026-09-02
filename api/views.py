@@ -459,17 +459,20 @@ CRITICAL RULES:
                     'reason': g['reason'],
                 })
 
-            # Aggregate SHS Elective Requirements Summary across AI recommended programs
+            # Aggregate SHS Elective Requirements Summary
+            # If direct pathways exist, pick exclusively from direct pathways; else fallback to secondary pathways
             mandatory_set = []
             recommended_set = []
             track_names = set()
 
-            top_names = [g['name'] for g in top_groups]
-            top_program_objs = Program.objects.filter(
-                Q(name__in=top_names)
+            summary_target_groups = primary_groups if primary_groups else secondary_groups
+            summary_names = [g['name'] for g in summary_target_groups]
+
+            summary_program_objs = Program.objects.filter(
+                Q(name__in=summary_names)
             ).prefetch_related('requirements__mandatory_subjects', 'requirements__elective_subjects', 'requirements__learning_area')
 
-            for p_obj in top_program_objs:
+            for p_obj in summary_program_objs:
                 for req in p_obj.requirements.all():
                     if req.learning_area:
                         track_names.add(req.learning_area.name)

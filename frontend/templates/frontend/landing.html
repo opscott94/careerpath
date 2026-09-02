@@ -31,8 +31,8 @@
       </p>
 
       <div class="flex gap-6 mt-10">
-        <div><span class="text-2xl font-black" style="color:#4ade80;">5</span><span class="text-xs ml-2"
-            style="color:#86efac;">Universities</span></div>
+        <div><span class="text-2xl font-black" style="color:#4ade80;">{{ total_universities }}</span><span
+            class="text-xs ml-2" style="color:#86efac;">Universities</span></div>
         <div style="width:1px;background:rgba(255,255,255,0.15);"></div>
         <div><span class="text-2xl font-black" style="color:#4ade80;">{{ total_programs }}</span><span
             class="text-xs ml-2" style="color:#86efac;">Programs</span></div>
@@ -95,7 +95,8 @@
       <div class="t-item"><span class="t-dot"></span></div>
       <div class="t-item"><b class="text-green-600">UENR</b><span class="text-gray-400">Sunyani</span></div>
       <div class="t-item"><span class="t-dot"></span></div>
-      <div class="t-item"><b class="text-green-600">100+</b><span class="text-gray-400">Programs with cut-offs</span>
+      <div class="t-item"><b class="text-green-600">{{ total_programs }}</b><span class="text-gray-400">Programs with
+          cut-offs</span>
       </div>
       <div class="t-item"><span class="t-dot"></span></div>
       <div class="t-item"><b class="text-green-600">16</b><span class="text-gray-400">NaCCA learning areas</span></div>
@@ -166,14 +167,25 @@
             career and we instantly map it to the right SHS subjects you need — straight from the NaCCA guidelines.</p>
           <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:18px;margin-bottom:24px;">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span
-                style="width:20px;height:20px;background:rgba(74,222,128,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#4ade80;flex-shrink:0;">✓</span><span
-                style="color:#d1fae5;font-size:0.9rem;font-weight:600;">NaCCA-aligned recommendations</span></div>
+                style="width:20px;height:20px;background:rgba(74,222,128,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#4ade80;flex-shrink:0;"><svg
+                  width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg></span><span style="color:#d1fae5;font-size:0.9rem;font-weight:600;">NaCCA-aligned
+                recommendations</span></div>
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span
-                style="width:20px;height:20px;background:rgba(74,222,128,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#4ade80;flex-shrink:0;">✓</span><span
-                style="color:#d1fae5;font-size:0.9rem;font-weight:600;">Core + elective subjects explained</span></div>
+                style="width:20px;height:20px;background:rgba(74,222,128,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#4ade80;flex-shrink:0;"><svg
+                  width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg></span><span style="color:#d1fae5;font-size:0.9rem;font-weight:600;">Core + elective subjects
+                explained</span></div>
             <div style="display:flex;align-items:center;gap:10px;"><span
-                style="width:20px;height:20px;background:rgba(74,222,128,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#4ade80;flex-shrink:0;">✓</span><span
-                style="color:#d1fae5;font-size:0.85rem;">Links to university programs</span></div>
+                style="width:20px;height:20px;background:rgba(74,222,128,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#4ade80;flex-shrink:0;"><svg
+                  width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg></span><span style="color:#d1fae5;font-size:0.85rem;">Links to university programs</span></div>
           </div>
           <a href="/jhs-guide/"
             style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#4ade80,#16a34a);color:#052e16;font-weight:700;padding:12px 24px;border-radius:12px;text-decoration:none;font-size:0.9rem;width:100%;justify-content:center;box-shadow:0 4px 20px rgba(74,222,128,0.3);">
@@ -214,18 +226,31 @@
           <h3
             style="font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:10px;font-family:'Playfair Display',serif;">
             UNI Eligibility Checker</h3>
-          <p style="color:#bfdbfe;line-height:1.6;margin-bottom:24px;font-size:0.875rem;">Already finished SHS? Enter your
+          <p style="color:#bfdbfe;line-height:1.6;margin-bottom:24px;font-size:0.875rem;">Already finished SHS? Enter
+            your
             WASSCE grades and instantly see every university program you qualify for across the top 5 universities.</p>
           <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:18px;margin-bottom:24px;">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span
-                style="width:20px;height:20px;background:rgba(96,165,250,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#60a5fa;flex-shrink:0;">✓</span><span
-                style="color:#dbeafe;font-size:0.9rem;font-weight:600;">Aggregate calculated automatically</span></div>
+                style="width:20px;height:20px;background:rgba(96,165,250,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0;"><svg
+                  width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg></span><span style="color:#dbeafe;font-size:0.9rem;font-weight:600;">Aggregate calculated
+                automatically</span></div>
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span
-                style="width:20px;height:20px;background:rgba(96,165,250,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#60a5fa;flex-shrink:0;">✓</span><span
-                style="color:#dbeafe;font-size:0.9rem;font-weight:600;">Filter by program category</span></div>
+                style="width:20px;height:20px;background:rgba(96,165,250,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0;"><svg
+                  width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg></span><span style="color:#dbeafe;font-size:0.9rem;font-weight:600;">Filter by program
+                category</span></div>
             <div style="display:flex;align-items:center;gap:10px;"><span
-                style="width:20px;height:20px;background:rgba(96,165,250,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#60a5fa;flex-shrink:0;">✓</span><span
-                style="color:#dbeafe;font-size:0.85rem;">See cut-off vs your aggregate per uni</span></div>
+                style="width:20px;height:20px;background:rgba(96,165,250,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0;"><svg
+                  width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg></span><span style="color:#dbeafe;font-size:0.85rem;">See cut-off vs your aggregate per uni</span>
+            </div>
           </div>
           <a href="/shs-eligibility/"
             style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#60a5fa,#2563eb);color:#fff;font-weight:700;padding:12px 24px;border-radius:12px;text-decoration:none;font-size:0.9rem;width:100%;justify-content:center;box-shadow:0 4px 20px rgba(96,165,250,0.3);">
@@ -242,18 +267,27 @@
 <!-- Universities -->
 <section class="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
   <style>
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
   <div class="max-w-6xl mx-auto">
     <div class="text-center mb-8 sm:mb-12">
       <p class="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2.5">Coverage</p>
-      <h2 class="display text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Ghana's top universities — all in one place</h2>
-      <p class="text-gray-500 text-xs sm:text-sm">Real admission cut-offs across 280+ programs <span class="lg:hidden text-green-700 font-semibold">(swipe →)</span></p>
+      <h2 class="display text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Ghana's top universities — all in one place
+      </h2>
+      <p class="text-gray-500 text-xs sm:text-sm">Real admission cut-offs across {{ total_programs }} programs <span
+          class="lg:hidden text-green-700 font-semibold">(swipe →)</span></p>
     </div>
 
     <!-- Scrollable on mobile & tablet, 5-col grid on laptop/desktop -->
-    <div class="flex lg:grid lg:grid-cols-5 gap-3.5 sm:gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory no-scrollbar -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
+    <div
+      class="flex lg:grid lg:grid-cols-5 gap-3.5 sm:gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory no-scrollbar -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
       <!-- KNUST -->
       <div
         class="flex-shrink-0 w-[205px] sm:w-[225px] lg:w-auto snap-start flex flex-col justify-between min-h-[195px] sm:min-h-[205px] rounded-[18px] p-4 sm:p-5 relative overflow-hidden cursor-pointer transition-transform duration-300"

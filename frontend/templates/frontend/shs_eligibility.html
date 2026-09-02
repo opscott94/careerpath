@@ -603,8 +603,8 @@
         style="background:linear-gradient(135deg, #052e16 0%, #064e3b 100%);border-radius:14px;padding:14px 18px;color:#fff;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:0 4px 14px rgba(5,46,22,0.12);">
         <div style="display:flex;align-items:center;gap:10px;">
           <div
-            style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">
-            💡
+            style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;color:#4ade80;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
           </div>
           <div>
             <h3 style="font-size:13px;font-weight:700;margin:0 0 2px;color:#fff;">Not sure which program fits your
@@ -628,7 +628,7 @@
             AI Career & Program Matcher
           </span>
           <button onclick="toggleAICareerHelper()"
-            style="background:none;border:none;color:#047857;cursor:pointer;font-size:11px;font-weight:600;">✕
+            style="background:none;border:none;color:#047857;cursor:pointer;font-size:11px;font-weight:600;">
             Close</button>
         </div>
         <div class="flex flex-col sm:flex-row gap-2 mb-2">
@@ -842,7 +842,7 @@
       aggregate = data.aggregate;
 
       if (data.is_awaiting) {
-        document.getElementById('aggregateBadge').textContent = '⌛';
+        document.getElementById('aggregateBadge').textContent = '--';
         document.getElementById('aggregateLabel').textContent = `Awaiting WASSCE Results · ${data.total_qualified_programs} Subject Qualified Programs`;
       } else {
         document.getElementById('aggregateBadge').textContent = data.aggregate;
@@ -1000,7 +1000,7 @@
           <p style="margin:0;font-weight:700;color:${statusText};font-size:13px;">${statusHeader}</p>
           ${statusNote}
         </div>
-        <button onclick="clearAIInterestFilter()" style="font-size:11px;background:${statusText};color:#fff;border:none;padding:5px 12px;border-radius:100px;cursor:pointer;font-weight:600;">Clear AI Filter ✕</button>
+        <button onclick="clearAIInterestFilter()" style="font-size:11px;background:${statusText};color:#fff;border:none;padding:5px 12px;border-radius:100px;cursor:pointer;font-weight:600;">Clear AI Filter</button>
       </div>`;
 
       renderPrograms();
@@ -1129,7 +1129,9 @@
       if (!evaluatedData.results || evaluatedData.results.length === 0) {
         html = `
         <div class="p-8 text-center bg-gray-50 rounded-2xl border border-gray-200">
-          <div style="width:48px;height:48px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:#dc2626;font-size:20px;font-weight:bold;">✕</div>
+          <div style="width:48px;height:48px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:#dc2626;font-size:20px;font-weight:bold;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </div>
           <p class="text-gray-900 font-bold text-base mb-1.5">No Qualified Programmes Found</p>
           <p class="text-xs text-gray-500 max-w-md mx-auto mb-4 leading-relaxed">Based on your entered WASSCE grades, you did not meet the minimum entry requirements (most public university degree programmes require credit passes A1–C6 in 3 core subjects and 3 relevant electives).</p>
           <button onclick="document.getElementById('step2').classList.add('hidden');document.getElementById('step1').classList.remove('hidden');" class="text-xs font-bold text-green-800 bg-green-100 hover:bg-green-200 px-4 py-2.5 rounded-xl transition cursor-pointer">← Edit Subjects & Grades</button>
@@ -1228,7 +1230,7 @@
         </div>
         <div class="flex items-center gap-3 self-start sm:self-auto">
           <div class="text-center">
-            <div class="w-14 h-14 ${evaluatedData && evaluatedData.is_awaiting ? 'bg-sky-600' : 'bg-green-600'} text-white font-black rounded-xl flex items-center justify-center text-xl shadow-md">${evaluatedData && evaluatedData.is_awaiting ? '⌛' : aggregate}</div>
+            <div class="w-14 h-14 ${evaluatedData && evaluatedData.is_awaiting ? 'bg-sky-600' : 'bg-green-600'} text-white font-black rounded-xl flex items-center justify-center text-xl shadow-md">${evaluatedData && evaluatedData.is_awaiting ? '--' : aggregate}</div>
             <span class="text-xs text-gray-400 font-medium mt-1 block">${evaluatedData && evaluatedData.is_awaiting ? 'Awaiting' : 'Your Score'}</span>
           </div>
           <div class="text-center">
@@ -1717,7 +1719,7 @@
 
       // Success feedback inside dropzone card
       processingState.innerHTML = `
-        <div style="font-size:16px;font-weight:900;color:#15803d;margin-bottom:2px;">✓ WASSCE Results Slip Analyzed!</div>
+        <div style="font-size:16px;font-weight:900;color:#15803d;margin-bottom:2px;">WASSCE Results Slip Analyzed!</div>
         <p style="font-size:13px;font-weight:700;color:#15803d;margin:0;">Grades extracted & Best 6 aggregate calculated!</p>
         <p style="font-size:11px;color:#166534;margin:2px 0 0;">Review your populated grades below or click "Check Eligibility"</p>
       `;

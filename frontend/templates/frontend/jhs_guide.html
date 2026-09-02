@@ -7,7 +7,9 @@
     style="position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:url('https://images.pexels.com/photos/9879939/pexels-photo-9879939.jpeg');background-size:cover;background-position:center;opacity:0.08;">
   </div>
   <div class="text-center mb-10">
-    <div class="text-5xl mb-4">🎓</div>
+    <div class="w-12 h-12 rounded-xl bg-green-100 text-green-800 flex items-center justify-center mx-auto mb-4">
+      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+    </div>
     <h1 class="text-3xl font-bold mb-3">JHS Career Guide</h1>
     <p class="text-gray-500">Tell us your dream career and we'll map it to the right SHS subjects</p>
   </div>
@@ -15,13 +17,17 @@
   <div class="bg-white rounded-2xl shadow-sm p-4 sm:p-6 md:p-8 mb-6">
     <label class="block font-semibold mb-3 text-gray-700">What do you want to be? <span
         class="text-gray-400 font-normal">(type naturally)</span></label>
-    <div class="flex flex-col sm:flex-row gap-3">
+    <div class="relative flex items-center">
       <input id="careerInput" type="text" placeholder="e.g. I want to be a doctor, software developer, lawyer..."
-        class="flex-1 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-gray-800 text-sm sm:text-base"
+        class="w-full border border-gray-200 rounded-xl pl-4 pr-16 sm:pr-32 py-3.5 focus:outline-none focus:ring-2 focus:ring-green-600 text-gray-800 text-sm sm:text-base shadow-sm"
         onkeydown="if(event.key==='Enter') searchCareer()">
-      <button onclick="searchCareer()"
-        class="bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary transition text-sm sm:text-base">
-        Search
+      <button onclick="searchCareer()" type="button" aria-label="Search career"
+        class="absolute right-1.5 bg-[#052e16] hover:bg-emerald-950 text-white px-4 sm:px-5 py-2.5 rounded-lg font-bold text-sm sm:text-base flex items-center gap-2 transition cursor-pointer shadow-sm">
+        <svg class="w-4 h-4 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span class="hidden sm:inline">Search</span>
       </button>
     </div>
     <div class="flex flex-wrap gap-2 mt-4">
@@ -42,8 +48,10 @@
   </div>
 
   <div id="loadingDiv" class="hidden text-center py-8">
-    <div class="inline-block animate-spin text-4xl">⏳</div>
-    <p id="loadingText" class="text-gray-500 mt-2">Our AI is finding your career path...</p>
+    <div class="inline-block animate-spin text-green-700">
+      <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor"></path></svg>
+    </div>
+    <p id="loadingText" class="text-gray-500 mt-2 font-medium">Our AI is finding your career path...</p>
   </div>
 
   <div id="aiResultsDiv" class="hidden"></div>
@@ -119,7 +127,9 @@
     <div style="border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;background:#fff;margin-bottom:16px;">
       <div style="background:#052e16;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
         <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:44px;height:44px;background:rgba(74,222,128,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎯</div>
+          <div style="width:40px;height:40px;background:rgba(74,222,128,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#4ade80;flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+          </div>
           <div>
             <p style="font-size:18px;font-weight:700;color:#fff;margin:0;line-height:1.2;">${aiData.career_name}</p>
             <p style="font-size:11px;color:#86efac;margin:2px 0 0;">AI-Recommended Career Path</p>

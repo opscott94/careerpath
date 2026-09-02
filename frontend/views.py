@@ -1,31 +1,35 @@
 from .program_data import PROGRAMS_BY_UNI
 from django.shortcuts import render
-from eligibility.models import Program
+from eligibility.models import University, Program
 from django.db.models import Q
 
 def landing(request):
+    total_universities = University.objects.count() or 5
+    total_programs = Program.objects.count()
     unis = ['KNUST', 'UG', 'UCC', 'UDS', 'UENR']
     program_counts = {}
     for uni in unis:
         program_counts[uni] = Program.objects.filter(
             Q(university__short_name__iexact=uni) | Q(university__name__icontains=uni)
         ).count()
-    total_programs = Program.objects.count()
     return render(request, 'frontend/landing.html', {
         'unis': unis, 
+        'total_universities': total_universities,
         'program_counts': program_counts,
         'total_programs': total_programs
     })
 
 def universities(request):
+    total_universities = University.objects.count() or 5
+    total_programs = Program.objects.count()
     unis = ['KNUST', 'UG', 'UCC', 'UDS', 'UENR']
     program_counts = {}
     for uni in unis:
         program_counts[uni] = Program.objects.filter(
             Q(university__short_name__iexact=uni) | Q(university__name__icontains=uni)
         ).count()
-    total_programs = Program.objects.count()
     return render(request, 'frontend/universities.html', {
+        'total_universities': total_universities,
         'program_counts': program_counts,
         'total_programs': total_programs
     })
@@ -82,6 +86,10 @@ def university_detail(request, uni_key):
     
     from eligibility.models import University, Program
     from django.db.models import Q
+
+    uni_obj = University.objects.filter(
+        Q(short_name__iexact=uni_name) | Q(short_name__iexact=uni_key)
+    ).first()
 
     if uni_obj:
         if uni_obj.name:
@@ -159,6 +167,7 @@ def university_detail(request, uni_key):
     return render(request, 'frontend/university_detail.html', {
         'uni': uni,
         'programs': programs,
+        'total_programs': len(programs),
         'grouped_programs': grouped_programs,
         'program_map_json': json.dumps(program_map),
     })

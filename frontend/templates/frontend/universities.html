@@ -1,117 +1,143 @@
 {% extends 'frontend/base.html' %}
 {% block title %}Universities — CareerPath Ghana{% endblock %}
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+<div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-8">
   <p class="text-xs sm:text-sm text-gray-500 m-0">
     <a href="/" class="text-gray-500 hover:text-green-700 transition no-underline">Home</a> &nbsp;›&nbsp;
     <span class="text-gray-900 font-semibold">Universities</span>
   </p>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-16">
-  <div class="mb-6 sm:mb-8">
-    <p class="text-xs font-bold text-green-700 tracking-wider uppercase mb-1.5">
+<div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-16">
+  <div class="mb-5 sm:mb-8">
+    <p class="text-xs font-bold text-green-700 tracking-wider uppercase mb-1">
       Institution Directory
     </p>
-    <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">Ghana's Top Universities</h1>
+    <h1 class="text-xl sm:text-3xl font-extrabold text-gray-900 mb-1.5">Ghana's Top Universities</h1>
     <p class="text-xs sm:text-sm text-gray-500 m-0 max-w-2xl leading-relaxed">
       Browse public universities, explore colleges, and check verified admission cut-offs and entry requirements.
     </p>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+  <!-- Responsive grid: 2 columns on mobile, 2 on small tablet, 3 on desktop -->
+  <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2.5 sm:gap-5 md:gap-6">
     <!-- KNUST -->
     <div
-      style="background:linear-gradient(145deg,#052e16,#166534);border-radius:20px;padding:24px;position:relative;overflow:hidden;cursor:pointer;transition:transform 0.3s;contain:paint;"
-      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'"
+      class="rounded-xl sm:rounded-2xl p-3 sm:p-6 relative overflow-hidden cursor-pointer transition-all duration-300 flex flex-col justify-between min-h-[160px] sm:min-h-[210px]"
+      style="background:linear-gradient(145deg,#052e16,#166534);contain:paint;"
+      onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'"
       onclick="window.location='/university/knust/'">
       <div
-        style="font-size:10px;font-weight:700;color:#4ade80;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">
-        Kumasi</div>
-      <div
-        style="position:absolute;inset:0;background-image:url('/static/images/knust.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.2;border-radius:20px;">
+        style="position:absolute;inset:0;background-image:url('/static/images/knust.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.18;border-radius:inherit;">
       </div>
-      <div style="font-size:2rem;font-weight:900;color:#fff;margin-bottom:4px;">KNUST</div>
-      <div style="font-size:11px;color:#86efac;margin-bottom:12px;">Kwame Nkrumah Univ.</div>
-      <div style="font-size:11px;color:#4ade80;font-weight:600;">{{ program_counts.KNUST }} programs</div>
-      <div style="margin-top:12px;height:2px;background:rgba(74,222,128,0.3);border-radius:2px;">
-        <div style="height:100%;width:80%;background:#4ade80;border-radius:2px;"></div>
+      <div class="relative z-10">
+        <div class="text-[9px] sm:text-[10px] font-bold text-emerald-400 tracking-wider uppercase mb-1 sm:mb-2">
+          Kumasi
+        </div>
+        <div class="text-lg sm:text-2xl md:text-3xl font-black text-white leading-tight mb-0.5">KNUST</div>
+        <div class="text-[10px] sm:text-xs text-emerald-200 truncate">Kwame Nkrumah Univ.</div>
+      </div>
+      <div class="relative z-10 mt-3 sm:mt-4">
+        <div class="text-[10px] sm:text-xs text-emerald-300 font-semibold">{{ program_counts.KNUST }} programs</div>
+        <div class="mt-1.5 sm:mt-2 h-1 sm:h-1.5 bg-emerald-900/40 rounded-full overflow-hidden">
+          <div class="h-full w-4/5 bg-emerald-400 rounded-full"></div>
+        </div>
       </div>
     </div>
 
     <!-- UG -->
     <div
-      style="background:linear-gradient(145deg,#0c1445,#1e40af);border-radius:20px;padding:24px;cursor:pointer;transition:transform 0.3s;position:relative;overflow:hidden;contain:paint;"
-      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'"
+      class="rounded-xl sm:rounded-2xl p-3 sm:p-6 relative overflow-hidden cursor-pointer transition-all duration-300 flex flex-col justify-between min-h-[160px] sm:min-h-[210px]"
+      style="background:linear-gradient(145deg,#0c1445,#1e40af);contain:paint;"
+      onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'"
       onclick="window.location='/university/ug/'">
       <div
-        style="font-size:10px;font-weight:700;color:#60a5fa;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">
-        Legon, Accra</div>
-      <div
-        style="position:absolute;inset:0;background-image:url('/static/images/ug.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.2;border-radius:20px;">
+        style="position:absolute;inset:0;background-image:url('/static/images/ug.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.18;border-radius:inherit;">
       </div>
-      <div style="font-size:2rem;font-weight:900;color:#fff;margin-bottom:4px;">UG</div>
-      <div style="font-size:11px;color:#bfdbfe;margin-bottom:12px;">University of Ghana</div>
-      <div style="font-size:11px;color:#60a5fa;font-weight:600;">{{ program_counts.UG }} programs</div>
-      <div style="margin-top:12px;height:2px;background:rgba(96,165,250,0.3);border-radius:2px;">
-        <div style="height:100%;width:65%;background:#60a5fa;border-radius:2px;"></div>
+      <div class="relative z-10">
+        <div class="text-[9px] sm:text-[10px] font-bold text-blue-400 tracking-wider uppercase mb-1 sm:mb-2">
+          Legon, Accra
+        </div>
+        <div class="text-lg sm:text-2xl md:text-3xl font-black text-white leading-tight mb-0.5">UG</div>
+        <div class="text-[10px] sm:text-xs text-blue-200 truncate">University of Ghana</div>
+      </div>
+      <div class="relative z-10 mt-3 sm:mt-4">
+        <div class="text-[10px] sm:text-xs text-blue-300 font-semibold">{{ program_counts.UG }} programs</div>
+        <div class="mt-1.5 sm:mt-2 h-1 sm:h-1.5 bg-blue-900/40 rounded-full overflow-hidden">
+          <div class="h-full w-3/5 bg-blue-400 rounded-full"></div>
+        </div>
       </div>
     </div>
 
     <!-- UCC -->
     <div
-      style="background:linear-gradient(145deg,#450a0a,#b91c1c);border-radius:20px;padding:24px;cursor:pointer;transition:transform 0.3s;position:relative;overflow:hidden;contain:paint;"
-      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'"
+      class="rounded-xl sm:rounded-2xl p-3 sm:p-6 relative overflow-hidden cursor-pointer transition-all duration-300 flex flex-col justify-between min-h-[160px] sm:min-h-[210px]"
+      style="background:linear-gradient(145deg,#450a0a,#b91c1c);contain:paint;"
+      onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'"
       onclick="window.location='/university/ucc/'">
       <div
-        style="font-size:10px;font-weight:700;color:#fca5a5;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">
-        Cape Coast</div>
-      <div
-        style="position:absolute;inset:0;background-image:url('/static/images/ucc.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.2;border-radius:20px;">
+        style="position:absolute;inset:0;background-image:url('/static/images/ucc.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.18;border-radius:inherit;">
       </div>
-      <div style="font-size:2rem;font-weight:900;color:#fff;margin-bottom:4px;">UCC</div>
-      <div style="font-size:11px;color:#fecaca;margin-bottom:12px;">Univ. of Cape Coast</div>
-      <div style="font-size:11px;color:#fca5a5;font-weight:600;">{{ program_counts.UCC }} programs</div>
-      <div style="margin-top:12px;height:2px;background:rgba(252,165,165,0.3);border-radius:2px;">
-        <div style="height:100%;width:65%;background:#fca5a5;border-radius:2px;"></div>
+      <div class="relative z-10">
+        <div class="text-[9px] sm:text-[10px] font-bold text-rose-300 tracking-wider uppercase mb-1 sm:mb-2">
+          Cape Coast
+        </div>
+        <div class="text-lg sm:text-2xl md:text-3xl font-black text-white leading-tight mb-0.5">UCC</div>
+        <div class="text-[10px] sm:text-xs text-rose-200 truncate">Univ. of Cape Coast</div>
+      </div>
+      <div class="relative z-10 mt-3 sm:mt-4">
+        <div class="text-[10px] sm:text-xs text-rose-300 font-semibold">{{ program_counts.UCC }} programs</div>
+        <div class="mt-1.5 sm:mt-2 h-1 sm:h-1.5 bg-rose-900/40 rounded-full overflow-hidden">
+          <div class="h-full w-3/5 bg-rose-300 rounded-full"></div>
+        </div>
       </div>
     </div>
 
     <!-- UDS -->
     <div
-      style="background:linear-gradient(145deg,#2e1065,#6d28d9);border-radius:20px;padding:24px;cursor:pointer;transition:transform 0.3s;position:relative;overflow:hidden;contain:paint;"
-      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'"
+      class="rounded-xl sm:rounded-2xl p-3 sm:p-6 relative overflow-hidden cursor-pointer transition-all duration-300 flex flex-col justify-between min-h-[160px] sm:min-h-[210px]"
+      style="background:linear-gradient(145deg,#2e1065,#6d28d9);contain:paint;"
+      onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'"
       onclick="window.location='/university/uds/'">
       <div
-        style="font-size:10px;font-weight:700;color:#c4b5fd;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">
-        Tamale</div>
-      <div
-        style="position:absolute;inset:0;background-image:url('/static/images/uds.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.2;border-radius:20px;">
+        style="position:absolute;inset:0;background-image:url('/static/images/uds.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.18;border-radius:inherit;">
       </div>
-      <div style="font-size:2rem;font-weight:900;color:#fff;margin-bottom:4px;">UDS</div>
-      <div style="font-size:11px;color:#ddd6fe;margin-bottom:12px;">Univ. for Dev. Studies</div>
-      <div style="font-size:11px;color:#c4b5fd;font-weight:600;">{{ program_counts.UDS }} programs</div>
-      <div style="margin-top:12px;height:2px;background:rgba(196,181,253,0.3);border-radius:2px;">
-        <div style="height:100%;width:35%;background:#c4b5fd;border-radius:2px;"></div>
+      <div class="relative z-10">
+        <div class="text-[9px] sm:text-[10px] font-bold text-purple-300 tracking-wider uppercase mb-1 sm:mb-2">
+          Tamale
+        </div>
+        <div class="text-lg sm:text-2xl md:text-3xl font-black text-white leading-tight mb-0.5">UDS</div>
+        <div class="text-[10px] sm:text-xs text-purple-200 truncate">Univ. for Dev. Studies</div>
+      </div>
+      <div class="relative z-10 mt-3 sm:mt-4">
+        <div class="text-[10px] sm:text-xs text-purple-300 font-semibold">{{ program_counts.UDS }} programs</div>
+        <div class="mt-1.5 sm:mt-2 h-1 sm:h-1.5 bg-purple-900/40 rounded-full overflow-hidden">
+          <div class="h-full w-2/5 bg-purple-300 rounded-full"></div>
+        </div>
       </div>
     </div>
 
     <!-- UENR -->
     <div
-      style="background:linear-gradient(145deg,#431407,#c2410c);border-radius:20px;padding:24px;cursor:pointer;transition:transform 0.3s;position:relative;overflow:hidden;contain:paint;"
-      onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'"
+      class="rounded-xl sm:rounded-2xl p-3 sm:p-6 relative overflow-hidden cursor-pointer transition-all duration-300 flex flex-col justify-between min-h-[160px] sm:min-h-[210px]"
+      style="background:linear-gradient(145deg,#431407,#c2410c);contain:paint;"
+      onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'"
       onclick="window.location='/university/uenr/'">
       <div
-        style="font-size:10px;font-weight:700;color:#fdba74;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">
-        Sunyani</div>
-      <div
-        style="position:absolute;inset:0;background-image:url('/static/images/uenr.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.2;border-radius:20px;">
+        style="position:absolute;inset:0;background-image:url('/static/images/uenr.png');background-size:55%;background-position:center;background-repeat:no-repeat;opacity:0.18;border-radius:inherit;">
       </div>
-      <div style="font-size:2rem;font-weight:900;color:#fff;margin-bottom:4px;">UENR</div>
-      <div style="font-size:11px;color:#fed7aa;margin-bottom:12px;">Univ. of Energy</div>
-      <div style="font-size:11px;color:#fdba74;font-weight:600;">{{ program_counts.UENR }} programs</div>
-      <div style="margin-top:12px;height:2px;background:rgba(253,186,116,0.3);border-radius:2px;">
-        <div style="height:100%;width:45%;background:#fdba74;border-radius:2px;"></div>
+      <div class="relative z-10">
+        <div class="text-[9px] sm:text-[10px] font-bold text-orange-300 tracking-wider uppercase mb-1 sm:mb-2">
+          Sunyani
+        </div>
+        <div class="text-lg sm:text-2xl md:text-3xl font-black text-white leading-tight mb-0.5">UENR</div>
+        <div class="text-[10px] sm:text-xs text-orange-200 truncate">Univ. of Energy</div>
+      </div>
+      <div class="relative z-10 mt-3 sm:mt-4">
+        <div class="text-[10px] sm:text-xs text-orange-300 font-semibold">{{ program_counts.UENR }} programs</div>
+        <div class="mt-1.5 sm:mt-2 h-1 sm:h-1.5 bg-orange-900/40 rounded-full overflow-hidden">
+          <div class="h-full w-1/2 bg-orange-300 rounded-full"></div>
+        </div>
       </div>
     </div>
   </div>
