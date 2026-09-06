@@ -20,23 +20,20 @@
     min-height: 100vh !important;
     margin: 0 !important;
     padding: 0 !important;
-    background: #f8fafc !important;
+    background: #f4f6f9 !important;
   }
 
   body.login {
     display: flex !important;
-    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     padding: 24px !important;
     box-sizing: border-box !important;
   }
 
-  body.login::before {
-    display: none !important;
-  }
+  body.login::before { display: none !important; }
 
-  /* Completely suppress all default Django chrome, titles, and headers */
+  /* Hide all Django default chrome */
   body.login #header,
   body.login #branding,
   body.login #user-tools,
@@ -51,10 +48,9 @@
     display: none !important;
   }
 
-  /* Center container */
   body.login #container {
     width: 100% !important;
-    max-width: 860px !important;
+    max-width: 480px !important;
     margin: 0 auto !important;
     padding: 0 !important;
     background: transparent !important;
@@ -85,115 +81,100 @@
     justify-content: center !important;
   }
 
-  /* The Split Card */
-  .login-split-card {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: stretch !important;
-    width: 100% !important;
-    max-width: 860px !important;
-    min-height: 480px !important;
-    margin: 0 auto !important;
+  /* Login Card */
+  .login-card {
+    width: 100%;
+    max-width: 460px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+  }
+
+  /* Green header strip */
+  .login-card-header {
+    background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+    padding: 32px 36px 28px;
+    text-align: center;
+  }
+
+  .login-card-header img {
+    height: 48px;
+    width: 48px;
+    object-fit: contain;
+    margin-bottom: 14px;
+  }
+
+  .login-card-header h1 {
+    display: block !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    margin: 0 0 4px 0 !important;
     padding: 0 !important;
-    background: #ffffff !important;
-    border-radius: 16px !important;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
-    border: 1px solid #e2e8f0 !important;
-    overflow: hidden !important;
-    box-sizing: border-box !important;
+    letter-spacing: -0.02em !important;
+    background: none !important;
+    border: none !important;
   }
 
-  /* Left Side: Brand Panel */
-  .login-brand-panel {
-    flex: 1 1 50% !important;
-    width: 50% !important;
-    background: linear-gradient(135deg, #052e16 0%, #166534 100%) !important;
-    padding: 48px 40px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    color: #ffffff !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
+  .login-card-header p {
+    color: #d1fae5;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
   }
 
-  .brand-logo-wrap {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
+  /* Form body */
+  .login-card-body {
+    padding: 32px 36px 36px;
   }
 
-  .brand-title {
-    font-size: 1.9rem !important;
-    font-weight: 800 !important;
-    color: #ffffff !important;
-    line-height: 1.2 !important;
-    margin: 0 0 12px 0 !important;
-    letter-spacing: -0.01em !important;
+  .login-card-body h2 {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+    margin: 0 0 4px 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
   }
 
-  .brand-title span {
-    color: #4ade80;
-  }
-
-  .brand-desc {
-    font-size: 0.92rem !important;
-    color: #bbf7d0 !important;
-    line-height: 1.6 !important;
-    margin: 0 !important;
-  }
-
-  /* Right Side: Form Panel */
-  .login-form-panel {
-    flex: 1 1 50% !important;
-    width: 50% !important;
-    background: #ffffff !important;
-    padding: 48px 44px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
-  }
-
-  .form-title {
-    font-size: 1.5rem !important;
-    font-weight: 800 !important;
-    color: #0f172a !important;
-    margin: 0 0 6px 0 !important;
-    letter-spacing: -0.01em !important;
-  }
-
-  .form-sub {
-    font-size: 0.9rem !important;
-    color: #64748b !important;
-    margin: 0 0 26px 0 !important;
+  .login-card-body .form-sub {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 24px 0;
   }
 
   .login-field {
-    margin-bottom: 18px !important;
+    margin-bottom: 18px;
   }
 
   .login-field label {
     display: block !important;
-    font-size: 13px !important;
-    font-weight: 700 !important;
-    color: #0f172a !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #111827 !important;
     margin-bottom: 6px !important;
   }
 
   .login-input {
     width: 100% !important;
     box-sizing: border-box !important;
-    border: 1px solid #cbd5e1 !important;
+    border: 1.5px solid #d1d5db !important;
     border-radius: 8px !important;
-    padding: 11px 14px !important;
-    font-size: 14px !important;
-    color: #0f172a !important;
+    padding: 12px 14px !important;
+    font-size: 15px !important;
+    color: #111827 !important;
     background: #ffffff !important;
-    transition: all 0.2s ease !important;
+    transition: border-color 0.15s, box-shadow 0.15s !important;
     outline: none !important;
+  }
+
+  .login-input::placeholder {
+    color: #9ca3af !important;
   }
 
   .login-input:focus {
@@ -203,128 +184,105 @@
 
   .login-submit-btn {
     width: 100% !important;
-    background: #052e16 !important;
+    background: #16a34a !important;
     color: #ffffff !important;
     border: none !important;
     border-radius: 8px !important;
-    padding: 12px !important;
-    font-size: 14px !important;
+    padding: 13px !important;
+    font-size: 15px !important;
     font-weight: 700 !important;
     cursor: pointer !important;
-    transition: all 0.2s ease !important;
+    transition: background 0.15s !important;
     margin-top: 6px !important;
     box-sizing: border-box !important;
   }
 
   .login-submit-btn:hover {
-    background: #14532d !important;
+    background: #15803d !important;
   }
 
   .login-error-alert {
     background: #fef2f2 !important;
-    border: 1px solid #fecaca !important;
+    border: 1px solid #fca5a5 !important;
     color: #991b1b !important;
     border-radius: 8px !important;
-    padding: 10px 14px !important;
-    font-size: 13px !important;
+    padding: 12px 14px !important;
+    font-size: 14px !important;
     font-weight: 600 !important;
     margin-bottom: 18px !important;
-    line-height: 1.5 !important;
   }
 
   .login-back-link {
-    margin-top: 22px !important;
-    text-align: center !important;
+    margin-top: 20px;
+    text-align: center;
   }
 
   .login-back-link a {
-    color: #16a34a !important;
-    font-size: 13px !important;
-    font-weight: 700 !important;
+    color: #15803d !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
     text-decoration: none !important;
   }
 
   .login-back-link a:hover {
-    color: #052e16 !important;
     text-decoration: underline !important;
   }
 
-  @media (max-width: 768px) {
-    .login-split-card {
-      flex-direction: column !important;
-      min-height: auto !important;
-    }
-    .login-brand-panel, .login-form-panel {
-      width: 100% !important;
-      flex: 1 1 auto !important;
-      padding: 36px 28px !important;
-    }
+  @media (max-width: 520px) {
+    .login-card-header { padding: 24px 24px 20px; }
+    .login-card-body { padding: 24px; }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="login-split-card">
+<div class="login-card">
 
-  <!-- Left: Brand Panel -->
-  <div class="login-brand-panel">
-    <div>
-      <div class="brand-logo-wrap">
-        <img src="{% static 'images/favicon.png' %}" alt="CareerPath" style="height: 36px; width: auto; object-fit: contain;">
-        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #86efac; background: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 6px;">
-          Admin Portal
-        </span>
-      </div>
-
-      <h1 class="brand-title">Career<span>Path</span><br>Ghana</h1>
-      <p class="brand-desc">
-        Centralized portal for managing national university programs, cut-off points, and subject criteria.
-      </p>
-    </div>
+  <!-- Green branded header -->
+  <div class="login-card-header">
+    <img src="{% static 'images/favicon.png' %}" alt="CareerPath">
+    <h1>CareerPath Ghana</h1>
+    <p>Administration Portal</p>
   </div>
 
-  <!-- Right: Sign In Form -->
-  <div class="login-form-panel">
-    <div>
-      <h2 class="form-title">Sign In</h2>
-      <p class="form-sub">Enter your administrator credentials below.</p>
+  <!-- White form body -->
+  <div class="login-card-body">
+    <h2>Welcome back</h2>
+    <p class="form-sub">Sign in with your admin credentials.</p>
 
-      {% if form.errors and not form.non_field_errors %}
-        <div class="login-error-alert">
-          Please enter a correct username and password.
-        </div>
-      {% endif %}
-
-      {% if form.non_field_errors %}
-        {% for error in form.non_field_errors %}
-          <div class="login-error-alert">
-            {{ error }}
-          </div>
-        {% endfor %}
-      {% endif %}
-
-      <form action="{{ app_path }}" method="post" id="login-form">
-        {% csrf_token %}
-
-        <div class="login-field">
-          <label for="id_username">Username</label>
-          <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username" class="login-input" placeholder="Your username">
-        </div>
-
-        <div class="login-field">
-          <label for="id_password">Password</label>
-          <input type="password" name="password" autocomplete="current-password" required id="id_password" class="login-input" placeholder="Your password">
-          <input type="hidden" name="next" value="{{ next }}">
-        </div>
-
-        <button type="submit" class="login-submit-btn">
-          Sign In
-        </button>
-      </form>
-
-      <div class="login-back-link">
-        <a href="/">← Return to Public Website</a>
+    {% if form.errors and not form.non_field_errors %}
+      <div class="login-error-alert">
+        Please enter a correct username and password.
       </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+        <div class="login-error-alert">
+          {{ error }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form action="{{ app_path }}" method="post" id="login-form">
+      {% csrf_token %}
+
+      <div class="login-field">
+        <label for="id_username">Username</label>
+        <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username" class="login-input" placeholder="Enter username">
+      </div>
+
+      <div class="login-field">
+        <label for="id_password">Password</label>
+        <input type="password" name="password" autocomplete="current-password" required id="id_password" class="login-input" placeholder="Enter password">
+        <input type="hidden" name="next" value="{{ next }}">
+      </div>
+
+      <button type="submit" class="login-submit-btn">Sign In</button>
+    </form>
+
+    <div class="login-back-link">
+      <a href="/">← Back to CareerPath Ghana</a>
     </div>
   </div>
 
