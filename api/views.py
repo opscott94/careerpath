@@ -266,7 +266,7 @@ CRITICAL RULES:
     # 2. Fallback to Gemini Developer API Key if Vertex AI failed or creds not available
     if not parsed:
         gemini_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDnUoGfv6RdAdUDkhFk9zWg3qy1TFzugaQ')
-        for model_name in ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]:
+        for model_name in ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"]:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
             try:
                 req_obj = urllib.request.Request(
@@ -669,7 +669,7 @@ Degree Program: {program_name}"""
     # 2. Fallback to Gemini Developer API
     if not result_text:
         gemini_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDnUoGfv6RdAdUDkhFk9zWg3qy1TFzugaQ')
-        for model_name in ["gemini-2.0-flash", "gemini-1.5-flash"]:
+        for model_name in ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"]:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
             try:
                 req_obj = urllib.request.Request(
@@ -1162,7 +1162,7 @@ CRITICAL RULES:
     # 2. Fallback to Gemini Developer API Key if Vertex AI failed or creds not available
     if not parsed:
         gemini_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDnUoGfv6RdAdUDkhFk9zWg3qy1TFzugaQ')
-        for model_name in ["gemini-2.0-flash", "gemini-1.5-flash"]:
+        for model_name in ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"]:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
             try:
                 req_obj = urllib.request.Request(
