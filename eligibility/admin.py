@@ -32,9 +32,8 @@ class UniversityAdmin(admin.ModelAdmin):
 
 @admin.register(Program)
 class ProgramAdmin(admin.ModelAdmin):
-    list_display = ['name', 'university', 'campus', 'college', 'aggregate', 'min_passing_grade', 'year']
-    list_filter = ['university', 'campus', 'college', 'min_passing_grade']
-    list_editable = ['min_passing_grade']
+    list_display = ['name', 'university', 'college', 'aggregate', 'year']
+    list_filter = ['university', 'college', 'year']
     search_fields = ['name', 'campus', 'note']
     filter_horizontal = ['core_subjects']
     inlines = [ProgramRequirementInline]
