@@ -827,17 +827,41 @@ def evaluate_eligibility(request):
             aggregate = raw_eng + raw_math + best_3rd_core
         user_elective_names = [e['name'].lower() for e in raw_electives]
 
-    science_subs = {'biology', 'chemistry', 'physics', 'additional mathematics', 'agricultural science'}
-    business_subs = {'business management', 'accounting', 'business economics'}
-    computing_subs = {'computer science', 'ict'}
-    arts_subs = {'economics', 'geography', 'government', 'history', 'literature in english', 'christian religious studies', 'islamic religious studies', 'rme'}
-    tech_subs = {'design and communication technology', 'electrical and electronic technology', 'building construction and wood technology', 'automobile and metal technology'}
+    def norm_sub(name):
+        n = (name or '').strip().lower()
+        n = re.sub(r'[\(\)]', '', n).strip()
+        if 'math' in n and ('elec' in n or 'add' in n or 'furth' in n):
+            return 'elective mathematics'
+        if 'math' in n and ('core' in n or 'gen' in n):
+            return 'core mathematics'
+        if 'science' in n and ('integ' in n or 'gen' in n):
+            return 'integrated science'
+        if 'physics' in n:
+            return 'physics'
+        if 'chem' in n:
+            return 'chemistry'
+        if 'bio' in n and 'med' not in n:
+            return 'biology'
+        return n
 
-    has_science = any(s in user_elective_names for s in science_subs)
-    has_business = any(s in user_elective_names for s in business_subs)
-    has_computing = any(s in user_elective_names for s in computing_subs)
-    has_arts = any(s in user_elective_names for s in arts_subs)
-    has_tech = any(s in user_elective_names for s in tech_subs)
+    # Map normalized user electives
+    user_elec_dict = {}
+    if not is_awaiting:
+        for e in raw_electives:
+            user_elec_dict[norm_sub(e['name'])] = e['grade']
+
+    science_subs = {'biology', 'chemistry', 'physics', 'elective mathematics', 'agricultural science'}
+    business_subs = {'business management', 'accounting', 'business economics', 'cost accounting'}
+    computing_subs = {'computer science', 'ict', 'information technology'}
+    arts_subs = {'economics', 'geography', 'government', 'history', 'literature in english', 'christian religious studies', 'islamic religious studies', 'rme'}
+    tech_subs = {'design and communication technology', 'electrical and electronic technology', 'building construction and wood technology', 'automobile and metal technology', 'technical drawing', 'applied electricity', 'electronics'}
+
+    norm_user_elective_names = [norm_sub(name) for name in user_elective_names]
+    has_science = any(s in norm_user_elective_names for s in science_subs)
+    has_business = any(s in norm_user_elective_names for s in business_subs)
+    has_computing = any(s in norm_user_elective_names for s in computing_subs)
+    has_arts = any(s in norm_user_elective_names for s in arts_subs)
+    has_tech = any(s in norm_user_elective_names for s in tech_subs)
 
     all_programs = Program.objects.select_related('university').prefetch_related(
         'core_subjects',
@@ -860,101 +884,149 @@ def evaluate_eligibility(request):
         if not cores_passed:
             continue
 
-        # Build user_elective_names for this program's passing threshold
-        if not is_awaiting:
-            prog_elective_names = [e['name'].lower() for e in raw_electives if e['grade'] <= min_pass]
-        else:
-            prog_elective_names = user_elective_names
+        category = 'all'
+        lower_pname = p.name.lower()
+        if any(k in lower_pname for k in ['medicine', 'surgery', 'pharmacy', 'nursing', 'midwifery', 'medical', 'dental', 'health', 'optometry', 'herbal', 'physiotherapy', 'dietetics']):
+            category = 'health'
+        elif 'engineering' in lower_pname or 'architecture' in lower_pname:
+            category = 'engineering'
+        elif any(k in lower_pname for k in ['computer', 'information technology', 'software', 'ict', 'data']):
+            category = 'computing'
+        elif any(k in lower_pname for k in ['business', 'accounting', 'marketing', 'banking', 'finance', 'management', 'agribusiness', 'administration']):
+            category = 'business'
+        elif any(k in lower_pname for k in ['law', 'llb', 'political', 'sociology', 'social', 'history']):
+            category = 'law'
+        elif any(k in lower_pname for k in ['agriculture', 'crop', 'animal', 'soil', 'agric']):
+            category = 'agric'
+        elif any(k in lower_pname for k in ['biology', 'chemistry', 'physics', 'mathematics', 'biochemistry', 'science']):
+            category = 'science'
 
         requirements = p.requirements.all()
         is_qualified = False
+        best_prog_aggregate = None
 
-        if not requirements.exists():
-            is_qualified = True
-        else:
-            for req in requirements:
-                la_name = (req.learning_area.name.lower() if req.learning_area else '').strip()
-                m_subs = [s.name.strip().lower() for s in req.mandatory_subjects.all()]
-                e_subs = [s.name.strip().lower() for s in req.elective_subjects.all()]
+        if is_awaiting:
+            # Evaluate subject track matching for awaiting mode
+            if not requirements.exists():
+                is_qualified = True
+            else:
+                for req in requirements:
+                    la_name = (req.learning_area.name.lower() if req.learning_area else '').strip()
+                    m_subs = [norm_sub(s.name) for s in req.mandatory_subjects.all()]
+                    e_subs = [norm_sub(s.name) for s in req.elective_subjects.all()]
 
-                if m_subs and not all(m in prog_elective_names for m in m_subs):
-                    continue
+                    if m_subs and not all(m in norm_user_elective_names for m in m_subs):
+                        continue
 
-                if e_subs:
-                    if any(e in prog_elective_names for e in e_subs):
-                        is_qualified = True
-                        break
-                elif la_name:
-                    if la_name == 'science' and has_science:
-                        is_qualified = True
-                        break
-                    elif la_name == 'business' and has_business:
-                        is_qualified = True
-                        break
-                    elif 'arts' in la_name and (has_arts or has_business):
-                        is_qualified = True
-                        break
-                    elif la_name == 'computing' and (has_computing or has_science):
-                        is_qualified = True
-                        break
-                    elif 'technology' in la_name and (has_tech or has_science):
-                        is_qualified = True
-                        break
-                    else:
-                        if not m_subs:
+                    if e_subs:
+                        if any(e in norm_user_elective_names for e in e_subs):
                             is_qualified = True
                             break
-                else:
+                    elif la_name:
+                        if la_name == 'science' and has_science:
+                            is_qualified = True
+                            break
+                        elif la_name == 'business' and has_business:
+                            is_qualified = True
+                            break
+                        elif 'arts' in la_name and (has_arts or has_business):
+                            is_qualified = True
+                            break
+                        elif la_name == 'computing' and (has_computing or has_science):
+                            is_qualified = True
+                            break
+                        elif 'technology' in la_name and (has_tech or has_science):
+                            is_qualified = True
+                            break
+                        else:
+                            if not m_subs:
+                                is_qualified = True
+                                break
+                    else:
+                        is_qualified = True
+                        break
+        else:
+            # Graded mode: calculate core points
+            u_eng = uni.get_point(raw_eng)
+            u_math = uni.get_point(raw_math)
+            u_sci = uni.get_point(raw_sci)
+            u_soc = uni.get_point(raw_soc)
+
+            # Science, Health, Engineering & IT programs strictly require Integrated Science
+            requires_science_core = (category in ['science', 'health', 'engineering', 'computing']) or \
+                                    any(c.name.strip().lower() == 'integrated science' for c in p.core_subjects.all())
+            
+            if requires_science_core:
+                if raw_sci > min_pass:
+                    continue  # Integrated Science pass is mandatory for science-based degree programs
+                u_3rd_core = u_sci
+            else:
+                u_3rd_core = min(u_sci, u_soc)
+
+            core_sum = u_eng + u_math + u_3rd_core
+
+            if not requirements.exists():
+                # General entry without specific requirement routes
+                passing_grades = sorted([uni.get_point(g) for g in user_elec_dict.values() if g <= min_pass])
+                if len(passing_grades) >= 3:
+                    best_prog_aggregate = core_sum + sum(passing_grades[:3])
                     is_qualified = True
-                    break
+            else:
+                for req in requirements:
+                    la_name = (req.learning_area.name.lower() if req.learning_area else '').strip()
+                    m_subs = [norm_sub(s.name) for s in req.mandatory_subjects.all()]
+                    e_subs = [norm_sub(s.name) for s in req.elective_subjects.all()]
+
+                    # Check mandatory electives
+                    m_points = []
+                    m_missing = False
+                    used_subs = set()
+                    for m in m_subs:
+                        if m in user_elec_dict and user_elec_dict[m] <= min_pass:
+                            m_points.append(uni.get_point(user_elec_dict[m]))
+                            used_subs.add(m)
+                        else:
+                            m_missing = True
+                            break
+
+                    if m_missing:
+                        continue
+
+                    # Number of additional electives needed to form 3 electives
+                    needed = max(0, 3 - len(m_points))
+
+                    # Remaining available passing electives
+                    rem_candidates = []
+                    for sub_name, grade in user_elec_dict.items():
+                        if sub_name not in used_subs and grade <= min_pass:
+                            priority = 0
+                            if e_subs and sub_name in e_subs:
+                                priority = -1  # prioritized elective
+                            rem_candidates.append((priority, uni.get_point(grade), sub_name))
+
+                    rem_candidates.sort(key=lambda x: (x[0], x[1]))
+
+                    if len(m_points) + len(rem_candidates) < 3:
+                        continue  # Cannot form 3 electives for this route
+
+                    extra_points = [x[1] for x in rem_candidates[:needed]]
+                    route_elec_sum = sum(m_points) + sum(extra_points)
+                    route_aggregate = core_sum + route_elec_sum
+
+                    is_qualified = True
+                    if best_prog_aggregate is None or route_aggregate < best_prog_aggregate:
+                        best_prog_aggregate = route_aggregate
 
         if is_qualified:
-            category = 'all'
-            lower_pname = p.name.lower()
-            if any(k in lower_pname for k in ['medicine', 'surgery', 'pharmacy', 'nursing', 'midwifery', 'medical', 'dental', 'health', 'optometry', 'herbal', 'physiotherapy', 'dietetics']):
-                category = 'health'
-            elif 'engineering' in lower_pname or 'architecture' in lower_pname:
-                category = 'engineering'
-            elif any(k in lower_pname for k in ['computer', 'information technology', 'software', 'ict', 'data']):
-                category = 'computing'
-            elif any(k in lower_pname for k in ['business', 'accounting', 'marketing', 'banking', 'finance', 'management', 'agribusiness', 'administration']):
-                category = 'business'
-            elif any(k in lower_pname for k in ['law', 'llb', 'political', 'sociology', 'social', 'history']):
-                category = 'law'
-            elif any(k in lower_pname for k in ['agriculture', 'crop', 'animal', 'soil', 'agric']):
-                category = 'agric'
-            elif any(k in lower_pname for k in ['biology', 'chemistry', 'physics', 'mathematics', 'biochemistry', 'science']):
-                category = 'science'
-
             cutoff = p.aggregate
             if is_awaiting:
                 is_eligible = True
                 is_borderline = False
                 prog_aggregate = None
             else:
-                # Convert raw grades to this university's point scale
-                u_eng = uni.get_point(raw_eng)
-                u_math = uni.get_point(raw_math)
-                u_sci = uni.get_point(raw_sci)
-                u_soc = uni.get_point(raw_soc)
-
-                # Science, Health, Engineering & IT programs strictly require Integrated Science
-                requires_science_core = (category in ['science', 'health', 'engineering', 'computing']) or \
-                                        any(c.name.strip().lower() == 'integrated science' for c in p.core_subjects.all())
-                
-                if requires_science_core:
-                    if raw_sci > min_pass:
-                        continue  # Integrated Science pass is mandatory for science-based degree programs
-                    u_3rd_core = u_sci
-                else:
-                    u_3rd_core = min(u_sci, u_soc)
-
-                # Convert elective grades to university scale and pick best 3 passing
-                u_elec_grades = sorted([uni.get_point(el['grade']) for el in raw_electives if el['grade'] <= min_pass])
-                if len(u_elec_grades) < 3:
+                prog_aggregate = best_prog_aggregate
+                if prog_aggregate is None:
                     continue
-
-                prog_aggregate = u_eng + u_math + u_3rd_core + sum(u_elec_grades[:3])
 
                 is_eligible = (cutoff is not None and prog_aggregate <= cutoff)
                 is_borderline = (cutoff is not None and not is_eligible and prog_aggregate <= cutoff + 3)
@@ -989,6 +1061,7 @@ def evaluate_eligibility(request):
                 'year': p.year,
                 'campus': p.campus or 'Main Campus',
                 'note': p.note or '',
+                'user_aggregate': prog_aggregate,
                 'is_eligible': is_eligible,
                 'is_borderline': is_borderline,
                 'margin': (cutoff - prog_aggregate) if (cutoff and prog_aggregate) else None,

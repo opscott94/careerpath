@@ -1128,6 +1128,7 @@
             </span>
             <span style="font-size:10px;font-weight:600;background:${styleObj.bg};color:${styleObj.text};padding:2px 8px;border-radius:4px;">${prog.college || prog.faculty || styleObj.label}</span>
             ${prog.cutoff ? `<span class="text-xs text-gray-500 font-medium">Cutoff: <strong>${prog.cutoff}</strong></span>` : ''}
+            ${prog.user_aggregate ? `<span class="text-xs font-semibold ${prog.is_eligible ? 'text-green-700 bg-green-50 border border-green-200' : 'text-amber-800 bg-amber-50 border border-amber-200'} px-2 py-0.5 rounded">Score: ${prog.user_aggregate}</span>` : ''}
             ${aiBadge}
           </div>
           <p class="text-xs text-gray-500">${prog.campus} · ${prog.university_name}</p>
@@ -1219,8 +1220,10 @@
     } else {
       detailStatusBadge = prog.is_eligible
         ? '<span style="background:#dcfce7;color:#15803d;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">Eligible for Admission</span>'
-        : '<span style="background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">Borderline</span>';
+        : '<span style="background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;">Borderline (Fee-Paying / Parallel)</span>';
     }
+
+    const programScore = (evaluatedData && evaluatedData.is_awaiting) ? '--' : (prog.user_aggregate || aggregate);
 
     document.getElementById('step3Content').innerHTML = `
     <!-- Header Program Details Card -->
@@ -1242,8 +1245,8 @@
         </div>
         <div class="flex items-center gap-3 self-start sm:self-auto">
           <div class="text-center">
-            <div class="w-14 h-14 ${evaluatedData && evaluatedData.is_awaiting ? 'bg-sky-600' : 'bg-green-600'} text-white font-black rounded-xl flex items-center justify-center text-xl shadow-md">${evaluatedData && evaluatedData.is_awaiting ? '--' : aggregate}</div>
-            <span class="text-xs text-gray-400 font-medium mt-1 block">${evaluatedData && evaluatedData.is_awaiting ? 'Awaiting' : 'Your Score'}</span>
+            <div class="w-14 h-14 ${evaluatedData && evaluatedData.is_awaiting ? 'bg-sky-600' : (prog.is_eligible ? 'bg-green-600' : 'bg-amber-600')} text-white font-black rounded-xl flex items-center justify-center text-xl shadow-md">${programScore}</div>
+            <span class="text-xs text-gray-400 font-medium mt-1 block">${evaluatedData && evaluatedData.is_awaiting ? 'Awaiting' : 'Program Score'}</span>
           </div>
           <div class="text-center">
             <div class="w-14 h-14 bg-gray-100 text-gray-800 font-black rounded-xl flex items-center justify-center text-xl border border-gray-200">${prog.cutoff || 'N/A'}</div>
@@ -1264,8 +1267,12 @@
         </div>
         <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
           <span class="text-gray-400 font-medium block">Cut-off Margin</span>
-          <span class="font-bold ${prog.margin < 0 ? 'text-green-700' : prog.margin === 0 ? 'text-green-600' : 'text-amber-700'} text-sm">
-            ${prog.margin < 0 ? `${Math.abs(prog.margin)} pts ahead` : prog.margin === 0 ? 'Exact match' : `${Math.abs(prog.margin)} pts away`}
+          <span class="font-bold ${prog.is_eligible ? 'text-green-700' : 'text-amber-700'} text-sm">
+            ${prog.cutoff && prog.user_aggregate 
+              ? (prog.is_eligible 
+                  ? (prog.cutoff === prog.user_aggregate ? 'Exact match' : `${prog.cutoff - prog.user_aggregate} pts ahead`)
+                  : `${prog.user_aggregate - prog.cutoff} pts over cutoff (Borderline)`)
+              : 'N/A'}
           </span>
         </div>
         <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
