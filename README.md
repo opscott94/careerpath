@@ -1,6 +1,6 @@
 # CareerPath Ghana
 
-CareerPath Ghana is an intelligent career guidance and tertiary academic eligibility evaluation platform built specifically for the Ghanaian educational system. It empowers Junior High School (JHS) and Senior High School (SHS) students to make informed educational decisions by mapping career aspirations to academic tracks, validating WASSCE grades against university cut-off benchmarks, and recommending verified degree pathways across premier Ghanaian universities.
+CareerPath Ghana is an intelligent career guidance and tertiary academic eligibility evaluation platform built specifically for the Ghanaian educational system. It empowers Junior High School (JHS) and Senior High School (SHS) students to make informed educational decisions by mapping career aspirations to academic tracks, validating WASSCE grades against university cut-off benchmarks, generating real-time AI career prospects for degree programmes, and recommending verified pathways across premier Ghanaian universities.
 
 ---
 
@@ -10,7 +10,7 @@ CareerPath Ghana is an intelligent career guidance and tertiary academic eligibi
 - [Key Features](#key-features)
   - [1. WASSCE Eligibility Assessment & Auto-Qualification Engine](#1-wassce-eligibility-assessment--auto-qualification-engine)
   - [2. AI-Powered Career Advisor & Interest Matching](#2-ai-powered-career-advisor--interest-matching)
-  - [3. Career Directory & Career Lookup](#3-career-directory--career-lookup)
+  - [3. AI-Generated Career Outlook & Prospects for Every Programme](#3-ai-generated-career-outlook--prospects-for-every-programme)
   - [4. NaCCA JHS-to-SHS Track Advisor](#4-nacca-jhs-to-shs-track-advisor)
   - [5. University & Degree Programme Directory](#5-university--degree-programme-directory)
   - [6. Administrative Management & Seeding](#6-administrative-management--seeding)
@@ -35,9 +35,9 @@ Navigating secondary school track selections and tertiary admissions in Ghana ca
 
 CareerPath Ghana solves this by providing:
 1. An automated WASSCE aggregate calculator and entry requirement validator for undergraduate programs.
-2. A reverse qualification engine that finds every university degree a student qualifies for based on their grades.
+2. A reverse qualification engine that discovers every university degree a student qualifies for based on their grades.
 3. An AI-powered career recommendation engine that translates student passions and strengths into viable academic pathways.
-4. A comprehensive career directory detailing job roles, salary outlooks, required SHS electives, and corresponding university degrees.
+4. An AI-driven career lookup engine that generates real-time, Ghana-specific career outlooks, professional job roles, and key employers for every degree programme.
 5. A NaCCA-aligned JHS-to-SHS curriculum guide that prioritizes direct subject combinations.
 6. A searchable repository of programs and cut-off points for major public universities in Ghana.
 
@@ -58,24 +58,16 @@ CareerPath Ghana solves this by providing:
 ### 2. AI-Powered Career Advisor & Interest Matching
 - **Natural Language Query Matching**: Students can express interests, hobbies, or dream professions in natural language (e.g., *"I love robotics, coding, and problem-solving"* or *"I want to work in maternal healthcare and help babies"*).
 - **Intelligent Semantic Matching**: Powered by Google Gemini AI to analyze nuanced user prompts and match them to verified careers and degree programs.
-- **Hybrid NLP Fallback Engine**: Built-in spaCy and domain knowledge ontology ensures instantaneous career matching even during offline or rate-limited scenarios.
+- **Domain Knowledge Fallback**: Built-in Ghanaian curriculum domain ontology ensures reliable matching even during network or rate-limited scenarios.
 - **Curriculum Mapping**: Automatically connects identified careers to recommended Senior High School tracks and university degrees.
 
-### 3. Career Directory & Career Lookup
-- **Comprehensive Career Library**: Explore hundreds of careers categorized across major Ghanaian industry sectors:
-  - Healthcare & Medical Sciences
-  - Engineering, Technology & Computing
-  - Business, Finance & Economics
-  - Built Environment, Architecture & Construction
-  - Agricultural & Environmental Sciences
-  - Law, Governance & Social Sciences
-  - Creative Arts, Media & Design
-- **Detailed Career Profiles**: Each career profile provides:
-  - Role overview and core daily responsibilities.
-  - Required SHS elective tracks and optimal subject combinations.
-  - Key technical and soft skills required for the profession.
-  - Estimated industry salary benchmarks in Ghana.
-  - Direct university degree programmes that lead into the career.
+### 3. AI-Generated Career Outlook & Prospects for Every Programme
+- **Dynamic Real-Time Career Lookup**: When exploring any degree programme (e.g., BSc Computer Engineering, BSc Optometry, BA Communication Studies), the platform dynamically generates a tailored, Ghana-specific professional outlook powered by Google Gemini AI.
+- **Actionable Career Intelligence**:
+  - **Specific Professional Roles**: Pinpoints exact job titles and career specializations graduates can step into (e.g., Embedded Systems Engineer, Clinical Optometrist, Corporate Communications Strategist).
+  - **Real Ghanaian Employers & Institutions**: Identifies real hiring institutions in Ghana across public and private sectors (e.g., Ghana Health Service, Food & Drugs Authority, Bank of Ghana, Volta River Authority, Ghana Standards Authority, leading financial institutions, and tech firms).
+  - **Industry Sector Mapping**: Highlights primary and emerging industries served by the academic degree.
+- **High-Speed Delivery & Fallbacks**: Utilizes Google Gemini with structured responses, cached fallbacks, and instantaneous delivery for a seamless browsing experience.
 
 ### 4. NaCCA JHS-to-SHS Track Advisor
 - **Curriculum Framework Alignment**: Structured according to the National Council for Curriculum and Assessment (NaCCA) standards.
@@ -93,7 +85,7 @@ CareerPath Ghana solves this by providing:
 - **Responsive Layout**: Clean, responsive card grid optimized for mobile and desktop screens (2-3 cards per row on mobile for rapid browsing).
 
 ### 6. Administrative Management & Seeding
-- **Django Admin Portal**: Full administrative interface for managing universities, colleges, faculties, programs, cut-off points, and career data.
+- **Django Admin Portal**: Full administrative interface for managing universities, colleges, faculties, programs, cut-off points, and curriculum tracks.
 - **Automated Data Seeding**: Includes a comprehensive seeder (`seed_data.py`) pre-populated with verified 2026/2027 academic year cut-off points and curriculum tracks.
 
 ---
@@ -101,8 +93,8 @@ CareerPath Ghana solves this by providing:
 ## Technology Stack
 
 - **Backend**: Django 6.x, Django REST Framework (DRF)
-- **AI & NLP**: Google Gemini API (`google-genai` / REST API), spaCy, scikit-learn
-- **Database**: SQLite (local development) / PostgreSQL with `dj-database-url` (production)
+- **AI & Multimodal**: Google Gemini API (`gemini-2.0-flash`, `gemini-1.5-flash` for Natural Language Career Matching, Programme Outlooks, and WASSCE OCR)
+- **Database**: PostgreSQL with `psycopg2-binary` and `dj-database-url`
 - **Frontend**: Responsive HTML5, Vanilla CSS, SVG Icons (zero external node/npm build dependencies)
 - **Production Server**: Gunicorn, WhiteNoise for static file serving
 
@@ -114,7 +106,7 @@ CareerPath Ghana solves this by providing:
 careerpath/
 ├── api/                        # Django REST Framework API views and serializers
 │   ├── urls.py                 # API routing endpoints
-│   └── views.py                # Eligibility evaluation, AI matching, & catalog APIs
+│   └── views.py                # Eligibility evaluation, AI matching, career outlook, & catalog APIs
 ├── careers/                    # Career pathways, NaCCA tracks, and JHS models
 │   ├── admin.py                # Django admin configuration
 │   └── models.py               # Career, SHSTrack, ElectiveSubject models
@@ -239,7 +231,7 @@ Open your browser and navigate to:
 | `DEBUG` | No | `False` | Enable or disable debug mode (`True` for local development) |
 | `ALLOWED_HOSTS` | No | `localhost,127.0.0.1` | Comma-separated list of host/domain names Django can serve |
 | `GEMINI_API_KEY` | No | - | Google Gemini API key used for natural language career matching and OCR |
-| `DATABASE_URL` | No | SQLite default | PostgreSQL database connection URL for production environments |
+| `DATABASE_URL` | Yes | - | PostgreSQL database connection URL (e.g. `postgres://user:password@host:5432/dbname`) |
 
 ---
 
@@ -250,13 +242,14 @@ CareerPath Ghana exposes REST API endpoints for seamless integration:
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
 | `GET` | `/api/universities/` | List all available universities with meta counts |
-| `GET` | `/api/universities/<id>/` | Retrieve detailed university profile and faculties |
-| `GET` | `/api/programs/` | List and search degree programmes with cutoff filters |
-| `GET` | `/api/programs/<id>/` | Retrieve specific program prerequisites and cutoffs |
-| `POST` | `/api/eligibility/evaluate/` | Evaluate student WASSCE grades against a program |
-| `POST` | `/api/eligibility/qualifying-programs/` | Discover all programs a student qualifies for |
-| `POST` | `/api/careers/ai-match/` | Match user interest descriptions to careers using Gemini AI |
-| `GET` | `/api/jhs-guide/tracks/` | List NaCCA academic tracks and elective combinations |
+| `POST` | `/api/program-details/` | Retrieve specific program offerings, campus locations, and prerequisites |
+| `POST` | `/api/career-outlook/` | Generate dynamic Ghana-specific AI career outlook for any degree programme |
+| `POST` | `/api/evaluate-eligibility/` | Evaluate student WASSCE grades against a degree program |
+| `POST` | `/api/wassce-check/` | Discover all programs a student qualifies for across all universities |
+| `POST` | `/api/ai-career-match/` | Match user natural language interest descriptions to careers using Gemini AI |
+| `POST` | `/api/career-search/` | Search career catalog and fetch track mappings |
+| `POST` | `/api/subject-recommendation/` | Get NaCCA elective combinations and subject recommendations |
+| `POST` | `/api/ocr-wassce-results/` | Extract WASSCE grades automatically from uploaded result slips via Gemini Vision |
 
 ---
 
