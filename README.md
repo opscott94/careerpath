@@ -2,6 +2,8 @@
 
 CareerPath Ghana is an intelligent career guidance and tertiary academic eligibility evaluation platform built specifically for the Ghanaian educational system. It empowers Junior High School (JHS) and Senior High School (SHS) students to make informed educational decisions by mapping career aspirations to academic tracks, validating WASSCE grades against university cut-off benchmarks, generating real-time AI career prospects for degree programmes, and recommending verified pathways across premier Ghanaian universities.
 
+**Live Application**: [https://careerpath.onrender.com](https://careerpath.onrender.com) *(Hosted on Render)*
+
 ---
 
 ## Table of Contents
