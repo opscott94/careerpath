@@ -1,6 +1,6 @@
 # CareerPath Ghana
 
-CareerPath Ghana is an intelligent career guidance and tertiary eligibility evaluation platform designed specifically for the Ghanaian educational system. It empowers Junior High School (JHS) and Senior High School (SHS) students to make informed decisions by mapping career aspirations to academic tracks, validating WASSCE grades against university cut-off benchmarks, and recommending verified degree pathways across top Ghanaian universities.
+CareerPath Ghana is an intelligent career guidance and tertiary academic eligibility evaluation platform built specifically for the Ghanaian educational system. It empowers Junior High School (JHS) and Senior High School (SHS) students to make informed educational decisions by mapping career aspirations to academic tracks, validating WASSCE grades against university cut-off benchmarks, and recommending verified degree pathways across premier Ghanaian universities.
 
 ---
 
@@ -8,10 +8,16 @@ CareerPath Ghana is an intelligent career guidance and tertiary eligibility eval
 
 - [Overview](#overview)
 - [Key Features](#key-features)
+  - [1. WASSCE Eligibility Assessment & Auto-Qualification Engine](#1-wassce-eligibility-assessment--auto-qualification-engine)
+  - [2. AI-Powered Career Advisor & Interest Matching](#2-ai-powered-career-advisor--interest-matching)
+  - [3. Career Directory & Career Lookup](#3-career-directory--career-lookup)
+  - [4. NaCCA JHS-to-SHS Track Advisor](#4-nacca-jhs-to-shs-track-advisor)
+  - [5. University & Degree Programme Directory](#5-university--degree-programme-directory)
+  - [6. Administrative Management & Seeding](#6-administrative-management--seeding)
 - [System Architecture](#system-architecture)
 - [Technology Stack](#technology-stack)
 - [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
+- [Local Development Setup](#local-development-setup)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Configuration](#configuration)
@@ -29,40 +35,66 @@ Navigating secondary school track selections and tertiary admissions in Ghana ca
 
 CareerPath Ghana solves this by providing:
 1. An automated WASSCE aggregate calculator and entry requirement validator for undergraduate programs.
-2. An AI-powered career recommendation engine that translates student passions and strengths into viable academic pathways.
-3. A NaCCA-aligned JHS-to-SHS curriculum guide that prioritizes direct subject combinations.
-4. A searchable repository of programs and cut-off points for major public universities in Ghana.
+2. A reverse qualification engine that finds every university degree a student qualifies for based on their grades.
+3. An AI-powered career recommendation engine that translates student passions and strengths into viable academic pathways.
+4. A comprehensive career directory detailing job roles, salary outlooks, required SHS electives, and corresponding university degrees.
+5. A NaCCA-aligned JHS-to-SHS curriculum guide that prioritizes direct subject combinations.
+6. A searchable repository of programs and cut-off points for major public universities in Ghana.
 
 ---
 
 ## Key Features
 
-### 1. WASSCE Eligibility Assessment Engine
-- **Accurate Aggregate Calculation**: Automatically computes the standard aggregate score (Best 3 Core Subjects + Best 3 Electives) using official WAEC grading scales (A1 = 1, B2 = 2, B3 = 3, C4 = 4, C5 = 5, C6 = 6, D7 = 7, E8 = 8, F9 = 9).
+### 1. WASSCE Eligibility Assessment & Auto-Qualification Engine
+- **Accurate Aggregate Calculation**: Automatically computes the official WAEC aggregate score (Best 3 Core Subjects + Best 3 Electives) using official Ghanaian grading standards (A1 = 1, B2 = 2, B3 = 3, C4 = 4, C5 = 5, C6 = 6, D7 = 7, E8 = 8, F9 = 9).
 - **Prerequisite Validation**: Verifies subject-specific prerequisites (e.g., Core Mathematics minimum C6, Elective Physics minimum B3) before checking aggregate cutoffs.
-- **Admission Classification**: Categorizes student eligibility into:
-  - **Direct Qualified**: Meets or beats the cut-off point and satisfies all subject rules.
+- **Three-Tier Admission Classification**:
+  - **Direct Qualified**: Meets or beats the cut-off point and satisfies all subject prerequisite rules.
   - **Borderline / Fee-Paying**: Meets academic prerequisites but lies within the extended cut-off margin for fee-paying or alternate admission streams.
   - **Not Qualified**: Clearly explains the specific deficit (aggregate threshold or missing prerequisite).
-- **Automated Results Slip OCR**: Supports uploading WASSCE result slips with automated grade extraction powered by Google Gemini Multimodal AI.
+- **Reverse Qualification ("Find What I Qualify For")**: Allows students to enter their 8 WASSCE grades once and instantly receive a ranked list of all qualifying degree programs across all universities.
+- **Automated Results Slip OCR**: Upload WASSCE result slips (images or scans) with automated grade extraction powered by Google Gemini Multimodal AI.
 
-### 2. AI-Powered Career Advisor
-- **Natural Language Matching**: Students can express interests, hobbies, or dream professions in plain English (e.g., *"I love robotics, coding, and problem-solving"*).
-- **Curriculum Mapping**: Connects each career to recommended SHS academic tracks (General Science, Business, General Arts, Visual Arts, Home Economics, Technical / STEM) and specific elective combinations.
-- **University Degree Linkage**: Directs students to university programs that lead directly into their chosen field.
+### 2. AI-Powered Career Advisor & Interest Matching
+- **Natural Language Query Matching**: Students can express interests, hobbies, or dream professions in natural language (e.g., *"I love robotics, coding, and problem-solving"* or *"I want to work in maternal healthcare and help babies"*).
+- **Intelligent Semantic Matching**: Powered by Google Gemini AI to analyze nuanced user prompts and match them to verified careers and degree programs.
+- **Hybrid NLP Fallback Engine**: Built-in spaCy and domain knowledge ontology ensures instantaneous career matching even during offline or rate-limited scenarios.
+- **Curriculum Mapping**: Automatically connects identified careers to recommended Senior High School tracks and university degrees.
 
-### 3. NaCCA JHS-to-SHS Track Advisor
-- **Elective Pathway Priority**: Automatically highlights direct pathways first, falling back to secondary pathways only when direct routes are unavailable.
-- **Integrated Search**: Quick search and category filter for fast exploration of senior high academic programmes.
+### 3. Career Directory & Career Lookup
+- **Comprehensive Career Library**: Explore hundreds of careers categorized across major Ghanaian industry sectors:
+  - Healthcare & Medical Sciences
+  - Engineering, Technology & Computing
+  - Business, Finance & Economics
+  - Built Environment, Architecture & Construction
+  - Agricultural & Environmental Sciences
+  - Law, Governance & Social Sciences
+  - Creative Arts, Media & Design
+- **Detailed Career Profiles**: Each career profile provides:
+  - Role overview and core daily responsibilities.
+  - Required SHS elective tracks and optimal subject combinations.
+  - Key technical and soft skills required for the profession.
+  - Estimated industry salary benchmarks in Ghana.
+  - Direct university degree programmes that lead into the career.
 
-### 4. University & Degree Programme Directory
-- Up-to-date benchmark cut-off points, tuition category options, campus locations, and degree durations for top universities:
+### 4. NaCCA JHS-to-SHS Track Advisor
+- **Curriculum Framework Alignment**: Structured according to the National Council for Curriculum and Assessment (NaCCA) standards.
+- **Elective Pathway Priority**: Automatically highlights **Direct Pathways** (optimal subject combinations) first, falling back to secondary pathways only when direct routes are unavailable.
+- **Interactive Search & Category Filters**: Search and filter across General Science, Business, General Arts, Visual Arts, Home Economics, and Technical / STEM tracks.
+
+### 5. University & Degree Programme Directory
+- **Premier Ghanaian Universities**: Comprehensive data for top public institutions:
   - Kwame Nkrumah University of Science and Technology (KNUST)
   - University of Ghana (UG, Legon)
   - University of Cape Coast (UCC)
   - University for Development Studies (UDS)
   - University of Energy and Natural Resources (UENR)
-- Clean, responsive card grid optimized for mobile and desktop screens.
+- **Rich Programme Information**: Benchmark cut-off points, campus locations, tuition categories (Regular vs. Fee-Paying notes), and specific subject requirements.
+- **Responsive Layout**: Clean, responsive card grid optimized for mobile and desktop screens (2-3 cards per row on mobile for rapid browsing).
+
+### 6. Administrative Management & Seeding
+- **Django Admin Portal**: Full administrative interface for managing universities, colleges, faculties, programs, cut-off points, and career data.
+- **Automated Data Seeding**: Includes a comprehensive seeder (`seed_data.py`) pre-populated with verified 2026/2027 academic year cut-off points and curriculum tracks.
 
 ---
 
@@ -71,7 +103,7 @@ CareerPath Ghana solves this by providing:
 - **Backend**: Django 6.x, Django REST Framework (DRF)
 - **AI & NLP**: Google Gemini API (`google-genai` / REST API), spaCy, scikit-learn
 - **Database**: SQLite (local development) / PostgreSQL with `dj-database-url` (production)
-- **Frontend**: Responsive HTML5, Vanilla CSS, SVG Icons (zero external frontend build steps or node dependencies required)
+- **Frontend**: Responsive HTML5, Vanilla CSS, SVG Icons (zero external node/npm build dependencies)
 - **Production Server**: Gunicorn, WhiteNoise for static file serving
 
 ---
@@ -106,19 +138,18 @@ careerpath/
 │   │   └── university_detail.html # University degree details & cutoffs
 │   ├── static/                 # Static CSS, JavaScript, and assets
 │   └── views.py                # Frontend view controllers
-├── seed_data.py                # Comprehensive database seeder with real 2026 data
+├── seed_data.py                # Comprehensive database seeder with real benchmark data
 ├── manage.py                   # Django CLI management script
 ├── requirements.txt            # Python dependencies
 ├── .env.example                # Environment variables template
 ├── .gitignore                  # Git ignore rules
-├── CONTRIBUTING.md             # Contribution guidelines
-├── LICENSE                     # MIT License
+├── LICENSE                     # Proprietary / All Rights Reserved notice
 └── README.md                   # Project documentation
 ```
 
 ---
 
-## Getting Started
+## Local Development Setup
 
 ### Prerequisites
 
