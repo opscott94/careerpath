@@ -106,7 +106,46 @@ def ai_career_match(request):
     # Domain Knowledge Fallback Map for Ghanaian University Programs
     def get_domain_fallback(q_term):
         q = q_term.lower()
-        if 'nurse' in q or 'nursing' in q or 'midwife' in q or 'midwifery' in q:
+        if any(k in q for k in ['health field', 'healthcare', 'health care', 'health sector', 'allied health', 'health science', 'health sciences', 'health career', 'medical field']):
+            return {
+                'career_name': 'Healthcare & Allied Health Practitioner',
+                'career_description': 'Healthcare and Allied Health specialists deliver clinical nursing, rehabilitation therapy, medical diagnostics, nutritional guidance, healthcare data systems, and public health disease prevention across hospitals and community health centres.',
+                'primary_keywords': ['Nursing', 'Midwifery', 'Physiotherapy', 'Dietetics', 'Health Information', 'Public Health', 'Water and Public Health Engineering', 'Medical Laboratory', 'Medical Imaging', 'Public Health Nursing'],
+                'secondary_keywords': ['Biology', 'Chemistry', 'Health', 'General Science'],
+                'explanations': {
+                    'Nursing': 'Direct degree program training students in clinical nursing skills and hospital patient care.',
+                    'Midwifery': 'Direct degree specializing in maternal, prenatal, and infant healthcare.',
+                    'Physiotherapy': 'Specialized clinical path in physical rehabilitation and movement recovery therapy.',
+                    'Dietetics': 'Specialized clinical path focusing on human nutrition, dietary planning, and metabolic health.',
+                    'Health Information': 'Covers medical records informatics, health statistics, and healthcare data systems.',
+                    'Public Health': 'Focuses on epidemiology, community hygiene, sanitation, and disease prevention programs.',
+                    'Water and Public Health Engineering': 'Direct engineering degree for potable water supply, environmental health, and municipal sanitation.',
+                    'Medical Laboratory': 'Direct clinical diagnostic pathology and laboratory disease analysis.'
+                }
+            }
+        elif 'physiotherap' in q or 'physical therap' in q:
+            return {
+                'career_name': 'Physiotherapist / Physical Rehabilitation Specialist',
+                'career_description': 'Physiotherapists assess, treat, and rehabilitate patients with movement disorders, sports injuries, neurological conditions, and physical disabilities.',
+                'primary_keywords': ['Physiotherapy', 'Physical Therapy'],
+                'secondary_keywords': ['Biology', 'Physics', 'Health', 'Medical'],
+                'explanations': {
+                    'Physiotherapy': 'Direct clinical degree preparing physical rehabilitation and movement specialists.',
+                    'Physical Therapy': 'Direct degree path in physical rehabilitation.'
+                }
+            }
+        elif 'dietetic' in q or 'dietitian' in q or 'nutritionist' in q or 'nutrition' in q:
+            return {
+                'career_name': 'Clinical Dietitian / Nutrition Specialist',
+                'career_description': 'Dietitians and Nutritionists assess nutritional needs, formulate clinical diets, manage metabolic disorders, and promote public nutritional wellness.',
+                'primary_keywords': ['Dietetics', 'Food Science and Technology', 'Human Nutrition', 'Nutrition'],
+                'secondary_keywords': ['Chemistry', 'Biology', 'Health'],
+                'explanations': {
+                    'Dietetics': 'Direct clinical degree in therapeutic nutrition and clinical dietetics.',
+                    'Food Science and Technology': 'Covers food chemistry, nutritional processing, and food safety.'
+                }
+            }
+        elif 'nurse' in q or 'nursing' in q or 'midwife' in q or 'midwifery' in q:
             return {
                 'career_name': 'Registered Nurse / Midwife',
                 'career_description': 'Registered Nurses and Midwives provide primary patient care, clinical treatments, and maternal healthcare across hospitals and community health centers.',
@@ -311,6 +350,7 @@ def ai_career_match(request):
         return None
 
     # Check Domain Knowledge Fallback Map first for instant, high-accuracy response
+    parsed = None
     domain_map = get_domain_fallback(q_clean)
     if domain_map and domain_map.get('primary_keywords'):
         parsed = domain_map
@@ -558,7 +598,7 @@ CRITICAL RULES:
         secondary_groups.sort(key=lambda x: (-x['score'], x['min_cutoff'] is None, x['min_cutoff'] or 999))
 
         combined_groups = primary_groups + secondary_groups
-        top_groups = combined_groups[:5]
+        top_groups = (primary_groups[:15] + secondary_groups[:5])[:15]
 
         if top_groups:
             matched = []
@@ -608,6 +648,8 @@ CRITICAL RULES:
             })
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print("DEBUG: ai_career_match SQL evaluation error:", e)
 
     return JsonResponse({'ai_match': False, 'message': 'AI unavailable, use keyword search'})
