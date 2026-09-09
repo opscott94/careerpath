@@ -68,14 +68,17 @@ def ai_career_match(request):
     if not raw_query:
         return JsonResponse({'error': 'No query provided'}, status=400)
 
-    # Clean conversational query prefixes ("I want to be a nurse" -> "nurse")
+    # Clean conversational query prefixes ("I want to be a nurse" -> "nurse", "I want to build airplanes" -> "airplanes")
     q_clean = raw_query.lower()
     prefix_patterns = [
-        r"^i\s+(want|would\s+like|wish|hope)\s+to\s+(be|become|study|work\s+as|do|pursue)\s+(a|an)?\s*",
-        r"^i\s+want\s+(a|an)?\s*",
+        r"^i\s+(want|would\s+like|wish|hope)\s+to\s+(be|become|study|work\s+as|do|pursue|build|design|create|make|fly)\s+(a|an)?\s*",
+        r"^i\s+(want|would\s+like|wish|hope)\s+to\s*",
+        r"^i\s+(want|would\s+like|wish|hope)\s+(a|an)?\s*",
         r"^i\s+am\s+interested\s+in\s+(becoming|a|an)?\s*",
-        r"^how\s+to\s+(become|be)\s+(a|an)?\s*",
+        r"^how\s+to\s+(become|be|study|build|make)\s+(a|an)?\s*",
         r"^looking\s+for\s+(a|an)?\s*",
+        r"^to\s+(be|become|study|work\s+as|do|pursue|build|design|create|make|fly)\s+(a|an)?\s*",
+        r"^to\s*",
     ]
     for pat in prefix_patterns:
         q_clean = re.sub(pat, "", q_clean, flags=re.IGNORECASE)
@@ -151,14 +154,15 @@ def ai_career_match(request):
                     'Information Technology': 'Applied computing degree covering web, networking, and software systems.'
                 }
             }
-        elif 'pilot' in q or 'aviation' in q or 'aero' in q:
+        elif any(k in q for k in ['pilot', 'aviation', 'aero', 'airplane', 'airplanes', 'aeroplane', 'aeroplanes', 'aircraft', 'aircrafts', 'flight', 'plane', 'planes', 'aerospace', 'rocket']):
             return {
-                'career_name': 'Aeronautical Engineer / Flight Operations',
-                'career_description': 'Aeronautical Engineers and Flight Operations specialists design aircraft, manage flight systems, and operate aviation infrastructure.',
+                'career_name': 'Aerospace / Aeronautical Engineer',
+                'career_description': 'Aerospace and Aeronautical Engineers design, test, build, and maintain aircraft, spacecraft, avionics systems, and flight hardware.',
                 'primary_keywords': ['Aerospace', 'Aeronautical', 'Mechanical Engineering'],
                 'secondary_keywords': ['Physics', 'Electrical', 'Mathematics'],
                 'explanations': {
                     'Aerospace': 'Direct engineering path for aircraft and propulsion system design.',
+                    'Aeronautical': 'Specialized engineering field focused on flight and aircraft design.',
                     'Mechanical Engineering': 'Provides mechanical design and aerodynamics fundamentals.'
                 }
             }
@@ -196,10 +200,124 @@ def ai_career_match(request):
                     'Finance': 'Focuses on financial markets, corporate finance, and investment analysis.'
                 }
             }
+        elif any(k in q for k in ['journalism', 'journalist', 'reporter', 'media', 'broadcasting', 'broadcast', 'news', 'communication', 'writer']):
+            return {
+                'career_name': 'Journalist / Media & Communications Specialist',
+                'career_description': 'Journalists and Media Specialists research stories, write news articles, produce broadcast programs, and communicate critical information across digital, television, radio, and print platforms.',
+                'primary_keywords': ['Communication Studies', 'Journalism', 'Media', 'English', 'Public Relations'],
+                'secondary_keywords': ['Political Science', 'Sociology', 'History', 'Theatre Arts', 'Information Studies'],
+                'explanations': {
+                    'Communication Studies': 'Direct degree pathway covering news broadcasting, media writing, and public communication.',
+                    'Journalism': 'Direct degree track specializing in news reporting, photojournalism, and investigative media.',
+                    'English': 'Builds advanced writing, grammar, and literary communication fundamentals essential for journalism.',
+                    'Political Science': 'Provides deep understanding of government, policy, and public affairs reporting.'
+                }
+            }
+        elif any(k in q for k in ['civil', 'bridge', 'structural', 'construction engineer', 'roads', 'infrastructure']):
+            return {
+                'career_name': 'Civil & Structural Engineer',
+                'career_description': 'Civil and Structural Engineers plan, design, and oversee construction of essential infrastructure including roads, bridges, water supply systems, and tall buildings.',
+                'primary_keywords': ['Civil Engineering', 'Geomatic', 'Construction Technology'],
+                'secondary_keywords': ['Physics', 'Mathematics', 'Engineering'],
+                'explanations': {
+                    'Civil Engineering': 'Direct engineering degree for infrastructure, structural design, and urban works.',
+                    'Geomatic': 'Specialized survey engineering for land spatial analysis and construction.',
+                    'Construction Technology': 'Provides management and construction science foundations.'
+                }
+            }
+        elif any(k in q for k in ['plant', 'crop', 'farm', 'farming', 'agriculture', 'agronomy', 'soil', 'agric', 'animal science', 'horticulture']):
+            return {
+                'career_name': 'Agricultural Scientist / Agronomist',
+                'career_description': 'Agricultural Scientists and Agronomists improve crop yields, manage livestock health, innovate sustainable farming techniques, and safeguard food security.',
+                'primary_keywords': ['Agriculture', 'Agricultural', 'Agribusiness', 'Post Harvest', 'Forest Resources'],
+                'secondary_keywords': ['Biology', 'Chemistry', 'General Science'],
+                'explanations': {
+                    'Agriculture': 'Comprehensive degree covering crop science, soil fertility, and agricultural systems.',
+                    'Agricultural': 'Applied agricultural technology and production sciences.',
+                    'Agribusiness': 'Combines agricultural knowledge with business management and economics.'
+                }
+            }
+        elif any(k in q for k in ['cyber', 'security', 'hack', 'network', 'information security', 'malware', 'firewall']):
+            return {
+                'career_name': 'Cybersecurity Analyst / Network Engineer',
+                'career_description': 'Cybersecurity Analysts protect networks, cloud systems, and data infrastructure against cyber threats, security breaches, and unauthorized intrusion.',
+                'primary_keywords': ['Computer Science', 'Information Technology', 'Telecommunication Engineering', 'Computer Engineering'],
+                'secondary_keywords': ['Mathematics', 'Physics', 'Computing'],
+                'explanations': {
+                    'Computer Science': 'Core degree providing programming, network architecture, and cryptography algorithms.',
+                    'Information Technology': 'Covers systems administration, network security, and enterprise database infrastructure.',
+                    'Telecommunication Engineering': 'Focuses on network hardware, data communications, and signal transmission security.'
+                }
+            }
+        elif any(k in q for k in ['robot', 'robotics', 'automation', 'mechatronics', 'automated machine']):
+            return {
+                'career_name': 'Robotics & Automation Engineer',
+                'career_description': 'Robotics and Automation Engineers design, program, and build robotic devices, autonomous systems, and industrial automated machinery.',
+                'primary_keywords': ['Mechanical Engineering', 'Electrical/Electronic Engineering', 'Computer Engineering', 'Biomedical Engineering'],
+                'secondary_keywords': ['Physics', 'Mathematics', 'Computer Science'],
+                'explanations': {
+                    'Mechanical Engineering': 'Provides mechanical design, kinematics, and dynamic systems engineering foundations.',
+                    'Electrical/Electronic Engineering': 'Covers microcontrollers, sensors, power electronics, and robotic motor control.',
+                    'Computer Engineering': 'Bridges hardware and software for embedded system robotics programming.'
+                }
+            }
+        elif any(k in q for k in ['dna', 'genetics', 'medical laboratory', 'biomedical', 'laboratory disease', 'clinical lab', 'pathology']):
+            return {
+                'career_name': 'Biomedical Scientist / Medical Lab Specialist',
+                'career_description': 'Biomedical Scientists conduct clinical diagnostic laboratory tests, investigate disease mechanisms, analyze genetic markers, and develop medical therapies.',
+                'primary_keywords': ['Medical Laboratory', 'Biomedical Science', 'Biochemistry', 'Biological Science', 'Molecular'],
+                'secondary_keywords': ['Chemistry', 'Biology', 'Health'],
+                'explanations': {
+                    'Medical Laboratory': 'Direct clinical degree for diagnostic testing, pathology analysis, and lab practice.',
+                    'Biomedical Science': 'Prepares students for advanced biomedical research and therapeutic development.',
+                    'Biochemistry': 'Provides deep chemical and molecular understanding of biological systems.'
+                }
+            }
+        elif any(k in q for k in ['hotel', 'hospitality', 'tourism', 'events', 'resort', 'travel']):
+            return {
+                'career_name': 'Hospitality & Tourism Manager',
+                'career_description': 'Hospitality and Tourism Managers oversee international hotel operations, resort destinations, event planning, and guest experience logistics.',
+                'primary_keywords': ['Hospitality', 'Tourism', 'Business Administration', 'Marketing', 'Management'],
+                'secondary_keywords': ['Economics', 'Languages', 'French'],
+                'explanations': {
+                    'Hospitality': 'Direct degree covering hotel management, food service operations, and customer experience.',
+                    'Tourism': 'Specialized program in ecotourism, travel agency operations, and destination management.',
+                    'Business Administration': 'Provides strategic management, finance, and marketing foundations.'
+                }
+            }
+        elif any(k in q for k in ['electric', 'electrical', 'solar', 'renewable energy', 'power', 'grid', 'energy']):
+            return {
+                'career_name': 'Electrical & Renewable Energy Engineer',
+                'career_description': 'Electrical and Renewable Energy Engineers design power generation facilities, solar energy systems, national electric grids, and electronic devices.',
+                'primary_keywords': ['Electrical/Electronic Engineering', 'Renewable Energy', 'Energy Systems', 'Physics'],
+                'secondary_keywords': ['Mathematics', 'Mechanical Engineering'],
+                'explanations': {
+                    'Electrical/Electronic Engineering': 'Direct engineering degree covering power systems, circuit design, and electromagnetics.',
+                    'Renewable Energy': 'Specialized path focused on solar, wind, biomass, and sustainable power grids.',
+                    'Physics': 'Provides deep theoretical electromagnetic and quantum foundations.'
+                }
+            }
+        elif any(k in q for k in ['teach', 'teacher', 'teaching', 'education', 'lecturer', 'tutor']):
+            return {
+                'career_name': 'Professional Educator / High School Teacher',
+                'career_description': 'Professional Educators deliver instruction, inspire students in specialized subjects, design curricula, and foster academic development.',
+                'primary_keywords': ['Education', 'B.Ed.', 'Teacher'],
+                'secondary_keywords': ['Arts', 'Science', 'Mathematics', 'English'],
+                'explanations': {
+                    'Education': 'Direct Bachelor of Education degree equipping teachers with pedagogy and subject mastery.',
+                    'B.Ed.': 'Official teaching qualification in Ghana.'
+                }
+            }
         return None
 
-    # Step 1: Query Gemini LLM with 3-Tier Multi-Authentication
-    system_prompt = """You are a career counselor for Ghanaian students. Analyze the student's interest and respond ONLY with a JSON object in this format:
+    # Check Domain Knowledge Fallback Map first for instant, high-accuracy response
+    domain_map = get_domain_fallback(q_clean)
+    if domain_map and domain_map.get('primary_keywords'):
+        parsed = domain_map
+
+    # If not in domain map, query Gemini LLM
+    if not parsed:
+        system_prompt = """You are a career counselor for Ghanaian students. Analyze the student's interest and respond ONLY with a JSON object in this format:
 {
   "career_name": "determined canonical career title (e.g. Nurse, Medical Doctor, Software Developer, Lawyer, Pilot)",
   "career_description": "1 sentence describing the career and its main activities",
@@ -216,34 +334,63 @@ CRITICAL RULES:
 2. "primary_keywords" MUST ONLY contain direct degree program names (e.g. ["Nursing", "Midwifery"] for Nurse, ["Medicine"] for Doctor, ["Optometry"] for Optometrist).
 3. Respond ONLY with JSON."""
 
-    user_prompt = f"Student Stated Interest: \"{q_clean}\""
-    full_prompt = f"{system_prompt}\n\n{user_prompt}"
+        user_prompt = f"Student Stated Interest: \"{q_clean}\""
+        full_prompt = f"{system_prompt}\n\n{user_prompt}"
 
-    payload = {
-        "contents": [{"role": "user", "parts": [{"text": full_prompt}]}],
-        "generationConfig": {"responseMimeType": "application/json"}
-    }
+        payload = {
+            "contents": [{"role": "user", "parts": [{"text": full_prompt}]}],
+            "generationConfig": {"responseMimeType": "application/json"}
+        }
 
-    parsed = None
+        # 1. Try Vertex AI with GCP Credentials
+        if creds:
+            try:
+                auth_req = google.auth.transport.requests.Request()
+                creds.refresh(auth_req)
+                token = creds.token
+                project_id = creds.project_id
 
-    # 1. Try Vertex AI with GCP Credentials
-    if creds:
-        try:
-            auth_req = google.auth.transport.requests.Request()
-            creds.refresh(auth_req)
-            token = creds.token
-            project_id = creds.project_id
+                for model_name in ["gemini-1.5-flash", "gemini-1.5-pro"]:
+                    url = f"https://firebasevertexai.googleapis.com/v1beta/projects/{project_id}/locations/us-central1/publishers/google/models/{model_name}:generateContent"
+                    try:
+                        req_obj = urllib.request.Request(
+                            url,
+                            data=json.dumps(payload).encode("utf-8"),
+                            headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+                            method="POST"
+                        )
+                        with urllib.request.urlopen(req_obj, timeout=3) as response:
+                            res_data = json.loads(response.read().decode())
+                            candidates = res_data.get("candidates", [])
+                            if candidates:
+                                text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                                if text_content.startswith("```"):
+                                    lines = text_content.splitlines()
+                                    if lines[0].startswith("```"):
+                                        lines = lines[1:]
+                                    if lines and lines[-1].startswith("```"):
+                                        lines = lines[:-1]
+                                    text_content = "\n".join(lines).strip()
+                                parsed = json.loads(text_content)
+                                break
+                    except Exception as e:
+                        continue
+            except Exception as e:
+                pass
 
-            for model_name in ["gemini-2.5-flash", "gemini-2.5-pro"]:
-                url = f"https://firebasevertexai.googleapis.com/v1beta/projects/{project_id}/locations/us-central1/publishers/google/models/{model_name}:generateContent"
+        # 2. Fallback to Gemini Developer API Key if Vertex AI failed or creds not available
+        if not parsed:
+            gemini_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDnUoGfv6RdAdUDkhFk9zWg3qy1TFzugaQ')
+            for model_name in ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
                 try:
                     req_obj = urllib.request.Request(
                         url,
                         data=json.dumps(payload).encode("utf-8"),
-                        headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+                        headers={"Content-Type": "application/json"},
                         method="POST"
                     )
-                    with urllib.request.urlopen(req_obj, timeout=5) as response:
+                    with urllib.request.urlopen(req_obj, timeout=3) as response:
                         res_data = json.loads(response.read().decode())
                         candidates = res_data.get("candidates", [])
                         if candidates:
@@ -258,45 +405,7 @@ CRITICAL RULES:
                             parsed = json.loads(text_content)
                             break
                 except Exception as e:
-                    print(f"DEBUG: Vertex AI call for {model_name} failed: {e}")
                     continue
-        except Exception as e:
-            print(f"DEBUG: Vertex AI auth failed: {e}")
-
-    # 2. Fallback to Gemini Developer API Key if Vertex AI failed or creds not available
-    if not parsed:
-        gemini_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDnUoGfv6RdAdUDkhFk9zWg3qy1TFzugaQ')
-        for model_name in ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"]:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
-            try:
-                req_obj = urllib.request.Request(
-                    url,
-                    data=json.dumps(payload).encode("utf-8"),
-                    headers={"Content-Type": "application/json"},
-                    method="POST"
-                )
-                with urllib.request.urlopen(req_obj, timeout=6) as response:
-                    res_data = json.loads(response.read().decode())
-                    candidates = res_data.get("candidates", [])
-                    if candidates:
-                        text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
-                        if text_content.startswith("```"):
-                            lines = text_content.splitlines()
-                            if lines[0].startswith("```"):
-                                lines = lines[1:]
-                            if lines and lines[-1].startswith("```"):
-                                lines = lines[:-1]
-                            text_content = "\n".join(lines).strip()
-                        parsed = json.loads(text_content)
-                        break
-            except Exception as e:
-                print(f"DEBUG: Gemini Developer API call for {model_name} failed: {e}")
-                continue
-
-    # Fallback to domain knowledge map or database search
-    domain_map = get_domain_fallback(q_clean)
-    if domain_map and (not parsed or not parsed.get('primary_keywords')):
-        parsed = domain_map
 
     if not parsed:
         matched_careers = Career.objects.filter(
@@ -309,7 +418,8 @@ CRITICAL RULES:
             primary_keywords = [c.name]
             secondary_keywords = [c.learning_area.name] if c.learning_area else ["Science", "General Arts"]
         else:
-            query_words = [w for w in q_clean.split() if len(w) > 2]
+            STOP_WORDS = {'to', 'a', 'an', 'the', 'in', 'on', 'at', 'for', 'of', 'and', 'or', 'is', 'be', 'want', 'build', 'building', 'make', 'do', 'study', 'work', 'become', 'like', 'how', 'looking'}
+            query_words = [w for w in q_clean.split() if len(w) > 2 and w.lower() not in STOP_WORDS]
             career_name = q_clean.title()
             career_description = f"Academic and career pathway tailored for interests in {q_clean.title()}."
             primary_keywords = query_words if query_words else [q_clean]
