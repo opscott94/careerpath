@@ -38,7 +38,7 @@ def jhs_guide(request):
     import os
     import dotenv
     dotenv.load_dotenv(override=True)
-    gemini_key = os.getenv('GEMINI_API_KEY', 'AIzaSyDnUoGfv6RdAdUDkhFk9zWg3qy1TFzugaQ')
+    gemini_key = os.getenv('GEMINI_API_KEY')
     print("DEBUG: views.py gemini_key =", repr(gemini_key))
     return render(request, 'frontend/jhs_guide.html', {'GEMINI_API_KEY': gemini_key})
 
