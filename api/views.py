@@ -421,31 +421,32 @@ CRITICAL RULES:
         # 2. Fallback to Gemini Developer API Key if Vertex AI failed or creds not available
         if not parsed:
             gemini_key = os.getenv('GEMINI_API_KEY')
-            for model_name in ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
-                try:
-                    req_obj = urllib.request.Request(
-                        url,
-                        data=json.dumps(payload).encode("utf-8"),
-                        headers={"Content-Type": "application/json"},
-                        method="POST"
-                    )
-                    with urllib.request.urlopen(req_obj, timeout=3) as response:
-                        res_data = json.loads(response.read().decode())
-                        candidates = res_data.get("candidates", [])
-                        if candidates:
-                            text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
-                            if text_content.startswith("```"):
-                                lines = text_content.splitlines()
-                                if lines[0].startswith("```"):
-                                    lines = lines[1:]
-                                if lines and lines[-1].startswith("```"):
-                                    lines = lines[:-1]
-                                text_content = "\n".join(lines).strip()
-                            parsed = json.loads(text_content)
-                            break
-                except Exception as e:
-                    continue
+            if gemini_key:
+                for model_name in ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
+                    try:
+                        req_obj = urllib.request.Request(
+                            url,
+                            data=json.dumps(payload).encode("utf-8"),
+                            headers={"Content-Type": "application/json"},
+                            method="POST"
+                        )
+                        with urllib.request.urlopen(req_obj, timeout=3) as response:
+                            res_data = json.loads(response.read().decode())
+                            candidates = res_data.get("candidates", [])
+                            if candidates:
+                                text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                                if text_content.startswith("```"):
+                                    lines = text_content.splitlines()
+                                    if lines[0].startswith("```"):
+                                        lines = lines[1:]
+                                    if lines and lines[-1].startswith("```"):
+                                        lines = lines[:-1]
+                                    text_content = "\n".join(lines).strip()
+                                parsed = json.loads(text_content)
+                                break
+                    except Exception as e:
+                        continue
 
     if not parsed:
         matched_careers = Career.objects.filter(
@@ -821,25 +822,26 @@ Degree Program: {program_name}"""
     # 2. Fallback to Gemini Developer API
     if not result_text:
         gemini_key = os.getenv('GEMINI_API_KEY')
-        for model_name in ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"]:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
-            try:
-                req_obj = urllib.request.Request(
-                    url,
-                    data=json.dumps(payload).encode("utf-8"),
-                    headers={"Content-Type": "application/json"},
-                    method="POST"
-                )
-                with urllib.request.urlopen(req_obj, timeout=8) as response:
-                    res_data = json.loads(response.read().decode())
-                    candidates = res_data.get("candidates", [])
-                    if candidates:
-                        result_text = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
-                        if result_text:
-                            break
-            except Exception as e:
-                print(f"DEBUG: career_outlook Gemini API {model_name} failed: {e}")
-                continue
+        if gemini_key:
+            for model_name in ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"]:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
+                try:
+                    req_obj = urllib.request.Request(
+                        url,
+                        data=json.dumps(payload).encode("utf-8"),
+                        headers={"Content-Type": "application/json"},
+                        method="POST"
+                    )
+                    with urllib.request.urlopen(req_obj, timeout=8) as response:
+                        res_data = json.loads(response.read().decode())
+                        candidates = res_data.get("candidates", [])
+                        if candidates:
+                            result_text = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                            if result_text:
+                                break
+                except Exception as e:
+                    print(f"DEBUG: career_outlook Gemini API {model_name} failed: {e}")
+                    continue
 
     # 3. Fallback to generic template
     if not result_text:
@@ -1387,32 +1389,33 @@ CRITICAL RULES:
     # 2. Fallback to Gemini Developer API Key if Vertex AI failed or creds not available
     if not parsed:
         gemini_key = os.getenv('GEMINI_API_KEY')
-        for model_name in ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"]:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
-            try:
-                req_obj = urllib.request.Request(
-                    url,
-                    data=json.dumps(payload).encode("utf-8"),
-                    headers={"Content-Type": "application/json"},
-                    method="POST"
-                )
-                with urllib.request.urlopen(req_obj, timeout=25) as response:
-                    res_data = json.loads(response.read().decode())
-                    candidates = res_data.get("candidates", [])
-                    if candidates:
-                        text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
-                        if text_content.startswith("```"):
-                            lines = text_content.splitlines()
-                            if lines[0].startswith("```"):
-                                lines = lines[1:]
-                            if lines and lines[-1].startswith("```"):
-                                lines = lines[:-1]
-                            text_content = "\n".join(lines).strip()
-                        parsed = json.loads(text_content)
-                        break
-            except Exception as e:
-                print(f"DEBUG: OCR Gemini Developer API call for {model_name} failed: {e}")
-                continue
+        if gemini_key:
+            for model_name in ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"]:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
+                try:
+                    req_obj = urllib.request.Request(
+                        url,
+                        data=json.dumps(payload).encode("utf-8"),
+                        headers={"Content-Type": "application/json"},
+                        method="POST"
+                    )
+                    with urllib.request.urlopen(req_obj, timeout=25) as response:
+                        res_data = json.loads(response.read().decode())
+                        candidates = res_data.get("candidates", [])
+                        if candidates:
+                            text_content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                            if text_content.startswith("```"):
+                                lines = text_content.splitlines()
+                                if lines[0].startswith("```"):
+                                    lines = lines[1:]
+                                if lines and lines[-1].startswith("```"):
+                                    lines = lines[:-1]
+                                text_content = "\n".join(lines).strip()
+                            parsed = json.loads(text_content)
+                            break
+                except Exception as e:
+                    print(f"DEBUG: OCR Gemini Developer API call for {model_name} failed: {e}")
+                    continue
 
     if not parsed:
         return JsonResponse({'error': 'Could not extract WASSCE grades from the uploaded document. Please ensure the image/PDF is clear or select grades manually.'}, status=422)
