@@ -57,3 +57,4 @@ wasabi==1.1.3
 weasel==1.0.0
 whitenoise==6.12.0
 wrapt==2.1.2
+reportlab>=4.0.0

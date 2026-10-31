@@ -97,3 +97,11 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
 }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'careerpath_cache_table',
+        'TIMEOUT': 86400,
+    }
+}

@@ -11,4 +11,9 @@ urlpatterns = [
     path('universities/', views.universities_list, name='universities_list'),
     path('evaluate-eligibility/', views.evaluate_eligibility, name='evaluate_eligibility'),
     path('ocr-wassce-results/', views.ocr_wassce_results, name='ocr_wassce_results'),
+    path('eligibility-pdf/', views.generate_eligibility_pdf, name='generate_eligibility_pdf'),
+    path('grade-simulator/', views.grade_simulator, name='grade_simulator'),
+    path('search/', views.global_search, name='global_search'),
+    path('compare-programs/', views.compare_programs, name='compare_programs'),
+    path('health/', views.health_check, name='health_check'),
 ]

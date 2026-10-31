@@ -1,25 +1,5 @@
 {% extends 'frontend/base.html' %}
-{% block title %}University Eligibility Checker — CareerPath Ghana
-<script>
-  function goToStep1() {
-    document.getElementById('step1').classList.remove('hidden');
-    document.getElementById('step2').classList.add('hidden');
-    document.getElementById('step3').classList.add('hidden');
-    document.getElementById('step1-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:#052e16;color:#fff;border:none;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:600;';
-    document.getElementById('step2-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:500;';
-    document.getElementById('step3-ind').style.cssText = 'display:flex;align-items:center;gap:8px;background:none;color:#9ca3af;border:1px solid #e5e7eb;border-radius:100px;padding:8px 16px;cursor:not-allowed;font-size:13px;font-weight:500;';
-  }
-  function goToStep2Ind() {
-    if (step2Reached) {
-      document.getElementById('step1').classList.add('hidden');
-      document.getElementById('step2').classList.remove('hidden');
-      document.getElementById('step3').classList.add('hidden');
-    }
-  }
-  var step2Reached = false;
-</script>
-
-{% endblock %}
+{% block title %}University Eligibility Checker — CareerPath Ghana{% endblock %}
 {% block content %}
 
 <div class="max-w-3xl mx-auto px-4 py-12">
@@ -585,13 +565,23 @@
       </div>
     </div>
     <div class="card p-4 sm:p-6 md:p-8">
-      <div class="flex items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
-        <div id="aggregateBadge"
-          class="w-12 h-12 sm:w-16 sm:h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-black flex-shrink-0">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-5 sm:mb-6">
+        <div class="flex items-center gap-3 sm:gap-4">
+          <div id="aggregateBadge"
+            class="w-12 h-12 sm:w-16 sm:h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-black flex-shrink-0">
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide">Your Aggregate</p>
+            <p id="aggregateLabel" class="text-lg sm:text-xl font-bold text-gray-900"></p>
+          </div>
         </div>
-        <div>
-          <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide">Your Aggregate</p>
-          <p id="aggregateLabel" class="text-lg sm:text-xl font-bold text-gray-900"></p>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="openGradeSimulatorModal()" class="px-3 sm:px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+            <span>What-If Simulator</span>
+          </button>
+          <button type="button" onclick="downloadEligibilityPDF(this)" class="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+            <span>Download Official PDF</span>
+          </button>
         </div>
       </div>
 
@@ -793,7 +783,7 @@
         return;
       }
 
-      payload = {
+      payload = window.userEvaluationPayload = {
         core_grades: {
           'English Language': parseInt(gEng),
           'Core Mathematics': parseInt(gMath),
@@ -1781,6 +1771,198 @@
     }
   }
   var step2Reached = false;
+</script>
+
+
+<!-- What-If Simulator Modal (No Emojis) -->
+<div id="gradeSimulatorModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-amber-50/50">
+      <div>
+        <h3 class="font-bold text-base text-slate-900">What-If Grade Simulator</h3>
+        <p class="text-xs text-slate-500">Calculate target subject improvements needed to qualify for borderline programs</p>
+      </div>
+      <button onclick="closeGradeSimulatorModal()" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-600 font-bold">✕</button>
+    </div>
+    <div id="gradeSimulatorContent" class="p-6 overflow-y-auto space-y-4">
+      <div class="text-center py-8 text-slate-400">Loading simulations...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function downloadEligibilityPDF(btn) {
+  if (!evaluatedData) {
+    alert('Please evaluate your grades first.');
+    return;
+  }
+  const originalText = btn ? btn.innerHTML : 'Download Official PDF';
+  if (btn) {
+    btn.innerHTML = '<span>Generating PDF...</span>';
+    btn.disabled = true;
+  }
+
+  try {
+    let coreGrades = {};
+    let electives = [];
+
+    if (window.userEvaluationPayload) {
+      coreGrades = window.userEvaluationPayload.core_grades || {};
+      electives = window.userEvaluationPayload.electives || [];
+    } else {
+      const gEng = document.getElementById('g_eng')?.value;
+      const gMath = document.getElementById('g_math')?.value;
+      const gSci = document.getElementById('g_sci')?.value;
+      const gSoc = document.getElementById('g_soc')?.value;
+      coreGrades = {
+        'English Language': gEng ? parseInt(gEng) : 9,
+        'Core Mathematics': gMath ? parseInt(gMath) : 9,
+        'Integrated Science': gSci ? parseInt(gSci) : 9,
+        'Social Studies': gSoc ? parseInt(gSoc) : 9
+      };
+      for (let i = 1; i <= 6; i++) {
+        const sEl = document.getElementById('s_e' + i)?.value;
+        const gEl = document.getElementById('g_e' + i)?.value;
+        if (sEl && gEl) {
+          electives.push({ name: sEl, grade: parseInt(gEl) });
+        }
+      }
+    }
+
+    const payload = {
+      student_name: 'Student Candidate',
+      aggregate: evaluatedData.aggregate,
+      label: evaluatedData.label,
+      is_awaiting: evaluatedData.is_awaiting || false,
+      core_grades: coreGrades,
+      electives: electives,
+      eligible_programs: (evaluatedData.results || []).slice(0, 35)
+    };
+
+    const resp = await fetch('/api/eligibility-pdf/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!resp.ok) throw new Error('Server returned ' + resp.status);
+
+    const blob = await resp.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `CareerPath_Ghana_Eligibility_Report_Agg${evaluatedData.aggregate || 'Awaiting'}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error('PDF error:', err);
+    alert('Failed to generate PDF report. Please try again.');
+  } finally {
+    if (btn) {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
+  }
+}
+
+async function openGradeSimulatorModal() {
+  const modal = document.getElementById('gradeSimulatorModal');
+  const container = document.getElementById('gradeSimulatorContent');
+  modal.classList.remove('hidden');
+  container.innerHTML = '<div class="text-center py-8 text-slate-400">Analyzing borderline degree pathways...</div>';
+
+  try {
+    let coreGrades = {};
+    let electives = [];
+
+    if (window.userEvaluationPayload) {
+      coreGrades = window.userEvaluationPayload.core_grades || {};
+      electives = window.userEvaluationPayload.electives || [];
+    } else {
+      const gEng = document.getElementById('g_eng')?.value;
+      const gMath = document.getElementById('g_math')?.value;
+      const gSci = document.getElementById('g_sci')?.value;
+      const gSoc = document.getElementById('g_soc')?.value;
+      coreGrades = {
+        'English Language': gEng ? parseInt(gEng) : 9,
+        'Core Mathematics': gMath ? parseInt(gMath) : 9,
+        'Integrated Science': gSci ? parseInt(gSci) : 9,
+        'Social Studies': gSoc ? parseInt(gSoc) : 9
+      };
+      for (let i = 1; i <= 6; i++) {
+        const sEl = document.getElementById('s_e' + i)?.value;
+        const gEl = document.getElementById('g_e' + i)?.value;
+        if (sEl && gEl) {
+          electives.push({ name: sEl, grade: parseInt(gEl) });
+        }
+      }
+    }
+
+    const borderlineProgs = (evaluatedData && evaluatedData.results) 
+      ? evaluatedData.results.filter(r => r.is_borderline || !r.is_eligible).slice(0, 15).map(r => r.id) 
+      : [];
+
+    const resp = await fetch('/api/grade-simulator/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        core_grades: coreGrades,
+        electives: electives,
+        program_ids: borderlineProgs
+      })
+    });
+
+    const data = await resp.json();
+    const sims = data.simulations || [];
+
+    if (sims.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-8">
+          <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 text-base font-bold">OK</div>
+          <h4 class="font-bold text-slate-800 text-sm">You Already Qualify for Most Target Programs</h4>
+          <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">No near-miss borderline programs found within 1 to 6 points of your current aggregate.</p>
+        </div>
+      `;
+      return;
+    }
+
+    let html = '';
+    sims.forEach(s => {
+      html += `
+        <div class="border border-amber-200/80 rounded-2xl p-4 bg-amber-50/30">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">${s.university}</span>
+              <h4 class="font-bold text-sm text-slate-900 mt-1">${s.program_name}</h4>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400">Cut-Off: </span><span class="font-bold text-slate-800">${s.cutoff}</span>
+              <p class="text-[11px] font-semibold text-rose-600">Needs -${s.points_needed} pts</p>
+            </div>
+          </div>
+          <div class="space-y-1.5 mt-3 pt-2 border-t border-amber-100">
+            <p class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Suggested Grade Improvements:</p>
+            ${s.recommendations.map(r => `
+              <div class="flex items-center justify-between text-xs bg-white p-2 rounded-xl border border-slate-100">
+                <span class="font-medium text-slate-800">${r.subject}</span>
+                <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">${r.current_grade} to ${r.target_grade} (-${r.points_saved} pts)</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  } catch (err) {
+    container.innerHTML = '<div class="text-center py-8 text-rose-500">Failed to calculate grade simulations.</div>';
+  }
+}
+
+function closeGradeSimulatorModal() {
+  document.getElementById('gradeSimulatorModal').classList.add('hidden');
+}
 </script>
 
 {% endblock %}
